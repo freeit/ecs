@@ -1,0 +1,114 @@
+<!--
+Copyright (C) 2007, 2008, 2009, 2010 Heiko Bernloehr (FreeIT.de).
+
+This file is part of ECS.
+
+ECS is free software: you can redistribute it and/or modify it
+under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+
+ECS is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public
+License along with ECS. If not, see <http://www.gnu.org/licenses/>.
+-->
+
+
+<%= form.error_messages %>
+
+<p><label for="participant_name" class="box2 table-resource-label">Name:</label>
+<%= form.text_field :name %></p>
+
+<p>
+<div class="formular-input-width">
+<div class="table-border">
+<div class="table-header">
+  <label class="table-resource-label">Description (optional):</label>
+</div>
+<%= form.text_area :description, :rows => 2 , :style => "width:99.5%" %>
+</div>
+</div>
+
+<p>
+<table>
+<tr>
+<td><label for="participant_dns" class="box2 table-resource-label">DNS:</label></td>
+<td><%= form.text_field :dns %></td>
+</tr>
+<tr>
+<td><label for="participant_email" class="box2 table-resource-label">Email:</label></td>
+<td><%= form.text_field :email %></td>
+</tr>
+</table>
+</p>
+
+<p><label for="participant_organization_id" class="box2 table-resource-label">Organization-Abreviation:</label>
+<%= form.collection_select(:organization_id, @organizations, :id, :orgtext) %></p>
+
+<p>
+<div class="formular-input-width">
+<div class="table-border">
+<div class="table-header">
+  <label class="table-resource-label">Authentication-IDs:</label>
+</div>
+  <table border="0" frame="box" rules="none" valign="top" width="100%">
+    <tr align="left">
+      <th style="width:30%">ID:</th>
+      <th style="width:60%">Description (optional):</th>
+      <th style="width:10%">delete</th>
+    </tr>
+    <% form.fields_for :identities do |ident| %>
+      <tr align="left" valign="top">
+        <td><%= ident.text_field :name, :style => "width:100%" %></td>
+        <TD><%= ident.text_area :description, :rows => 1, :style => "width:100%" %></TD>
+        <% unless ident.object.new_record? %>
+            <td valign='middle'>
+            <%= ident.check_box :_destroy %>
+            <!-- %= ident.label :_delete, 'delete' %> -->
+            </td>
+        <% else %>
+            <td></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </table>
+</div>
+</div>
+
+<p>
+<div class="formular-input-width">
+<div class="table-border">
+<div class="table-header">
+  <label class="table-resource-label">Communities:</label>
+</div>
+  <!-- <table border="1" frame="box" rules="all" valign="top"> -->
+  <table class="list" width="100%">
+  
+    <tr align="left">
+      <th>Name:</th>
+      <th>Description (optional):</th>
+      <th>join</th>
+    </tr>
+  
+    <% Community.find(:all).each do |community| %>
+  	    <tr valign="top" class="<%= cycle('list-line-odd', 'list-line-even') %>">
+  <!--      <tr align="left" valign="top"> -->
+          <TD>
+            <%= link_to h(community.name), admin_community_path(community) %>
+          </TD>
+          <TD>
+            <%= h(community.description).gsub(/\r\n/,'<BR />') %>
+          </TD>
+          <td valign='middle'>
+            <%= check_box_tag "participant[community_ids][]", community.id, @participant.communities.include?(community) %> 
+          </td>
+        </tr>
+    <% end %>
+  </table>
+</div>
+</div>
+</p>

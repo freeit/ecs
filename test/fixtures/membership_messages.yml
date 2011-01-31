@@ -1,0 +1,54 @@
+# Copyright (C) 2007, 2008, 2009, 2010 Heiko Bernloehr (FreeIT.de).
+# 
+# This file is part of ECS.
+# 
+# ECS is free software: you can redistribute it and/or modify it
+# under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of
+# the License, or (at your option) any later version.
+# 
+# ECS is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Affero General Public License for more details.
+# 
+# You should have received a copy of the GNU Affero General Public
+# License along with ECS. If not, see <http://www.gnu.org/licenses/>.
+
+
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+1:
+  id: 1
+  membership_id: 1 #stuttgart_suv
+  message_id: 1 #numlab_exercise_1
+
+2:
+  id: 2
+  membership_id: 2 #ulm_wuv
+  message_id: 2 #numlab_exercise_2
+  
+3:
+  id: 3
+  membership_id: 4 #ulm_suv_4
+  message_id: 3 #numlab_sol_3
+
+4:
+  id: 4
+  membership_id: 2 #ulm_wuv
+  message_id: 4 #cc_courselink_1
+
+5:
+  id: 5
+  membership_id: 3 #stuttgart_wuv
+  message_id: 6 #numlab_ulm_exercise_1
+
+6:
+  id: 6
+  membership_id: 2 #ulm_wuv
+  message_id: 1 #numlab_exercise_1
+
+7:
+  id: 7
+  membership_id: 4 #ulm_suv
+  message_id: 2 #numlab_exercise_2

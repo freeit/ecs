@@ -1,0 +1,11 @@
+ECS -- Elearning Community Server
+=================================
+
+It's a REST based middleware (MOM), especially for integrating e-learning based
+services such as 
+
+   * learning management systems (Ilias, Moodle, StudIP, ...)
+   * campus management systems (HIS/LSF, StudIP, OpenCMS, ...)
+
+See also: http://FreeIT.de/en/campusconnect
+

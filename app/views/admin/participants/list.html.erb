@@ -1,0 +1,61 @@
+<!--
+Copyright (C) 2007, 2008, 2009, 2010 Heiko Bernloehr (FreeIT.de).
+
+This file is part of ECS.
+
+ECS is free software: you can redistribute it and/or modify it
+under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+
+ECS is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public
+License along with ECS. If not, see <http://www.gnu.org/licenses/>.
+-->
+
+
+<h1 class="box1">Listing Participants (<%= @list_participants_count.to_s %>)</h1>
+
+<%= link_to 'New participant', new_admin_participant_url %>&nbsp;&nbsp;
+<% if @list_anonymous %>
+  <%= link_to "Hide anonymous (#{@list_participants_anonymous_count})", admin_participants_url(:anonymous => "false") %>
+<% else %>
+  <%= link_to "Show anonymous (#{@list_participants_anonymous_count})", admin_participants_url(:anonymous => "true") %>
+<% end %>
+
+<p>
+
+<table class="list">
+
+  <tr class="table-resource-label">
+    <TH class="box2">ID</TH>
+    <TH class="box2">Name</TH>
+    <TH class="box2">Description (optional)</TH>
+    <TH class="box2">Organization</TH>
+    <TH class="box2" align="center">Operations</TH>
+  </tr>
+  <tr></tr>
+
+<% for participant in @participants %>
+  
+  <tr class="<%= cycle('list-line-odd', 'list-line-even') %>">
+    <TD> <%= participant.id %></TD>
+		<TD> <%= h participant.name %></TD>
+	  <TD> <%= h truncate(participant.description,:length => 80) %></TD>
+    <TD class="center"> <%= h participant.organization.abrev %> </TD>
+		<TD>
+			<%= link_to 'Show', admin_participant_url(:id => participant) %>
+			<%= link_to 'Edit', edit_admin_participant_url(:id => participant) %>
+			<%= link_to 'Destroy', admin_participant_url(:id => participant), :confirm => 'Are you sure?', :method => :delete %><BR>
+		</TD>
+  </tr>
+
+<% end %>
+
+</table>
+
+</p>

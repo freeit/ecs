@@ -1,0 +1,108 @@
+<!--
+Copyright (C) 2007, 2008, 2009, 2010 Heiko Bernloehr (FreeIT.de).
+
+This file is part of ECS.
+
+ECS is free software: you can redistribute it and/or modify it
+under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+
+ECS is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public
+License along with ECS. If not, see <http://www.gnu.org/licenses/>.
+-->
+
+
+<h1 class="box1">Show Participant</h1>
+
+<%= link_to 'Edit', edit_admin_participant_path(:id => @participant) %> |
+<%= link_to 'Back', admin_participants_path %>
+
+<p>
+  <label class="box2 table-resource-label">Name:</label>
+  <%= @participant.name %>
+</p>
+
+<p>
+<div class="formular-input-width">
+<div class="table-border">
+<div class="table-header">
+  <label class="table-resource-label">Description (optional):</label>
+</div>
+    <%= h(@participant.description).gsub(/\r\n/, '<BR>') %>
+</div>
+</div>
+</p>
+
+<p>
+<div style="float:left;width:7ex">
+  <label for="participant_dns" class="box2 table-resource-label">DNS:</label>
+</div>
+<%= @participant.dns %>
+</p>
+
+<p>
+<div style="float:left;width:7ex">
+  <label for="participant_email" class="box2 table-resource-label">Email:</label>
+</div>
+<%= @participant.email %>
+</p>
+
+<p>
+  <label class="box2 table-resource-label">Organization:</label>
+  <%= @participant.organization.orgtext %>
+</p>
+
+<p>
+<div class="show-output-width">
+<div class="table-border">
+<div class="table-header">
+  <label class="table-resource-label">Identities:</label>
+</div>
+  <table class="list" width="100%">
+    <TR align="left">
+      <TH>ID:</TH>
+      <TH>Description:</TH>
+    </TR>
+    <% @participant.identities.each do |ident| %>
+      <tr class="<%= cycle('list-line-odd', 'list-line-even') %>">
+        <TD> <%= h ident.name %> </TD>
+        <TD> <%= h(ident.description).gsub(/\r\n/, '<BR>') %> </TD>
+      </TR>
+    <% end %>
+  </table>
+</div>
+</div>
+
+<p>
+<div class="show-output-width">
+<div class="table-border">
+<div class="table-header">
+  <label class="table-resource-label">Communities:</label>
+</div>
+  <table class="list" width="100%">
+    <TR align="left">
+        <TH>Name:</TH>
+        <TH>Description:</TH>
+        <TH align="right">mid:&nbsp;</TH>
+    </TR>
+    <% @participant.communities.each do |comm| %>
+      <tr class="<%= cycle('list-line-odd', 'list-line-even') %>">
+        <TD> <%= link_to h(comm.name), admin_community_path(comm) %> </TD>
+        <TD> <%= h(comm.description).gsub(/\r\n/, '<BR>') %> </TD>
+        <TD align="right"> <%= Membership.for_participant_id_and_community_id(@participant.id, comm.id)[0].id.to_s %>&nbsp; </TD>
+      </TR>
+    <% end %>
+  </table>
+</div>
+</div>
+
+<p>
+<%= link_to 'Edit', edit_admin_participant_path(:id => @participant) %> |
+<%= link_to 'Back', admin_participants_path %>
+</p>

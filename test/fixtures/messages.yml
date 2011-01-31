@@ -1,0 +1,62 @@
+# Copyright (C) 2007, 2008, 2009, 2010 Heiko Bernloehr (FreeIT.de).
+# 
+# This file is part of ECS.
+# 
+# ECS is free software: you can redistribute it and/or modify it
+# under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of
+# the License, or (at your option) any later version.
+# 
+# ECS is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Affero General Public License for more details.
+# 
+# You should have received a copy of the GNU Affero General Public
+# License along with ECS. If not, see <http://www.gnu.org/licenses/>.
+
+
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+numlab_ex1:
+  id: 1
+  ressource: numlab_ex
+  content_type: application/json
+  sender: 1
+  body: "Hallo Ihr da im Radio.\r\n"
+  
+numlab_ex2:
+  id: 2
+  ressource: numlab_ex
+  content_type: application/json
+  sender: 1
+  body: "Achtung ein Kartoon.\r\n"
+ 
+numlab_sol:
+  id: 3
+  ressource: numlab_solutions
+  content_type: application/json
+  sender: 1
+  body: "Eine gute Loesung.\r\n"
+
+cc_course1:
+  id: 4
+  ressource: cc_course
+  content_type: application/json
+  sender: 1
+  body: "Der ultimative Kurs.\r\n"
+
+no_rec:
+  id: 5
+  ressource: cc_course
+  content_type: application/json
+  sender: 19900
+  body: "Dieser Kurslink hat keinen Empfänger."
+  
+numlab_ulm_ex1:
+  id: 6
+  ressource: numlab_ex
+  content_type: application/json
+  sender: 2
+  body: "Ne superschwere Aufgabe aus Ulm.\r\n"
+

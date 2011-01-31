@@ -1,0 +1,58 @@
+<!--
+Copyright (C) 2007, 2008, 2009, 2010 Heiko Bernloehr (FreeIT.de).
+
+This file is part of ECS.
+
+ECS is free software: you can redistribute it and/or modify it
+under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+
+ECS is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public
+License along with ECS. If not, see <http://www.gnu.org/licenses/>.
+-->
+
+
+
+<table>
+
+<% for participant in participants %>
+	<tr valign="top" class="<%= cycle('list-line-odd', 'list-line-even') %>">
+
+		<TD>
+			<SPAN class="list-title"><%= h participant.id %></SPAN><BR/>
+		</TD>
+
+		<TD>
+			<SPAN class="list-title"><%= h participant.name %></SPAN><BR/>
+			<%= h truncate(participant.description,:length => 80) %>
+		</TD>
+
+
+		<TD>
+			<%= link_to 'Show', show_admin_participant_url(:id => participant) %>
+			<%= link_to 'Edit', edit_admin_participant_url(:id => participant) %>
+			<%= link_to 'Destroy', destroy_admin_participant_url(:id => participant), :confirm => 'Are you sure?', :method => :post %><BR>
+      <% if defined? links then -%>
+      <% links.each do |link| %>
+        <%= eval "link_to \"#{link[:text]}\", #{link[:map_name_function]}" %>
+      <% end -%>
+      <% end -%>
+		</TD>
+  </tr>
+<% end %>
+</table>
+
+<!-- 
+<#%= link_to 'Previous page', { :page => @community_pages.current.previous } if @community_pages.current.previous %>
+<#%= link_to 'Next page', { :page => @community_pages.current.next } if @community_pages.current.next %> 
+
+<br />
+
+<#%= link_to 'New community', :action => 'new' %>
+ -->

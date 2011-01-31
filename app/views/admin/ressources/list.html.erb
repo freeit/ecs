@@ -1,0 +1,56 @@
+<!--
+Copyright (C) 2007, 2008, 2009, 2010 Heiko Bernloehr (FreeIT.de).
+
+This file is part of ECS.
+
+ECS is free software: you can redistribute it and/or modify it
+under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+
+ECS is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public
+License along with ECS. If not, see <http://www.gnu.org/licenses/>.
+-->
+
+
+<h1 class="box1">Listing Ressources (<%= @list_ressources_count.to_s %>)</h1>
+
+<%= link_to 'New ressource', new_admin_ressource_url %>&nbsp;&nbsp;
+
+<p>
+
+<table class="list">
+
+  <tr class="table-resource-label">
+    <TH class="box2">Id</TH>
+    <TH class="box2">Namespace</TH>
+    <TH class="box2">Name</TH>
+    <TH class="box2">Postrouted</TH>
+    <TH class="box2" align="center">Operations</TH>
+  </tr>
+  <tr></tr>
+
+<% for ressource in @ressources %>
+  
+  <tr class="<%= cycle('list-line-odd', 'list-line-even') %>">
+    <TD> <%= ressource.id %></TD>
+		<TD> <%= h ressource.namespace %></TD>
+	  <TD> <%= h ressource.ressource %></TD>
+    <TD> <%= h ressource.postroute %> </TD>
+		<TD>
+			<%= link_to 'Show', admin_ressource_url(:id => ressource) %>
+			<%= link_to 'Edit', edit_admin_ressource_url(:id => ressource) %>
+			<%= link_to 'Destroy', admin_ressource_url(:id => ressource), :confirm => 'Are you sure?', :method => :delete %><BR>
+		</TD>
+  </tr>
+
+<% end %>
+
+</table>
+
+</p>

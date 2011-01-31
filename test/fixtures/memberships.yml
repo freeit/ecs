@@ -1,0 +1,52 @@
+# Copyright (C) 2007, 2008, 2009, 2010 Heiko Bernloehr (FreeIT.de).
+# 
+# This file is part of ECS.
+# 
+# ECS is free software: you can redistribute it and/or modify it
+# under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of
+# the License, or (at your option) any later version.
+# 
+# ECS is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Affero General Public License for more details.
+# 
+# You should have received a copy of the GNU Affero General Public
+# License along with ECS. If not, see <http://www.gnu.org/licenses/>.
+
+
+stgt_suv:
+  id: 1
+  participant_id: 1
+  community: suv
+  
+ulm_wuv:
+  id: 2
+  participant_id: 2
+  community: wuv
+  
+stgt_wuv:
+  id: 3
+  participant_id: 1
+  community: wuv
+  
+ulm_suv:
+  id: 4
+  participant_id: 2
+  community: suv
+  
+numlab_comp:
+  id: 5
+  participant_id: 3
+  community: public
+
+stgt_public:
+  id: 6
+  participant_id: 1
+  community: public
+
+numlab_teacher:
+  id: 7
+  participant_id: 4
+  community: public

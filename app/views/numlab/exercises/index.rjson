@@ -1,0 +1,3 @@
+for li in (@list.class == Array) ? @list : ([] << @list)
+  li.body
+end

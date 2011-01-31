@@ -1,0 +1,43 @@
+# Copyright (C) 2007, 2008, 2009, 2010 Heiko Bernloehr (FreeIT.de).
+# 
+# This file is part of ECS.
+# 
+# ECS is free software: you can redistribute it and/or modify it
+# under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of
+# the License, or (at your option) any later version.
+# 
+# ECS is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Affero General Public License for more details.
+# 
+# You should have received a copy of the GNU Affero General Public
+# License along with ECS. If not, see <http://www.gnu.org/licenses/>.
+
+
+stgt_id1:
+  name: my_secret_identity 
+  description:  "Einfach eine Dummy Identiy."
+  participant_id: 1
+
+stgt_id2:
+  name: myid
+  description:  "Zertifikats-ID\r\nZentrale E-Lernplattform am Rechenzentrum."
+  participant_id: 1
+
+ulm_id1:
+  name: ulama
+  description:  "LDAP Authentication ID."
+  participant_id: 2
+
+numlab_comp_id1:
+  name: sunito
+  description: 
+  participant_id: 3
+
+numlab_teacher_id1:
+  name: trulane
+  description: 
+  participant_id: 4
+

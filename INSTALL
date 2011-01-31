@@ -1,0 +1,9 @@
+Installing using apipropriate profiles
+======================================
+
+The "light" profile should have the fewest dependencies on other software. So
+this profile doesn't need a separate database, webserver and applicationserver.
+So this should only be used for testing and small application scenarios.
+
+For the "light" profile see: http://freeit.de/documents/ecs_light_installation.txt
+

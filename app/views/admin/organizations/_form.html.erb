@@ -1,0 +1,44 @@
+<!--
+Copyright (C) 2007, 2008, 2009, 2010 Heiko Bernloehr (FreeIT.de).
+
+This file is part of ECS.
+
+ECS is free software: you can redistribute it and/or modify it
+under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+
+ECS is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public
+License along with ECS. If not, see <http://www.gnu.org/licenses/>.
+-->
+
+
+<%= form.error_messages %>
+
+
+<table>
+<tr>
+<td><label for="organization_name" class="box2 table-resource-label">Name:</label></td>
+<td><%= h form.text_field :name %></td>
+</tr>
+<tr>
+<td><label for="organization_abrev" class="box2 table-resource-label">Abreviation:</label></td>
+<td><%= h form.text_field :abrev %></td>
+</tr>
+</table>
+
+<p>
+<div class="formular-input-width">
+<div class="table-border">
+<div class="table-header">
+  <label for="organization_description" class="table-resource-label">Description (optional):</label>
+</div>
+<%= h form.text_area :description, :rows => 2 , :style => "width:99.5%" %>
+</div>
+</div>
+
