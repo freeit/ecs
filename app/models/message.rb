@@ -25,6 +25,11 @@ class Message < ActiveRecord::Base
   has_many :communities, :through => :community_messages
   belongs_to :ressource
 
+  named_scope :for_participant, lambda {|participant| {
+    :joins => {:membership_messages => {:membership => :participant}},
+    :order => "id ASC",
+    :conditions => {:participants => {:id => participant.id}}}}
+
   def validate
     if content_type.blank? then
       errors.add_to_base("*** You must povide a \"Content-Type\" header. ")

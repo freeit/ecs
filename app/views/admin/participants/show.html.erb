@@ -106,8 +106,35 @@ License along with ECS. If not, see <http://www.gnu.org/licenses/>.
   </table>
 </div>
 </div>
+</p>
 
 <p>
 <%= link_to 'Edit', edit_admin_participant_path(:id => @participant) %> |
 <%= link_to 'Back', admin_participants_path %>
+</p>
+
+<p>
+<div class="show-output-width">
+<div class="table-border">
+<div class="table-header">
+  <label class="table-resource-label">Messages:</label>
+</div>
+  <table class="list" width="100%">
+    <TR align="left">
+        <TH>Id:</TH>
+        <TH>Resource:</TH>
+        <TH>Content-Type:</TH>
+        <TH>Date:</TH>
+    </TR>
+    <% Message.for_participant(@participant).uniq.each do |message| %>
+      <tr class="<%= cycle('list-line-odd', 'list-line-even') %>">
+        <TD> <%= h message.id %> </TD>
+        <TD> <%= h message.ressource.namespace+'/'+message.ressource.ressource %> </TD>
+        <TD> <%= h message.content_type %> </TD>
+        <TD> <%= h message.created_at %> </TD>
+      </TR>
+    <% end %>
+  </table>
+</div>
+</div>
 </p>
