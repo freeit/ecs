@@ -35,12 +35,12 @@ License along with ECS. If not, see <http://www.gnu.org/licenses/>.
 
 <P>
   <label class="box2 table-resource-label">Postrouted:</label>
-  <%= @ressource.postroute %>
+  <%= check_box_tag "ressource[postroute]",1,@ressource.postroute, :disabled => true %>
 </P>
 
 <P>
   <label class="box2 table-resource-label">Events:</label>
-  <%= @ressource.events %>
+  <%= check_box_tag "ressource[events]",1,@ressource.events, :disabled => true %>
 </P>
 
 <%= link_to 'Edit', edit_admin_ressource_path(:id => @ressource) %> |

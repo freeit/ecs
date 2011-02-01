@@ -42,8 +42,8 @@ License along with ECS. If not, see <http://www.gnu.org/licenses/>.
     <TD> <%= ressource.id %></TD>
 		<TD> <%= h ressource.namespace %></TD>
 	  <TD> <%= h ressource.ressource %></TD>
-    <TD> <%= h ressource.postroute %> </TD>
-    <TD> <%= h ressource.events %> </TD>
+    <TD align="center"> <%= check_box_tag "ressource[postroute]",1,ressource.postroute, :disabled => true %> </TD>
+    <TD align="center"> <%= check_box_tag "ressource[events]",1,ressource.events, :disabled => true %> </TD>
 		<TD>
 			<%= link_to 'Show', admin_ressource_url(:id => ressource) %>
 			<%= link_to 'Edit', edit_admin_ressource_url(:id => ressource) %>

@@ -60,7 +60,7 @@ License along with ECS. If not, see <http://www.gnu.org/licenses/>.
 
 <p>
   <label class="box2 table-resource-label">Community Selfrouting:</label>
-  <%= @participant.community_selfrouting %>
+  <%= check_box_tag "participant[community_selfrouting]",1,@participant.community_selfrouting, :disabled => true %>
 </p>
 
 <p>

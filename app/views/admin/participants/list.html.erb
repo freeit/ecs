@@ -35,7 +35,8 @@ License along with ECS. If not, see <http://www.gnu.org/licenses/>.
     <TH class="box2">ID</TH>
     <TH class="box2">Name</TH>
     <TH class="box2">Description (optional)</TH>
-    <TH class="box2">Organization</TH>
+    <TH class="box2">Organi-<br/>zation</TH>
+    <TH class="box2">Self-<br/>routing</TH>
     <TH class="box2" align="center">Operations</TH>
   </tr>
   <tr></tr>
@@ -47,6 +48,7 @@ License along with ECS. If not, see <http://www.gnu.org/licenses/>.
 		<TD> <%= h participant.name %></TD>
 	  <TD> <%= h truncate(participant.description,:length => 80) %></TD>
     <TD class="center"> <%= h participant.organization.abrev %> </TD>
+    <TD align="center"> <%= check_box_tag "participant[community_selfrouting]",1,participant.community_selfrouting, :disabled => true %></TD>
 		<TD>
 			<%= link_to 'Show', admin_participant_url(:id => participant) %>
 			<%= link_to 'Edit', edit_admin_participant_url(:id => participant) %>
