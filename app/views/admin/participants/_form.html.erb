@@ -49,6 +49,9 @@ License along with ECS. If not, see <http://www.gnu.org/licenses/>.
 <p><label for="participant_organization_id" class="box2 table-resource-label">Organization-Abreviation:</label>
 <%= form.collection_select(:organization_id, @organizations, :id, :orgtext) %></p>
 
+<p><label for="participant_community_selfrouting" class="box2 table-resource-label">Community Selfrouting:</label>
+<%= form.check_box :community_selfrouting %></p>
+
 <p>
 <div class="formular-input-width">
 <div class="table-border">
