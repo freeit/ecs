@@ -38,5 +38,10 @@ License along with ECS. If not, see <http://www.gnu.org/licenses/>.
   <%= @ressource.postroute %>
 </P>
 
+<P>
+  <label class="box2 table-resource-label">Events:</label>
+  <%= @ressource.events %>
+</P>
+
 <%= link_to 'Edit', edit_admin_ressource_path(:id => @ressource) %> |
 <%= link_to 'Back', admin_ressources_path %>

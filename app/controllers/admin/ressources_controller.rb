@@ -63,7 +63,7 @@ class Admin::RessourcesController < ApplicationController
     @ressource = Ressource.find(params[:id])
     if @ressource.update_attributes(params[:ressource])
       flash[:notice] = 'Ressource was successfully updated.'
-      redirect_to admin_ressources_path
+      redirect_to admin_ressource_path(:id => @ressource)
     else
       render :action => 'edit'
     end
