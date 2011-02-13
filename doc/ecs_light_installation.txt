@@ -1,0 +1,125 @@
+Installing the ECS on a Debian Squeeze (the new stable release of the Debian GNU/Linux Distribution)
+====================================================================================================
+To obtain the ECS source code you have two choices:
+
+  1. Using git (fast, scalable, distributed revision control system):
+    
+      mb7@vipecs:~$ sudo aptitude install git
+      ...
+
+  And clone the repository:
+
+      mb7@vipecs:~$ git clone http://repo.or.cz/r/ecs.git
+
+  After cloning you will notice the new application directory "ecs". All
+  further operations take place inside this application directory:
+
+      mb7@vipecs:~$ cd ecs
+      mb7@vipecs:~/ecs$
+
+
+  2. Download an ECS snapshot (tar.gz or zip archive). Please browse to
+  "http://repo.or.cz/w/ecs.git" and choose the newest stable snapshot available
+  (normally tagged as "master").
+  After unpacking the archive you will notice the new application directory "ecs". All
+  further operations take place inside this application directory:
+
+      mb7@vipecs:~$ cd ecs
+      mb7@vipecs:~/ecs$
+
+--------------
+
+You must install a ruby of version 1.8.7 (the latest 1.8.x version):
+
+  mb7@vipecs:~/ecs$ sudo aptitude install ruby
+
+The following NEW packages will be installed:
+libreadline5{a} libruby1.8{a} ruby ruby1.8{a} 
+
+--------------
+
+You must install a rubygems of version 1.3.7 or later:
+
+  mb7@vipecs:~/ecs$ sudo aptitude install rubygems
+
+The following NEW packages will be installed:
+binutils{a} build-essential{a} bzip2{a} cpp{a} cpp-4.4{a} dpkg-dev{a}
+fakeroot{a} g++{a} g++-4.4{a} gcc{a} gcc-4.4{a} libalgorithm-diff-perl{a}
+libalgorithm-diff-xs-perl{a} libalgorithm-merge-perl{a} libc-dev-bin{a}
+libc6-dev{a} libdb4.7{a} libdpkg-perl{a} libgmp3c2{a} libgomp1{a}
+libmpfr4{a} libstdc++6-4.4-dev{a} libtimedate-perl{a} linux-libc-dev{a}
+make{a} manpages-dev{a} patch{a} perl{a} perl-modules{a} ruby1.8-dev{a}
+rubygems rubygems1.8{a} 
+
+--------------
+
+Add the bin path of the gem directory:
+
+  mb7@vipecs:~/ecs$ export PATH=/var/lib/gems/1.8/bin:$PATH
+
+Please consider to place the export command into an appropriate startup file (i.e.
+.profile or .bashrc).
+
+--------------
+
+You must install the bundler gem:
+
+  mb7@vipecs:~i/ecs$ sudo gem install bundler
+  ...
+
+--------------
+
+You have to call:
+
+  mb7@vipecs:~/ecs$ sudo bundle install
+  ...
+
+Please standby until all further prerequisites are installed. Have an eye
+especially when it comes to installing the so called "native extensions". At
+any time during this installation process there should be no error message. 
+
+--------------
+
+Setting up the development database:
+
+  mb7@vipecs:~/ecs$ rake db:setup
+
+--------------
+
+Now running test cases. All should go well. Otherwise see error messages.
+
+  mb7@vipecs:~/ecs$ rake test
+
+--------------
+
+Now you can start the local WEBrick HTTP-Server:
+
+  mb7@vipecs:~/ecs$ ./script/server
+
+And point your Webbrowser to: http://localhost:3000
+
+--------------
+
+Just for info:
+
+  mb7@vipecs:~/ecs$ gem list
+  
+  *** LOCAL GEMS ***
+
+  actionmailer (2.3.8)
+  actionpack (2.3.8)
+  activerecord (2.3.8)
+  activeresource (2.3.8)
+  activesupport (2.3.8)
+  bundler (1.0.10)
+  i18n (0.3.7)
+  json (1.5.1)
+  jsonpretty (1.1.0)
+  rack (1.1.0)
+  rails (2.3.8)
+  rake (0.8.7)
+  simple-navigation (3.2.0)
+  sqlite3 (1.3.3)
+  sqlite3-ruby (1.3.3)
+
+--------------
