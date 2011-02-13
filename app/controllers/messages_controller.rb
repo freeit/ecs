@@ -39,7 +39,7 @@ class MessagesController < ApplicationController
   end
 
   def show
-    if !(@memberships = Membership.receiver(@participant.id, @record.id)).empty? or sender?(@participant, @record)
+    if !(@memberships = Membership.receiver(@participant.id, @record.id)).empty? or @participant.sender?(@record)
       Message.filter(__method__, @app_namespace, @ressource_name, @record, params)
       @body = @record.body 
       show_render
@@ -70,7 +70,7 @@ class MessagesController < ApplicationController
   end
 
   def update
-    raise(Ecs::AuthorizationException, "You are not the original sender of the message.") unless sender?(@participant,@record)
+    raise(Ecs::AuthorizationException, "You are not the original sender of the message.") unless @participant.sender?(@record)
     Message.transaction do
       Message.update_rest(@record, request, @app_namespace, @ressource_name, @participant.id)
       MembershipMessage.de_populate_jointable(@record)
@@ -80,7 +80,8 @@ class MessagesController < ApplicationController
                                            @participant)
       # TODO: if there are only the headers X-EcsReceiverMemberships and
       # X-EcsReceiverCommunities are updated, then we have to generate events only
-      # for these new receivers.
+      # for these new and removed receivers. To distinguish if the message body
+      # is untouched we can use the ETag functionality.
       participants = Participant.for_message(@record).uniq
       participants.each do |participant| 
         Event.make(:event_type_name => EvType.find(3).name, :participant => participant, :message => @record)
@@ -90,7 +91,7 @@ class MessagesController < ApplicationController
   end
 
   def destroy
-    if sender?(@participant,@record)
+    if @participant.sender?(@record)
       participants = Participant.for_message(@record).uniq
       participants.each do |participant| 
         Event.make(:event_type_name => EvType.find(2).name, :participant => participant, :message => @record)
@@ -156,13 +157,6 @@ protected
   # otherwise returns nil.
   def get_membership_from_participant_and_community(participant, community)
     (participant.memberships & community.memberships)[0]
-  end
-
-
-  # test if the calling participant is the initial sender of the message in question.
-  def sender?(participant, message)
-    return true if message.sender == participant.id
-    false
   end
 
   # get a record  out of the message table

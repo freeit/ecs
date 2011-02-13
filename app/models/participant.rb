@@ -43,6 +43,18 @@ class Participant < ActiveRecord::Base
     :joins => [:memberships => {:membership_messages => :message}],
     :conditions => {:messages => {:id => message.id}}}}
   
+
+  # test if the participant is the initial sender of the message in question.
+  def sender?(message)
+    if message.sender == id
+      true
+    else
+      false
+    end
+  end
+
+    
+
   def self.generate_anonymous_participant
     cookie = Digest::SHA1.hexdigest('something secret'+Time.now.to_s+rand.to_s)
     params = {
