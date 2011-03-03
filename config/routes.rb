@@ -28,6 +28,10 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :memberships, :only => [:index]
   map.resources :events, :only => [:index],
                 :collection => { :fifo => [:get, :post] }
+  map.resources :memberships, :path_prefix => '/sys', :name_prefix => 'sys_',
+                :only => [:index]
+  map.resources :events, :path_prefix => '/sys', :name_prefix => 'sys_',
+                :only => [:index], :collection => { :fifo => [:get, :post] }
 
   begin
     Ressource.all.each do |r|
