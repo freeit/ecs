@@ -18,11 +18,15 @@
 
 class Message < ActiveRecord::Base
 
+  require 'exceptions'
+  require 'json/add/rails'
+
   has_many :memberships, :through => :membership_messages
   has_many :membership_messages, :dependent => :destroy
   has_many :events, :dependent => :destroy
   has_many :community_messages, :dependent => :destroy
   has_many :communities, :through => :community_messages
+  has_one  :auth, :dependent => :destroy
   belongs_to :ressource
 
   named_scope :for_participant, lambda {|participant| {
@@ -94,14 +98,45 @@ class Message < ActiveRecord::Base
   end
 
   # get a record  out of the message table
-  def self.get_record(id, app_namespace, ressource_name)
+  def self.get_record(msg_id, app_namespace, ressource_name)
+    outdated_auth_token = nil
     ressource = Ressource.find_by_namespace_and_ressource(app_namespace, ressource_name)
     raise(Ecs::InvalidRessourceUriException, "*** ressource uri error ***") unless ressource
-    record = find_by_id_and_ressource_id(id.to_i, ressource.id)
-    raise ActiveRecord::RecordNotFound, "Invalid resource id" if !record or record.removed
-    record
+    if app_namespace == 'sys' and ressource_name == 'auths'
+      # processing a auths resource
+      if msg_id =~ /\D/
+        # asking a one touch token with the hash key
+        auth = Auth.find_by_one_touch_hash(msg_id)
+        if auth
+          record = auth.message
+        else
+          raise ActiveRecord::RecordNotFound, "Invalid auths hash"
+        end
+      else
+        unless record = find_by_id_and_ressource_id(msg_id.to_i, ressource.id)
+          raise ActiveRecord::RecordNotFound, "Invalid auths id"
+        end
+      end
+    else
+      record = find_by_id_and_ressource_id(msg_id.to_i, ressource.id)
+    end
+    if !record or record.removed
+      raise ActiveRecord::RecordNotFound, "Invalid resource id"
+    else
+      [record, outdated_auth_token]
+    end
   end
 
+  def test_auths_validation_window
+    b = JSON.parse(body)
+    sov = Time.parse(b["sov"]) 
+    eov = Time.parse(b["eov"]) 
+    if sov > Time.now or eov < Time.now
+      false
+    else
+      true
+    end
+  end
 
   # If the record has zero relations to memberships and is not tagged for
   # postrouting it will be deleted.
@@ -126,6 +161,53 @@ class Message < ActiveRecord::Base
     end
   end
 
+  # Request body has to be in json format.
+  # Preprocess request body if it's a /sys/auths resource.
+  # Generate a one touch token (hash)
+  def self.post_create_auths_resource(record, participant)
+    ttl = 60.seconds
+    unless Mime::Type.lookup(record.content_type).to_sym == :json
+      raise Ecs::InvalidMimetypeException, "Body format has to be in JSON"
+    end
+    begin
+      b = JSON.parse(record.body)
+    rescue JSON::ParserError
+      raise Ecs::InvalidMessageException, "Invalid JSON body"
+    end
+    bks = b.keys
+    unless bks.include?("url")
+      raise Ecs::InvalidMessageException, "Missing url key"
+    end
+    #msg_id = URI.split(b["url"])[5][1..-1].sub(/[^\/]*\/[^\/]*\/(.*)/, '\1').to_i
+    #begin
+    #  Message.find(msg_id)
+    #rescue ActiveRecord::RecordNotFound
+    #  raise Ecs::InvalidMessageException, $!.to_s
+    #end
+    case
+      when (!bks.include?("sov") and !bks.include?("eov"))
+        b["sov"] = Time.now.xmlschema
+        b["eov"] = (Time.now + ttl).xmlschema
+      when (bks.include?("sov") and !bks.include?("eov"))
+        b["eov"] = (Time.parse(b["sov"]) + ttl).xmlschema
+      when (!bks.include?("sov") and bks.include?("eov"))
+        if Time.parse(b["eov"]) < Time.now
+          raise Ecs::InvalidMessageException, 'eov time is younger then current time'
+        end
+        b["sov"] = Time.now.xmlschema
+      when (bks.include?("sov") and bks.include?("eov"))
+        if (Time.parse(b["eov"]) < Time.now) or (Time.parse(b["eov"]) < Time.parse(b["sov"]))
+          raise Ecs::InvalidMessageException, 'invalid times either in sov or eov'
+        end
+    end 
+    b["abbr"] = participant.organization.abrev
+    one_touch_token_hash = Digest::SHA1.hexdigest(rand.to_s+Time.now.to_s)
+    b["hash"] = one_touch_token_hash
+    record.body = JSON.pretty_generate(b)
+    record.auth = Auth.new :one_touch_hash => one_touch_token_hash
+    record.save!
+    self
+  end
 
 private
 

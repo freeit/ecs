@@ -9,7 +9,14 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110103145840) do
+ActiveRecord::Schema.define(:version => 20110303145153) do
+
+  create_table "auths", :force => true do |t|
+    t.string   "one_touch_hash"
+    t.integer  "message_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "communities", :force => true do |t|
     t.string   "name"

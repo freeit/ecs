@@ -22,4 +22,6 @@ module Ecs
   class AuthorizationException < StandardError; end
   class InvalidMessageException < StandardError; end
   class InvalidRessourceUriException < StandardError; end
+  class InvalidMimetypeException < StandardError; end
+  class OuttimedAuthsException < StandardError; end
 end

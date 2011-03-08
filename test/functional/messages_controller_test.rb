@@ -272,6 +272,19 @@ class MessagesControllerTest < ActionController::TestCase
     assert_equal "Hallo Ihr da im Radio.", @response.body.strip
   end
 
+
+  test "create_auths" do
+    @request.env["RAW_POST_DATA"] = '{"url":"http://freeit.de/course1"}'
+    @request.env["CONTENT_TYPE"] = "application/json"
+    @request.env["X-EcsAuthId"] = identities(:stgt_id1).name
+    @request.env["X-EcsReceiverMemberships"] = memberships(:ulm_wuv).id.to_s
+    @request.set_REQUEST_URI("/sys/auths")
+    mm_count = MembershipMessage.all.count
+    post :create
+    assert_response 201
+  end
+
+
 # anonymous clients
 #
 

@@ -39,13 +39,18 @@ class MessagesController < ApplicationController
   end
 
   def show
-    if !(@memberships = Membership.receiver(@participant.id, @record.id)).empty? or @participant.sender?(@record)
+    @memberships = Membership.receiver(@participant.id, @record.id)
+    case
+    when outtimed_auths_resource_by_non_owner?
+      raise Ecs::OuttimedAuthsException, 'Authorization token outtimed'
+    when (!@memberships.empty? or @participant.sender?(@record))
       Message.filter(__method__, @app_namespace, @ressource_name, @record, params)
       @body = @record.body 
       show_render
     else
       raise Ecs::AuthorizationException, 
-            "You are not allowed to access this resource, because you are not the original sender or a receiver."
+            "You are not allowed to access this resource, " +
+            "because you are not the original sender or a receiver."
     end
   end
 
@@ -56,7 +61,6 @@ class MessagesController < ApplicationController
     Message.transaction do
       Message.filter(__method__, @app_namespace, @ressource_name, @record, params)
       @record = Message.create_rest(request, @app_namespace, @ressource_name, @participant.id)
-      logger.info "@record="+@record.inspect
       MembershipMessage.populate_jointable(@record,
                                            request.headers["X-EcsReceiverMemberships"],
                                            request.headers["X-EcsReceiverCommunities"],
@@ -65,7 +69,11 @@ class MessagesController < ApplicationController
       participants.each do |participant| 
         Event.make(:event_type_name => EvType.find(1).name, :participant => participant, :message => @record)
       end if @record.ressource.events
+      if @app_namespace == 'sys' and @ressource_name == 'auths'
+        Message.post_create_auths_resource(@record,@participant)
+      end
     end
+    @body = @record.body
     create_render
   end
 
@@ -86,12 +94,21 @@ class MessagesController < ApplicationController
       participants.each do |participant| 
         Event.make(:event_type_name => EvType.find(3).name, :participant => participant, :message => @record)
       end if @record.ressource.events
+      if @app_namespace == 'sys' and @ressource_name == 'auths'
+        Message.post_create_auths_resource(@record,@participant)
+      end
     end
     update_render
   end
 
   def destroy
-    if @participant.sender?(@record)
+    @memberships = Membership.receiver(@participant.id, @record.id)
+    case
+    when outtimed_auths_resource_by_non_owner?
+      MembershipMessage.delete_relations(@record, @memberships)
+      Message.destroy_unlinked_and_not_postrouted(@record)
+      raise Ecs::OuttimedAuthsException, 'Authorization token outtimed'
+    when @participant.sender?(@record)
       participants = Participant.for_message(@record).uniq
       participants.each do |participant| 
         Event.make(:event_type_name => EvType.find(2).name, :participant => participant, :message => @record)
@@ -99,7 +116,6 @@ class MessagesController < ApplicationController
       MembershipMessage.delete_relations(@record)
       @record.destroy_ressource
     else
-      @memberships = Membership.receiver(@participant.id, @record.id)
       raise ActiveRecord::RecordNotFound if @memberships.empty?
       MembershipMessage.delete_relations(@record, @memberships)
       Message.destroy_unlinked_and_not_postrouted(@record)
@@ -143,6 +159,29 @@ protected
     end
   end
 
+  def outtimed_auths_resource_by_non_owner?
+    @app_namespace  == 'sys' and
+    @ressource_name == 'auths' and
+    !@memberships.empty? and
+    !@participant.sender?(@record) and
+    !@record.test_auths_validation_window
+  end
+
+
+  def valid_auths_resource_fetched_by_non_owner?
+    @app_namespace  == 'sys' and
+    @ressource_name == 'auths' and
+    !@memberships.empty? and
+    !@participant.sender?(@record) and
+    test_auths_validation_window(@record)
+  end
+
+  def valid_no_auths_resource_fetched_by_non_owner?
+    @app_namespace  != 'sys' and
+    @ressource_name != 'auths' and
+    !@memberships.empty? and
+    !@participant.sender?(@record)
+  end
 
   # inititialize instance variables dependent from request object
   def late_initialize
@@ -160,8 +199,8 @@ protected
   end
 
   # get a record  out of the message table
-  def get_record
-    @record = Message.get_record(params[:id], @app_namespace, @ressource_name)
+  def get_record(record = params[:id], app_namespace=@app_namespace, ressource_name=@ressource_name)
+    @record, @outdated_auth_token = Message.get_record(record, app_namespace, ressource_name)
   end
     
   def index_render
@@ -194,8 +233,11 @@ protected
     location = request.protocol + request.host
     location += request.headers["SCRIPT_NAME"] if request.headers.has_key?("SCRIPT_NAME")
     location += request.path.gsub(/\/*$/,'') + "/" + @record.id.to_s
-    render :text => "", :layout => false, :status => 201,
-           :location => location
+    if @app_namespace == 'sys' and @ressource_name == 'auths'
+      render :text => @body, :layout => false, :status => 201, :location => location
+    else
+      render :text => "", :layout => false, :status => 201, :location => location
+    end
   end
 
   def update_render
@@ -225,5 +267,6 @@ protected
       head :not_modified
     end
   end
+
 
 end

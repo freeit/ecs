@@ -24,6 +24,7 @@ class ApplicationController < ActionController::Base
 
   require 'exceptions'
   require 'pp'
+  require 'json/add/rails'
 
   #rescue_from Exception, :with => :rescue_body_500
   rescue_from Ecs::InvalidMessageException, :with => :rescue_body_400
@@ -31,8 +32,10 @@ class ApplicationController < ActionController::Base
   rescue_from Ecs::AuthorizationException, :with => :rescue_body_403
   rescue_from Ecs::InvalidRessourceUriException, :with => :rescue_body_404
   rescue_from ActiveRecord::RecordNotFound, :with => :rescue_body_404
-  rescue_from ActiveRecord::StatementInvalid, :with => :rescue_body_415
+  rescue_from Ecs::OuttimedAuthsException, :with => :rescue_body_409
   rescue_from ActiveRecord::StaleObjectError, :with => :rescue_body_409
+  rescue_from ActiveRecord::StatementInvalid, :with => :rescue_body_415
+  rescue_from Ecs::InvalidMimetypeException, :with => :rescue_body_415
 
   #helper :all # include all helpers, all the time
   #protect_from_forgery # See ActionController::RequestForgeryProtection for details
@@ -55,6 +58,7 @@ class ApplicationController < ActionController::Base
     @participant = nil
     @memberships = nil
     @cookie = nil
+    @outdated_auth_token = nil
   end
 
 protected
@@ -145,6 +149,7 @@ protected
     logger.error $!.to_s
     if $!.to_s.blank?
       render :text => "The format of the client data is not supported by the server.\nIf your format is right please doublecheck the encoding !\nIt has to be UTF8 !\n", :layout => false, :status => 415
+    else
       render :text => "#{$!.to_s}\n" , :layout => false, :status => 415
     end
 
