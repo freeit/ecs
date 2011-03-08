@@ -20,7 +20,7 @@ class Community < ActiveRecord::Base
   has_many  :memberships, :order => :id
   has_many  :participants, :through => :memberships do
     def with_reduced_attributes_and_without_anonymous
-      find  :all, :select => "participants.id, name, description, email, dns",
+      find  :all, :select => "participants.id, name, description, email, dns, organization_id",
             :conditions => ["participants.anonymous = ?", false],
             :order => "participants.id ASC"
     end

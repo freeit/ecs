@@ -35,7 +35,9 @@ class MembershipsController < ApplicationController
             :participants => membership.community.participants.with_reduced_attributes_and_without_anonymous.map {|p|
               attribs = p.attributes
               attribs["mid"] = Membership.for_participant_id_and_community_id(p.id, membership.community.id).first.id
+              attribs["org"] = {"name" => p.organization.name, "abbr" => p.organization.abrev}
               attribs.delete("id")
+              attribs.delete("organization_id")
               attribs
             }
           }
