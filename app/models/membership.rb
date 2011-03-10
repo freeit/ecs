@@ -32,6 +32,11 @@ class Membership < ActiveRecord::Base
     :joins => [:participant, {:membership_messages => :message}], 
     :conditions => { :participants => { :id => participant_id }, :messages => { :id => message_id } } } }
 
+  named_scope :receivers, lambda { |message_id| {
+    :joins => [:membership_messages => :message], 
+    :select => :memberships.to_s+".id" + ", community_id, participant_id",
+    :conditions => { :messages => { :id => message_id } } } }
+
   named_scope :for_participant_id, lambda { |participant_id| {
     :joins => [:participant],
     :conditions => { :participants => { :id => participant_id } } } }

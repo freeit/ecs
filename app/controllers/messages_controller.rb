@@ -21,7 +21,7 @@ class MessagesController < ApplicationController
   before_filter :late_initialize
   before_filter :authentication
   before_filter :add_cookie_header
-  before_filter :get_record, :only => [:show, :update, :destroy]
+  before_filter :get_record, :only => [:show, :update, :destroy, :receivers]
   after_filter  :touch_participant_ttl
 
   def initialize
@@ -130,6 +130,35 @@ class MessagesController < ApplicationController
 
   def lifo
     queue(:queue_type => :lifo)
+  end
+
+  def receivers
+    memberships = []
+    if @participant.sender?(@record)
+      Membership.receivers(@record.id).each do |membership|
+        memberships << 
+          lambda { |memb|
+              attribs = memb.attributes
+              id = attribs["id"]; attribs.delete("id"); attribs["mid"] = id
+              id = attribs["community_id"]; attribs.delete("community_id"); attribs["cid"] = id
+              id = attribs["participant_id"]; attribs.delete("participant_id"); attribs["pid"] = id
+              attribs["itsyou"] = memb.participant_id == @participant.id
+              attribs
+          }.call(membership)
+      end
+    else
+      raise Ecs::AuthorizationException, 
+            "You are not allowed to access this resource, " +
+            "because you are not the original sender."
+    end
+    if memberships.empty?
+      render :text => "", :content_type => "application/json", :layout => false
+    else
+      respond_to do |format|
+        format.json  { render :json  => JSON.pretty_generate(memberships) }
+        format.xml   { render :xml   => memberships }
+      end
+    end
   end
 
 protected
