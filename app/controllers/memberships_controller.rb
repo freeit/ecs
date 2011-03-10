@@ -31,7 +31,11 @@ class MembershipsController < ApplicationController
     memberships = []
     Membership.for_participant_id(@participant.id).each do |membership|
         memberships << 
-          { :community => membership.community_with_reduced_attributes.attributes,
+          { :community => lambda { |memb|
+                            attribs = memb.community_with_reduced_attributes.attributes
+                            id = attribs["id"]; attribs.delete("id"); attribs["cid"] = id
+                            attribs
+                          }.call(membership),
             :participants => membership.community.participants.with_reduced_attributes_and_without_anonymous.map {|p|
               attribs = p.attributes
               attribs["mid"] = Membership.for_participant_id_and_community_id(p.id, membership.community.id).first.id

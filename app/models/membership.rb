@@ -19,7 +19,10 @@
 class Membership < ActiveRecord::Base
   belongs_to  :participant
   belongs_to  :community
-  belongs_to  :community_with_reduced_attributes, :class_name => "Community", :foreign_key => "community_id", :select => "name, description"
+  belongs_to  :community_with_reduced_attributes,
+              :class_name => "Community",
+              :foreign_key => "community_id",
+              :select => "name, description, id"
   has_many    :messages, :through => :membership_messages
   has_many    :membership_messages, :dependent => :destroy
 
