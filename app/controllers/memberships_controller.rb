@@ -47,10 +47,13 @@ class MembershipsController < ApplicationController
             }
           }
     end
-
-    respond_to do |format|
-      format.json { render :json => JSON.pretty_generate(memberships) }
-      format.xml  { render :xml  => memberships }
+    if memberships.empty?
+      render :text => "", :content_type => "application/json", :layout => false
+    else
+      respond_to do |format|
+        format.json { render :json => JSON.pretty_generate(memberships) }
+        format.xml  { render :xml  => memberships }
+      end
     end
   end
 
