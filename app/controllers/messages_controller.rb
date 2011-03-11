@@ -31,11 +31,16 @@ class MessagesController < ApplicationController
   def index
     senderonly = params["senderonly"].blank? ? nil : params["senderonly"]
     receiveronly = params["receiveronly"].blank? ? nil : params["receiveronly"]
+    all = params["all"].blank? ? nil : params["all"]
     case
     when senderonly
       @list = Message.for_participant_sender(@participant).for_resource(@app_namespace,@ressource_name).for_not_removed.uniq
     when receiveronly
       @list = Message.for_participant_receiver(@participant).for_resource(@app_namespace,@ressource_name).for_not_removed.uniq
+    when all
+      list1 = Message.for_participant_sender(@participant).for_resource(@app_namespace,@ressource_name).for_not_removed
+      list2 = Message.for_participant_receiver(@participant).for_resource(@app_namespace,@ressource_name).for_not_removed
+      @list = list1.concat(list2).uniq
     else
       @list = Message.for_participant_receiver(@participant).for_resource(@app_namespace,@ressource_name).for_not_removed.uniq
     end
