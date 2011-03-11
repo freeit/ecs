@@ -29,10 +29,24 @@ class Message < ActiveRecord::Base
   has_one  :auth, :dependent => :destroy
   belongs_to :ressource
 
-  named_scope :for_participant, lambda {|participant| {
+  named_scope :for_participant_receiver, lambda {|participant| {
     :joins => {:membership_messages => {:membership => :participant}},
     :order => "id ASC",
     :conditions => {:participants => {:id => participant.id}}}}
+
+  named_scope :for_participant_sender, lambda {|participant| {
+    :order => "id ASC",
+    :conditions => {:sender => participant.id}}}
+
+  named_scope :for_not_removed, lambda { {
+    :order => "id ASC",
+    :conditions => {:removed => false}}}
+
+  named_scope :for_resource, lambda {|namespace, name| {
+    :joins => :ressource,
+    :order => "id ASC",
+    :conditions => {:ressources => {:namespace => namespace, :ressource => name}}}}
+
 
   def validate
     if content_type.blank? then
@@ -50,18 +64,6 @@ class Message < ActiveRecord::Base
     Message.destroy_ressource(self)
   end
 
-  # return messages from a given namespace, ressource name and participant
-  # TODO: Find a way to eliminate the ".uniq" method ...
-  # I.e. doing it in the database. This can't be coded in activerecord DSL
-  # rigtht now. You have to use plain SQL.
-  def self.index_rest(namespace, ressource, participant)
-    find(:all,
-      :joins => [:ressource, { :membership_messages => { :membership => :participant } }], 
-      :conditions => { :participants => { :id => participant.id },
-                       :ressources => { :namespace => namespace, :ressource => ressource },
-                       :removed => false },
-      :order => :messages.to_s+".id ASC").uniq
-  end
 
   # return first messages from fifo/lifo queue
   def self.fifo_lifo_rest(namespace, ressource, participant_id, options={:queue_type => :fifo})

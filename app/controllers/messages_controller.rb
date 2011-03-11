@@ -29,12 +29,16 @@ class MessagesController < ApplicationController
   end
 
   def index
-    @list = Message.index_rest(@app_namespace, @ressource_name, @participant)
+    senderonly = params["senderonly"].blank? ? nil : params["senderonly"]
+    case
+    when senderonly
+      @list = Message.for_participant_sender(@participant).for_resource(@app_namespace,@ressource_name).for_not_removed.uniq
+    else
+      @list = Message.for_participant_receiver(@participant).for_resource(@app_namespace,@ressource_name).for_not_removed.uniq
+    end
     @list.each do |li| 
       @body << @ressource_name << "/" << li.id.to_s << "\n"
     end unless @list.empty?
-    # render only if ":contoller => :messages" in routes.rb file
-    # otherwise call render out of the namespace specific controller.
     index_render
   end
 

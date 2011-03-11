@@ -113,7 +113,7 @@ License along with ECS. If not, see <http://www.gnu.org/licenses/>.
 <%= link_to 'Back', admin_participants_path %>
 </p>
 
-<% unless (messages =  Message.for_participant(@participant).uniq).blank? %>
+<% unless (messages =  Message.for_participant_receiver(@participant).uniq).blank? %>
 <p>
 <div class="show-output-width">
 <div class="table-border">
