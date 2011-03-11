@@ -30,9 +30,12 @@ class MessagesController < ApplicationController
 
   def index
     senderonly = params["senderonly"].blank? ? nil : params["senderonly"]
+    receiveronly = params["receiveronly"].blank? ? nil : params["receiveronly"]
     case
     when senderonly
       @list = Message.for_participant_sender(@participant).for_resource(@app_namespace,@ressource_name).for_not_removed.uniq
+    when receiveronly
+      @list = Message.for_participant_receiver(@participant).for_resource(@app_namespace,@ressource_name).for_not_removed.uniq
     else
       @list = Message.for_participant_receiver(@participant).for_resource(@app_namespace,@ressource_name).for_not_removed.uniq
     end
