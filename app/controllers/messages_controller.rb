@@ -21,7 +21,7 @@ class MessagesController < ApplicationController
   before_filter :late_initialize
   before_filter :authentication
   before_filter :add_cookie_header
-  before_filter :get_record, :only => [:show, :update, :destroy, :receivers]
+  before_filter :get_record, :only => [:show, :update, :destroy, :receivers, :details]
   after_filter  :touch_participant_ttl
 
   def initialize
@@ -145,32 +145,59 @@ class MessagesController < ApplicationController
   end
 
   def receivers
-    memberships = []
     if @participant.sender?(@record)
-      Membership.receivers(@record.id).each do |membership|
-        memberships << 
-          lambda { |memb|
-              attribs = memb.attributes
-              id = attribs["id"]; attribs.delete("id"); attribs["mid"] = id
-              id = attribs["community_id"]; attribs.delete("community_id"); attribs["cid"] = id
-              id = attribs["participant_id"]; attribs.delete("participant_id"); attribs["pid"] = id
-              attribs["itsyou"] = memb.participant_id == @participant.id
-              attribs
-          }.call(membership)
+      receivers = []
+      Membership.receivers(@record.id).each do |recv|
+        receivers << { 
+          :mid => recv.id,
+          :cid => recv.community_id,
+          :itsyou => recv.participant_id == @participant.id
+        }
+      end
+      senders = []
+      Membership.senders(@participant,@record).each do |sender|
+        senders << sender.id
       end
     else
       raise Ecs::AuthorizationException, 
             "You are not allowed to access this resource, " +
             "because you are not the original sender."
     end
-    if memberships.empty?
+    if receivers.empty?
       render :text => "", :content_type => "application/json", :layout => false
     else
       respond_to do |format|
-        format.json  { render :json  => JSON.pretty_generate(memberships) }
-        format.xml   { render :xml   => memberships }
+        format.json  { render :json  => JSON.pretty_generate(receivers) }
+        format.xml   { render :xml   => receivers }
       end
     end
+  end
+
+  def details
+    if @participant.sender?(@record)
+      receivers=[]
+      senders=[]
+      Membership.receivers(@record.id).each do |recv|
+        receivers << { :mid => recv.id, :cid => recv.community_id, :itsyou => recv.participant_id == @participant.id }
+        senders << Membership.find_by_participant_id_and_community_id(@participant.id, recv.community_id).id
+      end
+      content_type = @record.content_type
+      details = { :receivers => receivers, :senders => senders, :content_type => content_type }
+    else
+      raise Ecs::AuthorizationException, 
+            "You are not allowed to access this resource, " +
+            "because you are not the original sender."
+    end
+    if receivers.empty?
+      render :text => "", :content_type => "application/json", :layout => false
+    else
+      respond_to do |format|
+        format.json  { render :json  => JSON.pretty_generate(details) }
+        format.xml   { render :xml   => details }
+      end
+    end
+    
+    
   end
 
 protected

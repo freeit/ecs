@@ -39,7 +39,7 @@ ActionController::Routing::Routes.draw do |map|
       :name_prefix => r.namespace+'_', :controller => 'messages',
       :only => [:index, :show, :create, :update, :destroy],
       :collection => { :fifo => [:get, :post], :lifo => [:get, :post] },
-      :member => { :receivers => :get } 
+      :member => { :receivers => :get, :details => :get } 
     end
   rescue ActiveRecord::StatementInvalid 
     Rails.logger.info "DB error: #{$!}"

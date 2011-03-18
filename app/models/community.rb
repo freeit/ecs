@@ -28,4 +28,14 @@ class Community < ActiveRecord::Base
   has_many :community_messages, :dependent => :destroy
   validates_presence_of :name
   validates_uniqueness_of :name
+
+  named_scope :for_participant, lambda { |participant| {
+    :joins => [:memberships => :participant],
+    :conditions => { :participants => { :id => participant.id }}}}
+
+  named_scope :for_message, lambda { |message| {
+    :joins => [:memberships => {:membership_messages => :message}],
+    :conditions => { :messages => { :id => message.id }}}}
+
+
 end

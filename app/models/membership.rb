@@ -44,4 +44,16 @@ class Membership < ActiveRecord::Base
   named_scope :for_participant_id_and_community_id, lambda { |participant_id,community_id| {
     :joins => [:participant, :community],
     :conditions => { :participants => { :id => participant_id }, :communities => { :id => community_id } } } }
+
+  def self.senders(participant, message)
+    sender_mids=[]
+    Community.for_participant(participant).for_message(message).uniq.each do |comm|
+      sender_mids << Membership.find_by_participant_id_and_community_id(participant.id,comm.id)
+    end
+    if sender_mids.empty?
+      []
+    else
+      sender_mids.flatten
+    end
+  end
 end
