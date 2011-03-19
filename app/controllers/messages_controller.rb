@@ -211,15 +211,22 @@ protected
   end
 
   def index_querystring_list
-    sender = params["sender"].blank? ? nil : params["sender"]
-    receiver = params["receiver"].blank? ? nil : params["receiver"]
-    all = params["all"].blank? ? nil : params["all"]
+    header_querystrings = request.headers["X-EcsQueryStrings"]
+    if header_querystrings
+      hqs = header_querystrings.split(",").map{|s| s.strip}.map{|s| s.split("=").map{|s| s.strip}}
+      sender = (m=hqs.assoc("sender")) ? m[1] : nil
+      receiver = (m=hqs.assoc("receiver")) ? m[1] : nil
+      all = (m=hqs.assoc("all")) ? m[1] : nil
+    end
+    sender ||= params["sender"] ? params["sender"] : nil
+    receiver ||= params["receiver"] ? params["receiver"] : nil
+    all ||= params["all"] ? params["all"] : nil
     case
-    when sender
+    when sender == "true"
       @list = Message.for_participant_sender(@participant).for_resource(@app_namespace,@ressource_name).for_not_removed.uniq
-    when receiver
+    when receiver == "true"
       @list = Message.for_participant_receiver(@participant).for_resource(@app_namespace,@ressource_name).for_not_removed.uniq
-    when all
+    when all == "true"
       list1 = Message.for_participant_sender(@participant).for_resource(@app_namespace,@ressource_name).for_not_removed
       list2 = Message.for_participant_receiver(@participant).for_resource(@app_namespace,@ressource_name).for_not_removed
       @list = list1.concat(list2).uniq
