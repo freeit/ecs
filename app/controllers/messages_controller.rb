@@ -285,13 +285,6 @@ protected
     #@ar_model= @ar_model_name.constantize
   end
 
-
-  # returns a membership of the relation between a participant and a community
-  # otherwise returns nil.
-  def get_membership_from_participant_and_community(participant, community)
-    (participant.memberships & community.memberships)[0]
-  end
-
   # get a record  out of the message table
   def get_record(record_id = params["id"], app_namespace=@app_namespace, ressource_name=@ressource_name)
     @record, @outdated_auth_token = Message.get_record(record_id, app_namespace, ressource_name)
@@ -308,7 +301,7 @@ protected
     x_ecs_sender= ""
     @memberships.each do |memb| 
       x_ecs_receiver_communities << memb.community.id.to_s 
-      x_ecs_sender << get_membership_from_participant_and_community(Participant.find(@record.sender), memb.community).id.to_s 
+      x_ecs_sender << Membership.find_by_participant_id_and_community_id(Participant.find(@record.sender).id, memb.community.id).id.to_s 
       unless @memberships.last == memb
         x_ecs_receiver_communities << ","
         x_ecs_sender << "," 
