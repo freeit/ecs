@@ -21,7 +21,7 @@ class MessagesController < ApplicationController
   before_filter :late_initialize
   before_filter :authentication
   before_filter :add_cookie_header
-  before_filter :get_record, :only => [:show, :update, :destroy, :receivers, :details]
+  before_filter :get_record, :only => [:show, :update, :destroy, :receivers]
   after_filter  :touch_participant_ttl
 
   def initialize
@@ -29,21 +29,7 @@ class MessagesController < ApplicationController
   end
 
   def index
-    sender = params["sender"].blank? ? nil : params["sender"]
-    receiver = params["receiver"].blank? ? nil : params["receiver"]
-    all = params["all"].blank? ? nil : params["all"]
-    case
-    when sender
-      @list = Message.for_participant_sender(@participant).for_resource(@app_namespace,@ressource_name).for_not_removed.uniq
-    when receiver
-      @list = Message.for_participant_receiver(@participant).for_resource(@app_namespace,@ressource_name).for_not_removed.uniq
-    when all
-      list1 = Message.for_participant_sender(@participant).for_resource(@app_namespace,@ressource_name).for_not_removed
-      list2 = Message.for_participant_receiver(@participant).for_resource(@app_namespace,@ressource_name).for_not_removed
-      @list = list1.concat(list2).uniq
-    else
-      @list = Message.for_participant_receiver(@participant).for_resource(@app_namespace,@ressource_name).for_not_removed.uniq
-    end
+    index_querystring_list
     @list.each do |li| 
       @body << @ressource_name << "/" << li.id.to_s << "\n"
     end unless @list.empty?
@@ -174,21 +160,22 @@ class MessagesController < ApplicationController
   end
 
   def details
-    if @participant.sender?(@record)
-      receivers=[]
-      senders=[]
-      Membership.receivers(@record.id).each do |recv|
-        receivers << { :mid => recv.id, :cid => recv.community_id, :itsyou => recv.participant_id == @participant.id }
-        senders << Membership.find_by_participant_id_and_community_id(@participant.id, recv.community_id).id
-      end
-      content_type = @record.content_type
-      details = { :receivers => receivers, :senders => senders, :content_type => content_type }
+    details = nil
+    no_data_to_render = false
+    if params["id"]
+      # member subresource
+      details = member_subresource_details(params["id"])
+      if !details[:receivers] then  no_data_to_render = true end
     else
-      raise Ecs::AuthorizationException, 
-            "You are not allowed to access this resource, " +
-            "because you are not the original sender."
+      index_querystring_list
+      # collection subresource
+      details ||= []
+      @list.each do |li| 
+        details << member_subresource_details(li.id)
+      end unless @list.empty?
+      if details.empty? then  no_data_to_render = true end
     end
-    if receivers.empty?
+    if no_data_to_render
       render :text => "", :content_type => "application/json", :layout => false
     else
       respond_to do |format|
@@ -196,11 +183,50 @@ class MessagesController < ApplicationController
         format.xml   { render :xml   => details }
       end
     end
-    
-    
   end
 
 protected
+
+  def member_subresource_details(record_id)
+    get_record(record_id)
+    if @participant.sender?(@record)
+      receivers=[]
+      senders=[]
+      Membership.receivers(@record.id).each do |recv|
+        receivers << { :mid => recv.id, :cid => recv.community_id, :itsyou => recv.participant_id == @participant.id }
+        senders << { :mid => Membership.find_by_participant_id_and_community_id(@participant.id, recv.community_id).id }
+      end
+      content_type = @record.content_type
+      url = @ressource_name + "/" + record_id.to_s
+      { :receivers => receivers,
+        :senders => senders,
+        :content_type => content_type,
+        :url => url
+      }
+    else
+      raise Ecs::AuthorizationException, 
+            "You are not allowed to access this resource, " +
+            "because you are not the original sender."
+    end
+  end
+
+  def index_querystring_list
+    sender = params["sender"].blank? ? nil : params["sender"]
+    receiver = params["receiver"].blank? ? nil : params["receiver"]
+    all = params["all"].blank? ? nil : params["all"]
+    case
+    when sender
+      @list = Message.for_participant_sender(@participant).for_resource(@app_namespace,@ressource_name).for_not_removed.uniq
+    when receiver
+      @list = Message.for_participant_receiver(@participant).for_resource(@app_namespace,@ressource_name).for_not_removed.uniq
+    when all
+      list1 = Message.for_participant_sender(@participant).for_resource(@app_namespace,@ressource_name).for_not_removed
+      list2 = Message.for_participant_receiver(@participant).for_resource(@app_namespace,@ressource_name).for_not_removed
+      @list = list1.concat(list2).uniq
+    else
+      @list = Message.for_participant_receiver(@participant).for_resource(@app_namespace,@ressource_name).for_not_removed.uniq
+    end
+  end
 
   def queue(queue_options = {:queue_type => :fifo})
     max_tries = 5
@@ -267,8 +293,8 @@ protected
   end
 
   # get a record  out of the message table
-  def get_record(record = params[:id], app_namespace=@app_namespace, ressource_name=@ressource_name)
-    @record, @outdated_auth_token = Message.get_record(record, app_namespace, ressource_name)
+  def get_record(record_id = params["id"], app_namespace=@app_namespace, ressource_name=@ressource_name)
+    @record, @outdated_auth_token = Message.get_record(record_id, app_namespace, ressource_name)
   end
     
   def index_render
