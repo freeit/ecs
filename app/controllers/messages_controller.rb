@@ -205,7 +205,6 @@ protected
   end
 
   def queue(queue_options = {:queue_type => :fifo})
-    max_tries = 5
     begin
       MembershipMessage.transaction do
         @record = Message.fifo_lifo_rest(@app_namespace, @ressource_name,@participant.id, queue_options)
@@ -222,9 +221,8 @@ protected
         end
       end
     rescue ActiveRecord::StaleObjectError, ActiveRecord::RecordNotFound => error
-      logger.info "**** Concurrent access at queue ressource (max_tries=#{max_tries})."
-      max_tries-= 1
-      retry unless max_tries <= 0
+      logger.info "**** Concurrent access at queue resource."                                                                               
+      logger.info "**** Error: #{error.to_s}."                                                                                              
       raise
     end
   end
