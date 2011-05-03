@@ -32,6 +32,7 @@ class ApplicationController < ActionController::Base
   rescue_from Ecs::AuthorizationException, :with => :rescue_body_403
   rescue_from Ecs::InvalidRessourceUriException, :with => :rescue_body_404
   rescue_from ActiveRecord::RecordNotFound, :with => :rescue_body_404
+  rescue_from ActionController::RoutingError , :with => :rescue_body_404
   rescue_from Ecs::OuttimedAuthsException, :with => :rescue_body_409
   rescue_from ActiveRecord::StaleObjectError, :with => :rescue_body_409
   rescue_from ActiveRecord::StatementInvalid, :with => :rescue_body_415
