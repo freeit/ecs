@@ -6,3 +6,4 @@ gem "json"
 gem "jsonpretty"
 gem "simple-navigation"
 gem "i18n", '0.3.7'
+gem "ruby-debug"
