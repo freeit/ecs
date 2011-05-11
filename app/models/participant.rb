@@ -53,6 +53,9 @@ class Participant < ActiveRecord::Base
     end
   end
 
+  def receiver?(message)
+    not Membership.receiver(id, message.id).empty? 
+  end
     
 
   def self.generate_anonymous_participant

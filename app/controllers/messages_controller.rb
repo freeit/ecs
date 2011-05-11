@@ -189,24 +189,27 @@ protected
 
   def member_subresource_details(record_id)
     get_record(record_id)
-    if @participant.sender?(@record)
+    if @participant.sender?(@record) or @participant.receiver?(@record)
       receivers=[]
       senders=[]
       Membership.receivers(@record.id).each do |recv|
-        receivers << { :mid => recv.id, :cid => recv.community_id, :itsyou => recv.participant_id == @participant.id }
-        senders << { :mid => Membership.find_by_participant_id_and_community_id(@participant.id, recv.community_id).id }
+        receivers << { :pid => recv.participant.id, :mid => recv.id, :cid => recv.community_id,
+                       :itsyou => recv.participant_id == @participant.id }
+        senders << { :mid => Membership.find_by_participant_id_and_community_id(@record.sender, recv.community_id).id }
       end
       content_type = @record.content_type
       url = @ressource_name + "/" + record_id.to_s
       { :receivers => receivers,
         :senders => senders,
         :content_type => content_type,
-        :url => url
+        :url => url,
+        :owner => { :itsyou => @participant.id == @record.sender,
+                    :pid => @record.sender }
       }
     else
       raise Ecs::AuthorizationException, 
             "You are not allowed to access this resource, " +
-            "because you are not the original sender."
+            "because you are not the original sender or a receiver."
     end
   end
 
