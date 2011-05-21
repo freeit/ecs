@@ -39,7 +39,7 @@ class MessagesController < ApplicationController
   def show
     @memberships = Membership.receiver(@participant.id, @record.id)
     case
-    when outtimed_auths_resource_by_non_owner?
+    when @record.outtimed_auths_resource_by_non_owner?(@app_namespace, @resource_name, @memberships, @participant)
       raise Ecs::OuttimedAuthsException, 'Authorization token outtimed'
     when (!@memberships.empty? or @participant.sender?(@record))
       Message.filter(__method__, @app_namespace, @ressource_name, @record, params)
@@ -102,7 +102,7 @@ class MessagesController < ApplicationController
   def destroy
     @memberships = Membership.receiver(@participant.id, @record.id)
     case
-    when outtimed_auths_resource_by_non_owner?
+    when @record.outtimed_auths_resource_by_non_owner?(@app_namespace, @resource_name, @memberships, @participant)
       MembershipMessage.delete_relations(@record, @memberships)
       Message.destroy_unlinked_and_not_postrouted(@record)
       raise Ecs::OuttimedAuthsException, 'Authorization token outtimed'
@@ -234,29 +234,6 @@ protected
     end
   end
 
-  def outtimed_auths_resource_by_non_owner?
-    @app_namespace  == 'sys' and
-    @ressource_name == 'auths' and
-    !@memberships.empty? and
-    !@participant.sender?(@record) and
-    !@record.test_auths_validation_window
-  end
-
-
-  def valid_auths_resource_fetched_by_non_owner?
-    @app_namespace  == 'sys' and
-    @ressource_name == 'auths' and
-    !@memberships.empty? and
-    !@participant.sender?(@record) and
-    test_auths_validation_window(@record)
-  end
-
-  def valid_no_auths_resource_fetched_by_non_owner?
-    @app_namespace  != 'sys' and
-    @ressource_name != 'auths' and
-    !@memberships.empty? and
-    !@participant.sender?(@record)
-  end
 
   # inititialize instance variables dependent from request object
   def late_initialize

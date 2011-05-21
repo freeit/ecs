@@ -211,6 +211,30 @@ class Message < ActiveRecord::Base
     self
   end
 
+  def outtimed_auths_resource_by_non_owner?(app_namespace, resource_name, memberships, participant)
+    app_namespace  == 'sys' and
+    resource_name == 'auths' and
+    !memberships.empty? and
+    !participant.sender?(self) and
+    !test_auths_validation_window
+  end
+
+
+  def valid_auths_resource_fetched_by_non_owner?(app_namespace, resource_name, memberships, participant)
+    app_namespace  == 'sys' and
+    resource_name == 'auths' and
+    !memberships.empty? and
+    !participant.sender?(@record) and
+    test_auths_validation_window
+  end
+
+  def valid_no_auths_resource_fetched_by_non_owner?(app_namespace, resource_name, memberships, participant)
+    app_namespace  != 'sys' and
+    ressource_name != 'auths' and
+    !memberships.empty? and
+    !participant.sender?(@record)
+  end
+
 private
 
   # Helper function for create and update 
