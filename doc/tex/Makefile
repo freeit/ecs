@@ -4,7 +4,7 @@ IMAGE_FILES:=$(wildcard images/*)
 INTERMEDIATE_FILES:= *.ac[nr] *.alg *.gl[gos] *.idx *.ilg *.ind *.ist *.aux *.lof *.out *.toc *.log *.dvi *.4ct *.4tc *.haux *.hind *.htoc *.idv *.lg *.nlo *.nls *.tmp *.xref html/* 
 TARGET_FILES:= main.ps.[0-9][0-9][0-9] main.ps.gz main.dvi main.pdf
 
-.PHONY: dvi ps pdf vdvi vps vpdf fax html distclean clean
+.PHONY: dvi ps pdf vdvi vps vpdf fax html txt ftp distclean clean
 
 dvi: main.dvi
 ps: main.ps.gz
@@ -34,7 +34,6 @@ main.pdf: ps
 	ps2pdf main.ps main.pdf
 	gzip -f main.ps
 	rm -f main.ps
-	ncftpput -m -f ~/.ncftp/prosite.dat -C main.pdf /htdocs/documents/ecsa/ecsa.pdf
 
 vdvi: dvi
 	xdvi main.dvi&
@@ -58,4 +57,10 @@ html: dvi
 	htlatex main.tex "main,graphics-130" "" "-dhtml/"
 	mv html/* ../html
 	mv ../html/main.html ../html/index.html
+txt: html
+	links -dump  ../html/index.html > main.txt
+
+ftp: pdf txt
 	(cd ../html ; for i in *; do ncftpput -m -f ~/.ncftp/prosite.dat -C $$i /htdocs/documents/ecsa/$$i ; done)
+	ncftpput -m -f ~/.ncftp/prosite.dat -C main.pdf /htdocs/documents/ecsa/ecsa.pdf
+	ncftpput -m -f ~/.ncftp/prosite.dat -C main.txt /htdocs/documents/ecsa/ecsa.txt
