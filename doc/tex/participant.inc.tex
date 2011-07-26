@@ -53,10 +53,10 @@ easily permit
 In order to take part in an ECSA network a participant has to communicate with
 the ECS and other participants in different ways.
 
-\subsection{Retrieving courselink information}\index{participant!retrieving courselink}
+\subsection{Retrieving course data}\index{participant!retrieving coursedata}
 Figure \ref{fig:participant_courselink_retrieval} on page
 \pageref{fig:participant_courselink_retrieval} shows the communication procedure
-how a LMS retrieve a courselink:
+how a LMS retrieve a coursedata:
 \begin{description}
   \item[1] First the LMS fetches (POST)  an event message from its event resource
   (\rs{/events/fifo}) of ECS , which gives it a new or updated course
@@ -74,7 +74,7 @@ how a LMS retrieve a courselink:
   successfully, it deletes (DELETE) the message \rs{/campusconnect/course/5}
   received in 1.1 on ECS.
 \end{description}
-This procedure guranties that the appropriate course data will remain on the
+This procedure guarantiee that the appropriate course data will remain on the
 proxy until the LMS has successfully fetched the data, because after the
 message \rs{/campusconnect/course/5} has been deleted from the LMS the proxy
 will be informed from the ECS, so that the real course data  could be deleted.

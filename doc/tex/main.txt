@@ -16,7 +16,7 @@ Contents
      2.1.5 Ressource extensions / Alterations
      2.1.6 Web interfaces
     2.2 Communication procedures / scenarios
-     2.2.1 Retrieving courselink information
+     2.2.1 Retrieving course data
 
 Chapter 1
 Overview
@@ -150,10 +150,10 @@ Participants
    In order to take part in an ECSA network a participant has to communicate
    with the ECS and other participants in different ways.
 
-    2.2.1 Retrieving courselink information
+    2.2.1 Retrieving course data
 
    Figure 2.1 on page 19 shows the communication procedure how a LMS retrieve
-   a courselink:
+   a coursedata:
 
    1
            First the LMS fetches (POST) an event message from its event
@@ -182,7 +182,7 @@ Participants
            successfully, it deletes (DELETE) the message
            /campusconnect/course/5 received in 1.1 on ECS.
 
-   This procedure guranties that the appropriate course data will remain on
+   This procedure guarantiee that the appropriate course data will remain on
    the proxy until the LMS has successfully fetched the data, because after
    the message /campusconnect/course/5 has been deleted from the LMS the
    proxy will be informed from the ECS, so that the real course data could be
