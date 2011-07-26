@@ -193,11 +193,11 @@ Participants
      ----------------------------------------------------------------------
 
    PIC
-   Figure 2.1: LMS courselink retrieval communication procedure.
+   Figure 2.1: LMS coursedata retrieval communication procedure.
 
      ----------------------------------------------------------------------
 
 List of Figures
 
    1.1 ECSA components.
-   2.1 LMS courselink retrieval
+   2.1 LMS coursedata retrieval
