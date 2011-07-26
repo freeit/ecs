@@ -1,0 +1,88 @@
+\chapter{Overview}
+
+An ECSA\nc{ECSA}{elearning community service architecture}\index{ECSA!overview}
+is a service architecture for elearning based webservices. It provides
+mechanisms for communication and authorization between elearning systems among
+each other and management systems. This is implemented via a
+MOM\nc{MOM}{message orientated middleware}.
+
+The ECSA is derived from an architecture style for distributed systems
+called REST. 
+
+It will put major efforts that only recognized Web standards/protocols
+and web components are used, whereby a high degree of compatibility
+and connectivity is achieved. See figure \ref{fig:ecsa_components}
+for ECSA components.
+
+\begin{figure}
+\noindent \begin{centering}
+\includegraphics{../diagrams/ecsa_overview}
+\par\end{centering}
+\caption[ECSA components.]{\label{fig:ecsa_components}Components of an ECSA network.}
+\end{figure}
+
+An ECSA builds up of three primary components:
+\begin{itemize}
+  \item The ECS (elearning community server)\nc{ECS}{elearning community
+  server} serves the core functionionality of an ECSA network. It provides
+  named message resources to allow communication between all participants. 
+  \item An ECC (elearning community client)\nc{ECC}{elearning community client}
+  is a participant\nc{participant}{a client in ECSA network} in an ECSA
+  network. It has to be registered at ECS and must be able to talk to the ECS
+  as a REST based client. This participant normally has a native implementation
+  of the ECS interface. Our favourite ECCs are LMSs (learning management
+  systems).
+  \item An ECP (elearning community proxy)\nc{ECP}{elearning community proxy}
+  represents a special kind of participant. It serves as a proxy for a none
+  ECSA compliant system so that such a system is able to participate in an ECSA
+  network without ever knowing about it. 
+\end{itemize}
+
+\section{Sample usage scenario}
+
+Suppose you have several LMSs (learning management systems)\nc{LMS}{learning
+management system} and want to share courses between them. You decide not
+to interchange the real courses but only course links which consist of some
+meta data of the appropriate course especially a link formed by an URL pointing
+to the real course so you can call it through the WWW e.g.: 
+
+\verb!http://ilias.freeit.de/goto.php?target=pg_26_43&client_id=ecs2}!
+
+Now it's possible for each LMS to communicate the released courses by the
+resources provided from the ECS to an explicit LMS (point to point) or to a
+community of LMSs (point to multipoint). 
+
+Because of the uniform application interface -- there are only GET,
+PUT, DELETE and POST operations -- receiving participants can fetch
+messages through a GET on the resource URL or sending messages
+by a POST on the resource URL (with some additional query parameters
+or header variables to point to the appropriate receivers).
+
+To illustrate this we use the simple ECC application \cmd{curl} to
+send a message from one participant to another:
+
+\begin{verbatim}
+curl -i -H 'X-EcsAuthId: pid01' \
+        -H 'X-EcsReceiverMemberships: mid02' \
+        -H 'Content-Type: application/json' \
+        -X POST \
+        -d '{
+              "name": "Mathematics II",
+              "url" : "http://ilias...?target=pg_26_43&client_id=ecs2",
+              ...
+            }' \
+        http://ecs.freeit.de/campusconnect/courselinks
+\end{verbatim}
+In order to receive a message (in fifo mode) the receiving
+participant may call:
+\begin{verbatim}
+curl -i -H 'X-EcsAuthId: pid02' \
+        -H 'Accept: text/plain; application/json' \
+        -X GET \
+        http://ecs.freeit.de/campusconnect/courselinks/fifo
+\end{verbatim}
+
+Of course, there are several ways to operate on a resource. For details
+on using the resources located on an ECS and the different parameters
+(http headers, query strings) please see XXX for details.
+

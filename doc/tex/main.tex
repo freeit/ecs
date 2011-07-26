@@ -1,0 +1,55 @@
+\documentclass[12pt,oneside]{book}
+\usepackage[german,english]{babel}
+\usepackage{textcomp,marvosym}
+\usepackage[utf8]{inputenc}
+%\usepackage[T1]{fontenc}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{chngpage}
+\usepackage{ifthen}
+\usepackage{makeidx}
+%\usepackage{xkeyval, xfor, amsgen}
+%\usepackage[toc,nonumberlist,acronym]{glossaries}
+\usepackage{nomencl}
+%\usepackage{pstricks}
+%\usepackage{showkeys, showidx}
+\usepackage{todonotes}
+\usepackage{listings}
+\usepackage{varioref}
+\usepackage{url}
+%\usepackage[colorlinks, linkcolor=black, urlcolor=black]{hyperref}
+\usepackage{hyperref}
+\sloppy
+\parindent0mm
+\parskip\medskipamount
+
+\newcommand{\qu}[1]{\begin{quote}{\raggedright #1}\end{quote}} % quotation
+\newcommand{\cmd}[1]{\textit{#1}} % commands like shell commands
+\newcommand{\nc}[1]{\nomenclature{#1}} % nomenclature
+\newcommand{\rs}[1]{\texttt{#1}} % resource
+\newcommand{\ur}[1]{\texttt{#1}} % url
+
+
+\title{ECSA -- Elearning Community Service Architecture}
+\author{Heiko Bernlöhr}
+\date{April, 12, 2011}
+
+\makeindex
+\makenomenclature
+\renewcommand{\nomname}{List of Symbols}
+\begin{document}
+\hypersetup{%
+  pdftitle={ECSA},
+  pdfauthor={Heiko Bernlöhr},
+  pdfkeywords={middleware} {mom}
+}
+\maketitle
+\tableofcontents
+
+\include{overview.inc}
+\include{participant.inc}
+
+\listoffigures
+\printnomenclature
+\printindex
+\end{document}
