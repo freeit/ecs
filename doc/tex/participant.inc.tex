@@ -1,6 +1,7 @@
 \chapter{Participants}\index{participant}
 A particpant represents a legal client in an ECSA network.
 
+\hypertarget{participant-basic-requirements}{}
 \section{Basic functionalities and requirements}
 \subsection{Technology / Architecture}\index{participant!technology}\index{participant!architecture}
 \begin{itemize}
@@ -53,22 +54,24 @@ easily permit
 In order to take part in an ECSA network a participant has to communicate with
 the ECS and other participants in different ways.
 
-\subsection{Retrieving course data}\index{participant!retrieving coursedata}
-Figure \ref{fig:participant_courselink_retrieval} on page
-\pageref{fig:participant_courselink_retrieval} shows the communication procedure
-how a LMS retrieve a coursedata:
+\subsection{Retrieving resource representations indirectly}\index{participant!retrieving resources indirectly}
+Figure \ref{fig:participant_coursedata_retrieval_indirectly} on page
+\pageref{fig:participant_coursedata_retrieval_indirectly} shows the
+communication procedure how a LMS retrieves a resource representation
+(coursedata) indirectly through ECS. Indirect addressing takes place when the
+ECS returns resource representations with  \hv{Content-Type: text/uri-list}
+(\href{http://tools.ietf.org/html/rfc2483#section-5}{rfc2483}).
 \begin{description}
   \item[1] First the LMS fetches (POST)  an event message from its event resource
   (\rs{/events/fifo}) of ECS , which gives it a new or updated course
   resource meta data URL on ECS. Supposing this would be \rs{/campusconnect/course/5}.
-  \item[1.1] Now the LMS takes this URL and fetch (GET) it from ECS (the LMS
-  only fetch the message via a GET, so that the message will still be there).
-  Only now the LMS get the real resource URL to fetch the desired course data
-  from the proxy. This url maybe itself an encoded url:
-  \ur{https://.../58680c636c8bc4a16e047d758f2e7773118fa141}
+  \item[1.1] Now the LMS takes this URL and fetches (GET) it from ECS (the LMS
+  only fetches the message via a GET, so that the message will still be there).
+  Only now the LMS gets the real resource URL to fetch the desired course data
+  from the proxy. This url maybe an encoded url like \ur{https://.../58680c636c8bc4a16e047d758f2e7773118fa141}
   \item[1.2] Next the LMS fetches (POST) a one touch token from the \rs{/auths}
   resource of ECS in case the proxy use it for authorization against ECS.
-  \item[1.3] Then the LMS get (GET) the actual course data from the proxy URL
+  \item[1.3] Then the LMS gets (GET) the actual course data from the proxy URL
   provided by the received message in 1.1 . 
   \item[1.4] Until it will get back the course resource representation in 1.3
   successfully, it deletes (DELETE) the message \rs{/campusconnect/course/5}
@@ -76,15 +79,17 @@ how a LMS retrieve a coursedata:
 \end{description}
 This procedure guarantiee that the appropriate course data will remain on the
 proxy until the LMS has successfully fetched the data, because after the
-message \rs{/campusconnect/course/5} has been deleted from the LMS the proxy
-will be informed from the ECS, so that the real course data  could be deleted.
+message \rs{/campusconnect/course/5} has been deleted by the LMS the proxy
+will be informed by the ECS, so that the real course data  could be deleted.
 Of course this information occurs only if all addressed participants has
 successfully fetched the message on the proxy and if the
 \rs{/campusconnect/course} resource is not tagged as a postrouted resource. 
 
 \begin{figure}[p]
 \noindent \begin{centering}
-\includegraphics{../diagrams/participant_course_retrieval}
+\includegraphics{../diagrams/participant_course_retrieval_indirectly}
 \par\end{centering}
-\caption[LMS coursedata retrieval]{\label{fig:participant_courselink_retrieval}LMS coursedata retrieval communication procedure.}
+\caption[Indirect LMS coursedata
+retrieval]{\label{fig:participant_coursedata_retrieval_indirectly}Indirect LMS
+coursedata retrieval communication procedure.}
 \end{figure}
