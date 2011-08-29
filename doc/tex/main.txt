@@ -1,7 +1,7 @@
 ECSA - Elearning Community Service Architecture
 
    Heiko Bernlo:hr
-   April, 12, 2011
+   2011
 
 Contents
 
@@ -16,7 +16,20 @@ Contents
      2.1.5 Ressource extensions / Alterations
      2.1.6 Web interfaces
     2.2 Communication procedures / scenarios
-     2.2.1 Retrieving course data indirectly
+     2.2.1 Retrieving resource representations indirectly
+   3 ECS
+    3.1 Community selfrouting
+    3.2 Authentication
+     3.2.1 Anonymous participants
+    3.3 System resources
+     3.3.1 Events
+     3.3.2 Memberships
+     3.3.3 Auths
+   4 Developing
+    4.1 Tools
+     4.1.1 Scriptable REST commandline client
+    4.2 CampusConnect
+     4.2.1 Simulating LSFproxy
 
 Chapter 1
 Overview
@@ -150,11 +163,12 @@ Participants
    In order to take part in an ECSA network a participant has to communicate
    with the ECS and other participants in different ways.
 
-    2.2.1 Retrieving course data indirectly
+    2.2.1 Retrieving resource representations indirectly
 
-   Figure 2.1 on page 19 shows the communication procedure how a LMS retrieve
-   coursedata indirectly through ECS. Indirect addressing takes place when
-   the ECS returns messages with Content-Type: text/uri-list (rfc2483).
+   Figure 2.1 on page 20 shows the communication procedure how a LMS
+   retrieves a resource representation (coursedata) indirectly through ECS.
+   Indirect addressing takes place when the ECS returns resource
+   representations with Content-Type: text/uri-list (rfc2483).
 
    1
            First the LMS fetches (POST) an event message from its event
@@ -197,6 +211,340 @@ Participants
    Figure 2.1: Indirect LMS coursedata retrieval communication procedure.
 
      ----------------------------------------------------------------------
+
+Chapter 3
+ECS
+
+   The elearning community server (ECS) is designed as a message oriented
+   middleware (MOM) and is implemented as a REST conform application.
+
+   Because the ECS was born in an elearning context the following definition
+   shows consideration of that. Nevertheless the ECS could be used in other
+   areas of responsibility.
+
+   The ECS groups its participants in so called "communities". Participants
+   could address each other only if they share a community. Therefore they
+   could address an explicit participant, a participant list or the whole
+   members of the community (see ECS API for details).
+
+   All participants have to register at the ECS. Every registered participant
+   has access to at least three system resources (/system/memberships,
+   /system/events, /system/auths) to get informed and take part at a ECSA
+   network. To design/map your specific application communication you can
+   create as many application resources you want.
+
+  3.1 Community selfrouting
+
+   If community selfrouting is activated at the participant (administration
+   area) you can decide if you also want to receive the message which you
+   send to an appropriate community, i.e. you get an event notification (if
+   events on this resource is activated) and you get it listed by its list
+   resource and could access it through its queue resource. Of course, as
+   sender of the message you can always access it by its message resource.
+
+  3.2 Authentication
+
+   All participants have to be authenticated in order to use ECS services. A
+   participant is deemed to be authenticated if the X-EcsAuthId header is set
+   and the ECS knows it. The real authentication take place in front of the
+   ECS, normally at the Webserver (Proxy). But this depends on
+   configuration/installation of ECS:
+        +-----------+    .
+        |   ECS     |   /_\
+        | (RAILS)   |    |
+        +-----------+    |
+        |Rack Module|    |
+        | (optional)|    |
+        +-----------+    | Message
+        | Webserver |    | Flow
+        |  (Proxy)  |    |
+        +-----------+    |
+              |          |
+        +-----------+    |
+        |Participant|    |
+        +-----------+
+
+   Currently supported authentication methods:
+     * Basic Auth
+     * X.509 certificates
+
+    3.2.1 Anonymous participants
+
+   The creation of a new anonymous participant automatically takes place by
+   every call to an ECS resource if the calling participant didn't set
+   X-EcsAuthId or Cookie header, by setting a Set-Cookie header in the
+   response. On subsequent calls the participant has to provide this cookie
+   in a Cookie header in order to be identified as the previously calling
+   participant. Additionally those participants were automatically joined to
+   the public community. Further their lifetime will be limited and all
+   resources will be silently deleted after this lifetime becomes zero. With
+   succesional accesses to ECS this lifetime will be refreshed. For general
+   cookie handling see also HTTP cookies. See also examples.
+
+  3.3 System resources
+
+    3.3.1 Events
+
+   Provides a general queue which accumulates the resource tasks: creation,
+   deletion and renewal. Available representations are application/json and
+   application/xml. It's recommended to use the events queue to supervise all
+   your possible application specific resources. Further you only have to
+   poll the events queue in order to supervise all your application specific
+   ressources and this further take down system load.
+
+   Remark: If you wisely decide to use the events queue to supervise your
+   application specific ressources you have to manage the validity of events
+   queue yourself, i.e. you shouldn't additionally poll your application
+   specific ressources directly, because then you will get stale events in
+   the events queue.
+
+   /sys/events
+           GET provides a list of events for the appropriate calling
+           participant. Optionally the query string parameter count could be
+           used to limit the amount of returned events.
+
+   /sys/events/fifo
+           GET provides an event (the oldest one) for the appropriate calling
+           participant. Optionally the query string parameter count could be
+           used to extend the amount of returned events. POST provides an
+           event (the oldest one) for the appropriate calling participant and
+           removes it from the events queue. Optionally the query string
+           parameter count could be used to extend the amount of returned
+           events.
+
+   Following a sample representation in JSON:
+   1  [
+   2    {
+   3      "status": "created",
+   4      "ressource": "numlab/exercises/7"
+   5    },
+   6    {
+   7      "status": "destroyed",
+   8      "ressource": "numlab/exercises/3"
+   9    }
+   10  ]
+
+    3.3.2 Memberships
+
+   Provides information of the affiliation of the calling participant to the
+   available communities. Available representations are application/json and
+   application/xml.
+
+   /sys/memberships
+           GET provides a list of memberships for the appropriate calling
+           participant. It implies all participants joining an appropriate
+           community including the caller itself.
+
+   With the itsyou key the caller of the /sys/memberships resource will be
+   informed which participant in the different communities is assigned to
+   him.
+
+   Following a sample representation in JSON:
+   1  [
+   2    {
+   3      "community": {
+   4        "name": "cc_courselinks",
+   5        "description": "CampusConnect courselinks."
+   6      },
+   7      "participants": [
+   8        {
+   9          "name": "ILIAS-ECS Client 1",
+   10          "itsyou": true,
+   11          "org": {
+   12            "name": "Leifos",
+   13            "abbr": "LEI"
+   14          },
+   15          "mid": 1,
+   16          "description": "Development participant.",
+   17          "dns": "n/a",
+   18          "email": "meyer@leifos.com"
+   19        },
+   20        {
+   21          "name": "FreeIT.de Testparticipant",
+   22          "itsyou": false,
+   23          "org": {
+   24            "name": "FreeIT Softwaredevelopment.",
+   25            "abbr": "FreeIT"
+   26          },
+   27          "mid": 2,
+   28          "description": "A general test participant.",
+   29          "dns": "n/a",
+   30          "email": "Heiko.Bernloehr@FreeIT.de"
+   31        },
+   32        {
+   33          "name": "ILIAS-ECS Client 2",
+   34          "itsyou": false,
+   35          "org": {
+   36            "name": "Leifos",
+   37            "abbr": "LEI"
+   38          },
+   39          "mid": 3,
+   40          "description": "",
+   41          "dns": "n/a",
+   42          "email": "meyer@leifos.com"
+   43        }
+   44      ]
+   45    }
+   46  ]
+
+    3.3.3 Auths
+
+   This means authorization through one touch tokens. Provides a mechanism to
+   grant each participant authorization to consume services from any
+   service-providing-participant in an ECS network.
+
+   The interface is the same as for application resources. If you want to
+   create an authorization token, you have to provide at least a json
+   formated URL (authorization context) as body text:
+   1  curl ... -X POST -d '{"url":"https://freeit.de/mycourse"}' https://.../sys/auths
+
+   and you will get back something like this:
+   1  {
+   2    "hash": "5a944e72346e6e3102d32ccfecc18862d23e1dc0",
+   3    "sov": "2011-03-08T23:25:27+01:00",
+   4    "eov": "2011-03-08T23:26:27+01:00",
+   5    "url": "https://freeit.de/testcourse",
+   6    "abbr": "LEI"
+   7  }
+
+   hash
+           povides the authorization token (one touch token)
+
+   sov
+           stands for start of validation
+
+   eov
+           stands for end of validation
+
+   url
+           provides the authorization context
+
+   abbr
+           provides an abbreviation of the participant which has been created
+           the authorization token (deprecated)
+
+   You're allowed to set the sov and/or eov to distinguish the validity
+   period of the authorization token. If you do not, the validity period is
+   set to one minute starting at current time.
+
+   The recommended way to fetch an authorization token when knowing the one
+   touch hash:
+   1  curl .... -X DELETE https://.../sys/auths/<one touch hash>
+
+   This will return the auths representation (same structure/form as when
+   creating; see above) and delete it server side. If the authorization token
+   is outtimed, i.e. the current time is not between sov and eov, you will
+   get back a return code 409 (conflict) and following descriptional text in
+   the body: Authorization token outtimed.
+
+Chapter 4
+Developing
+
+  4.1 Tools
+
+    4.1.1 Scriptable REST commandline client
+
+   As the ECSA is derived from an architecture style for distributed systems
+   called REST, the major tool for developing in an ECSA context is a
+   scriptable REST commandline client. An excellent choice would be curl.
+
+      Monitoring resources
+
+   Following code monitors the events resource every 5 seconds and
+   shows/highlights the differences in the output:
+   1  watch -n 5 --differences=cumulative --no-title \
+   2  'curl -i --cacert /path/to/freeit-root-ca.cert.pem \
+   3       --cert /path/to/participant.cert.pem \
+   4       --key /path/to/participant.key.pem \
+   5       --pass "secure pwd" \
+   6       -X GET https://ecscc.uni-stuttgart.de/ra/ecs-test/sys/events'
+
+  4.2 CampusConnect
+
+    4.2.1 Simulating LSFproxy
+
+   To develop without a running LSFproxy you could simply provide static
+   resources inside the ECSA network. At ECS you have to create the specific
+   CampusConnect resources (/campusconnect/courses,
+   /campusconnect/directory_trees and /campusconnect/course_members). The
+   essential LSFproxy communication to ECS could be substituted with curl
+   scripts/calls. In presence of a LSFproxy, its resource representations has
+   to be retrieved indirectly through ECS (see 2.2.1 on page 17 for
+   retrieving course representations). For each development party you should
+   create a separate LSFproxy participant at ECS. For easier usage we provide
+   a shell script (LSFproxy.sh) simulating an LSFproxy. Please have a look at
+   the top of the script and adjust the appropriate lines. For development we
+   provide an ECS, LSFproxy certificates and LSFproxy data. Please contact us
+   (info[at]freeit[dot]de). Of course you can drive all parts by your own and
+   have to fill out the lines by your personal data.
+
+      POST new LSFproxy data
+
+   To POST new LSFproxy course to a community participant (e.g. a LMS) call
+   the script like this:
+   1    ./lsfproxy.sh -c -k 11 -u 1 create
+   2  
+   3    -c ... you want to work with courses
+   4    -k ... you address membership 11
+   5    -u ... static course data with DATA_URL1 (see top of LSFproxy.sh)
+   6    create ... POST this message to ECS (URL of ECS see top of LSFproxy.sh)
+
+   For a new LSFproxy directory-tree:
+   1    ./lsfproxy.sh -t -k 11 -u 3 create
+   2  
+   3    -t ... you want to work with trees
+   4    -k ... you address membership 11
+   5    -u ... static tree data with DATA_URL3 (see top of LSFproxy.sh)
+   6    create ... POST this message to ECS (URL of ECS see top of LSFproxy.sh)
+
+   You always have to choose the appropriate DATA_URL (see top of
+   LSFproxy.sh) that correspondents to the resource you want to operate on
+   ECS.
+
+   After you have created some messages, you can of course DELETE them (you
+   are the owner). But first you have to distinguish the resource id on ECS.
+   Either you have noticed the id at creation time looking at the provided
+   Location header from ECS or you request first a resource listing and
+   second request a resource representation from this id checking it is the
+   right one before deleting it:
+   1    ./lsfproxy.sh -c get
+   2    -c ... you want to work with courses
+   3    get ... get a list of the resource
+   4  
+   5    ./lsfproxy.sh -c -i 2445 delete
+   6    -c ... you want to work with courses
+   7    -i ... resource id
+   8    delete ... delete resource
+
+   In order to update a resource call the script like this:
+   1    ./lsfproxy.sh -c -i 2445 -k 11 -u 4 update
+   2    -c ... you want to work with courses
+   3    -i ... resource id
+   4    -k ... you address membership 11
+   5    -u ... static course data with DATA_URL4
+   6    update ... POST this message to ECS
+
+   You can also show your memberships by calling:
+   1    ./lsfproxy.sh -s get
+
+   And last you can show a usage help text by calling the script with no
+   parameters and options or with the -h option:
+   1    ./lsfproxy.sh -h
+   2  
+   3    Usage: lsfproxy.sh options <create|get|delete|update>
+   4    Options:
+   5      -c ... courses
+   6      -m ... course members
+   7      -t ... directory trees
+   8      -s ... memberships
+   9      -i <resource id>
+   10      -k <membership id>
+   11      -u <data url id>
+   12      -v   ... verbose output
+   13      -h|? ... usage
+
+   Please remember, this script is only a help utility, not full-fledged
+   application. So please adjust it to your needs.
 
 List of Figures
 

@@ -3,6 +3,7 @@
 \usepackage{textcomp,marvosym}
 \usepackage[utf8]{inputenc}
 %\usepackage[T1]{fontenc}
+\usepackage{fancyvrb}
 \usepackage{color}
 \usepackage{graphicx}
 \usepackage{chngpage}
@@ -27,14 +28,16 @@
 \newcommand{\cmd}[1]{\textit{#1}} % commands like shell commands
 \newcommand{\nc}[1]{\nomenclature{#1}} % nomenclature
 \newcommand{\rs}[1]{\texttt{#1}} % resource
-\newcommand{\hv}[1]{\texttt{#1}} % header variable
+\newcommand{\hv}[1]{\texttt{#1}} % header variable/value
+\newcommand{\kw}[1]{\texttt{#1}} % keyword
 \newcommand{\ur}[1]{\texttt{#1}} % url
 \newcommand{\gq}[1]{\glqq{#1}\grqq} % german left quotes
-
+\DefineVerbatimEnvironment{code}{Verbatim}{numbers=left} % source code or command lines
+\DefineVerbatimEnvironment{txtg}{Verbatim}{} % text graphic
 
 \title{ECSA -- Elearning Community Service Architecture}
 \author{Heiko Bernlöhr}
-\date{April, 12, 2011}
+\date{2011}
 
 \makeindex
 \makenomenclature
@@ -50,7 +53,8 @@
 
 \include{overview.inc}
 \include{participant.inc}
-%\include{ecs.inc}
+\include{ecs.inc}
+\include{developing.inc}
 
 \listoffigures
 \printnomenclature
