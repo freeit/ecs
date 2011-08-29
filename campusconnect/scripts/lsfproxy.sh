@@ -161,6 +161,7 @@ else
   if [ -z $CID ]; then 
     curl $CURL_OPTIONS --cacert $CACERT --cert $CERT --key $KEY --pass $PASS \
        -H "Accept: text/uri-list" \
+       -H "X-EcsQueryStrings: all=true" \
        -X GET $ECS_URL/$RESOURCE
   else
     url=`curl -s --cacert $CACERT --cert $CERT --key $KEY --pass $PASS \
@@ -174,7 +175,7 @@ else
       echo "ERROR: Invalid resource id"
       exit 99
     else
-      curl $CURL_OPTIONS  -H "X-EcsQueryStrings: all=true" -X GET $url
+      curl $CURL_OPTIONS -X GET $url
     fi
   fi
 fi
