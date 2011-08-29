@@ -37,7 +37,7 @@ and LSFproxy data. Please contact us (info[at]freeit[dot]de). Of course you can
 drive all parts by your own and have to fill out the lines by your personal
 data.
 
-\subsubsection{POST new LSFproxy data}
+\subsubsection{Create}
 To POST new LSFproxy course to a community participant (e.g. a LMS) call the
 script like this:
 \begin{code}
@@ -64,6 +64,7 @@ download these static representations from the URLs assigned to the DATA\_URL
 constatnts at top of the script and setup your own static LSFproxy data
 representations at your local web sever.
 
+\subsubsection{Get, Delete and Update}
 After you have created some messages, you can of course DELETE them (you are
 the owner). But first you have to distinguish the resource id on ECS. Either
 you have noticed the id at creation time looking at the provided \hv{Location}
@@ -90,11 +91,13 @@ In order to update a resource call the script like this:
   update ... POST this message to ECS
 \end{code}
 
+\subsubsection{Show Memberships}
 You can also show your memberships by calling:
 \begin{code}
   ./lsfproxy.sh -s get
 \end{code}
 
+\subsubsection{Show Usage}
 And last you can show a usage help text by calling the script with no
 parameters and options or with the \kw{-h} option:
 \begin{code}

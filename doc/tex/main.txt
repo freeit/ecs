@@ -478,7 +478,7 @@ Developing
    (info[at]freeit[dot]de). Of course you can drive all parts by your own and
    have to fill out the lines by your personal data.
 
-      POST new LSFproxy data
+      Create
 
    To POST new LSFproxy course to a community participant (e.g. a LMS) call
    the script like this:
@@ -503,6 +503,8 @@ Developing
    assigned to the DATA_URL constatnts at top of the script and setup your
    own static LSFproxy data representations at your local web sever.
 
+      Get, Delete and Update
+
    After you have created some messages, you can of course DELETE them (you
    are the owner). But first you have to distinguish the resource id on ECS.
    Either you have noticed the id at creation time looking at the provided
@@ -526,8 +528,12 @@ Developing
    5    -u ... static course data with DATA_URL4
    6    update ... POST this message to ECS
 
+      Show Memberships
+
    You can also show your memberships by calling:
    1    ./lsfproxy.sh -s get
+
+      Show Usage
 
    And last you can show a usage help text by calling the script with no
    parameters and options or with the -h option:
