@@ -1,0 +1,117 @@
+\hypertarget{devel}{}
+\chapter{Developing}\index{developing}
+\section{Tools}
+\subsection{Scriptable REST commandline client}
+As the ECSA is derived from an architecture style for distributed systems
+called REST, the major tool for developing in an ECSA context is a scriptable
+REST commandline client. An excellent choice would be \cmd{curl}.
+\subsubsection{Monitoring resources}
+Following code monitors the events resource every 5 seconds and
+shows/highlights the differences in the output:
+\begin{code}
+watch -n 5 --differences=cumulative --no-title \
+'curl -i --cacert /path/to/freeit-root-ca.cert.pem \
+     --cert /path/to/participant.cert.pem \
+     --key /path/to/participant.key.pem \
+     --pass "secure pwd" \
+     -X GET https://ecscc.uni-stuttgart.de/ra/ecs-test/sys/events'
+\end{code}
+
+\hypertarget{devel-campusconnect}{}
+\section{CampusConnect}
+\subsection{Simulating LSFproxy}
+To develop without a running LSFproxy you could simply provide static resources
+inside the ECSA network. At ECS you have to create the specific CampusConnect
+resources (\rs{/campusconnect/courses}, \rs{/campusconnect/directory\_trees} and
+\rs{/campusconnect/course\_members}). The essential LSFproxy communication to ECS
+could be substituted with curl scripts/calls. In presence of a LSFproxy, its
+resource representations has to be retrieved indirectly through ECS (see
+\ref{heading:participant_coursedata_retrieval_indirectly} on page
+\pageref{heading:participant_coursedata_retrieval_indirectly} for retrieving
+course representations). For each development party you should create a
+separate LSFproxy participant at ECS. For easier usage we provide a shell script
+\href{http://repo.or.cz/w/ecs.git/blob_plain/HEAD:/campusconnect/scripts/lsfproxy.sh}{(LSFproxy.sh)}
+simulating an LSFproxy. Please have a look at the top of the script and adjust
+the appropriate lines. For development we provide an ECS, LSFproxy certificates
+and LSFproxy data. Please contact us (info[at]freeit[dot]de). Of course you can
+drive all parts by your own and have to fill out the lines by your personal
+data.
+
+\subsubsection{POST new LSFproxy data}
+To POST new LSFproxy course to a community participant (e.g. a LMS) call the
+script like this:
+\begin{code}
+  ./lsfproxy.sh -c -k 11 -u 1 create
+
+  -c ... you want to work with courses
+  -k ... you address membership 11
+  -u ... static course data with DATA_URL1 (see top of LSFproxy.sh)
+  create ... POST this message to ECS (URL of ECS see top of LSFproxy.sh)
+\end{code}
+For a new LSFproxy directory-tree:
+\begin{code}
+  ./lsfproxy.sh -t -k 11 -u 3 create
+
+  -t ... you want to work with trees
+  -k ... you address membership 11
+  -u ... static tree data with DATA_URL3 (see top of LSFproxy.sh)
+  create ... POST this message to ECS (URL of ECS see top of LSFproxy.sh)
+\end{code}
+
+You always have to choose the appropriate DATA\_URL (see top of LSFproxy.sh)
+that correspondents to the resource you want to operate on ECS. Feel free to
+download these static representations from the URLs assigned to the DATA\_URL
+constatnts at top of the script and setup your own static LSFproxy data
+representations at your local web sever.
+
+After you have created some messages, you can of course DELETE them (you are
+the owner). But first you have to distinguish the resource id on ECS. Either
+you have noticed the id at creation time looking at the provided \hv{Location}
+header from ECS or you request first a resource listing and second request a
+resource representation from this id checking it is the right one before
+deleting it:
+\begin{code}
+  ./lsfproxy.sh -c get
+  -c ... you want to work with courses
+  get ... get a list of the resource
+
+  ./lsfproxy.sh -c -i 2445 delete
+  -c ... you want to work with courses
+  -i ... resource id
+  delete ... delete resource
+\end{code}
+In order to update a resource call the script like this:
+\begin{code}
+  ./lsfproxy.sh -c -i 2445 -k 11 -u 4 update
+  -c ... you want to work with courses
+  -i ... resource id
+  -k ... you address membership 11
+  -u ... static course data with DATA_URL4
+  update ... POST this message to ECS
+\end{code}
+
+You can also show your memberships by calling:
+\begin{code}
+  ./lsfproxy.sh -s get
+\end{code}
+
+And last you can show a usage help text by calling the script with no
+parameters and options or with the \kw{-h} option:
+\begin{code}
+  ./lsfproxy.sh -h
+
+  Usage: lsfproxy.sh options <create|get|delete|update>
+  Options:
+    -c ... courses
+    -m ... course members
+    -t ... directory trees
+    -s ... memberships
+    -i <resource id>
+    -k <membership id>
+    -u <data url id>
+    -v   ... verbose output
+    -h|? ... usage
+\end{code}
+Please remember, this script is only a help utility, not full-fledged
+application. So please adjust it to your needs. 
+

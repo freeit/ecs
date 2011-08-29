@@ -499,7 +499,9 @@ Developing
 
    You always have to choose the appropriate DATA_URL (see top of
    LSFproxy.sh) that correspondents to the resource you want to operate on
-   ECS.
+   ECS. Feel free to download these static representations from the URLs
+   assigned to the DATA_URL constatnts at top of the script and setup your
+   own static LSFproxy data representations at your local web sever.
 
    After you have created some messages, you can of course DELETE them (you
    are the owner). But first you have to distinguish the resource id on ECS.
