@@ -16,7 +16,34 @@ for ECSA components.
 
 \begin{figure}
 \noindent \begin{centering}
-\includegraphics{../diagrams/ecsa_overview}
+\begin{SaveVerbatim}{EcsTxtGr}
+................................................
+.                                              .
+.            community A           ........... .
+.+----+                            .  +----+ . .
+.|LMS1|-------------+ +---------------|LMS2| . .
+.+----+             | |            .  +----+ . .
+....................|.|.........................
+                    | |            .         . 
+                    | |            .         . 
+........          +-----+          .+-------+. 
+.+----+.  https   |     |          .|HIS/LSF|. 
+.|LMS4|-----------| ECS |-----------| Proxy |. 
+.+----+.          |     |          .+-------+. 
+.      .          +-----+          .         . 
+.      .            | |            . comm. C . 
+.      .            | |            .         . 
+.      .............|.|.........................
+.+----+             | |            .  +----+ . .
+.|LMS3|-------------+ +---------------|LMSn| . .
+.+----+                            .  +----+ . .
+.            community B           ........... .
+................................................
+
+\end{SaveVerbatim}
+\ifdefstring{\doctype}{text}%
+  {\UseVerbatim{EcsTxtGr}}%
+  {\includegraphics{../diagrams/ecsa_overview}}
 \par\end{centering}
 \caption[ECSA components.]{\label{fig:ecsa_components}Components of an ECSA network.}
 \end{figure}
@@ -37,7 +64,7 @@ An ECSA builds up of three primary components:
   ECSA compliant system so that such a system is able to participate in an ECSA
   network without ever knowing about it. 
 \end{itemize}
-
+ 
 \section{Sample usage scenario}
 
 Suppose you have several LMSs (learning management systems)\nc{LMS}{learning
@@ -48,41 +75,40 @@ to the real course so you can call it through the WWW e.g.:
 
 \verb!http://ilias.freeit.de/goto.php?target=pg_26_43&client_id=ecs2}!
 
-Now it's possible for each LMS to communicate the released courses by the
-resources provided from the ECS to an explicit LMS (point to point) or to a
-community of LMSs (point to multipoint). 
-
-Because of the uniform application interface -- there are only GET,
-PUT, DELETE and POST operations -- receiving participants can fetch
-messages through a GET on the resource URL or sending messages
+Now i 's possible for each LMS to communicate the released courses by the
+resour es provided from the ECS to an explicit LMS (point to point) or to a
+communi y of LMSs (point to multipoint). 
+         
+Because o  the uniform application interface -- there are only GET,
+PUT, DELET  and POST operations -- receiving participants can fetch
+messages th ough a GET on the resource URL or sending messages
 by a POST on the resource URL (with some additional query parameters
-or header variables to point to the appropriate receivers).
-
-To illustrate this we use the simple ECC application \cmd{curl} to
-send a message from one participant to another:
-
-\begin{verbatim}
-curl -i -H 'X-EcsAuthId: pid01' \
-        -H 'X-EcsReceiverMemberships: mid02' \
-        -H 'Content-Type: application/json' \
-        -X POST \
-        -d '{
-              "name": "Mathematics II",
-              "url" : "http://ilias...?target=pg_26_43&client_id=ecs2",
-              ...
-            }' \
-        http://ecs.freeit.de/campusconnect/courselinks
-\end{verbatim}
-In order to receive a message (in fifo mode) the receiving
-participant may call:
-\begin{verbatim}
-curl -i -H 'X-EcsAuthId: pid02' \
-        -H 'Accept: text/plain; application/json' \
-        -X GET \
-        http://ecs.freeit.de/campusconnect/courselinks/fifo
-\end{verbatim}
-
-Of course, there are several ways to operate on a resource. For details
+or header var ables to point to the appropriate receivers).
+               
+To illustrate t is we use the simple ECC application \cmd{curl} to
+send a message f om one participant to another:
+                  
+\begin{verbatim}   
+curl -i -H 'X-EcsAu hId: pid01' \
+        -H 'X-EcsRec iverMemberships: mid02' \
+        -H 'Content-T pe: application/json' \
+        -X POST \      
+        -d '{           
+              "name": "M thematics II",
+              "url" : "ht p://ilias...?target=pg_26_43&client_id=ecs2",
+              ...          
+            }' \            
+        http://ecs.freeit.d /campusconnect/courselinks
+\end{verbatim}              
+In order to receive a messa e (in fifo mode) the receiving
+participant may call:       
+\begin{verbatim}            
+curl -i -H 'X-EcsAuthId: pi 02' \
+        -H 'Accept: text/pl in; application/json' \
+        -X GET \             
+        http://ecs.freeit.de/ ampusconnect/courselinks/fifo
+\end{verbatim}                 
+                                
+Of course, there are several way  to operate on a resource. For details
 on using the resources located on an ECS and the different parameters
-(http headers, query strings) please see XXX for details.
-
+(http headers, query strings) plea e see XXX for details.

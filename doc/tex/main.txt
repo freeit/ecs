@@ -48,7 +48,29 @@ Overview
 
      ----------------------------------------------------------------------
 
-   PIC
+     ................................................
+     .                                              .
+     .            community A           ........... .
+     .+----+                            .  +----+ . .
+     .|LMS1|-------------+ +---------------|LMS2| . .
+     .+----+             | |            .  +----+ . .
+     ....................|.|.........................
+                         | |            .         .
+                         | |            .         .
+     ........          +-----+          .+-------+.
+     .+----+.  https   |     |          .|HIS/LSF|.
+     .|LMS4|-----------| ECS |-----------| Proxy |.
+     .+----+.          |     |          .+-------+.
+     .      .          +-----+          .         .
+     .      .            | |            . comm. C .
+     .      .            | |            .         .
+     .      .............|.|.........................
+     .+----+             | |            .  +----+ . .
+     .|LMS3|-------------+ +---------------|LMSn| . .
+     .+----+                            .  +----+ . .
+     .            community B           ........... .
+     ................................................
+     
    Figure 1.1: Components of an ECSA network.
 
      ----------------------------------------------------------------------
@@ -77,39 +99,39 @@ Overview
 
    http://ilias.freeit.de/goto.php?target=pg_26_43&client_id=ecs2}
 
-   Now it's possible for each LMS to communicate the released courses by the
-   resources provided from the ECS to an explicit LMS (point to point) or to
-   a community of LMSs (point to multipoint).
+   Now i 's possible for each LMS to communicate the released courses by the
+   resour es provided from the ECS to an explicit LMS (point to point) or to
+   a communi y of LMSs (point to multipoint).
 
-   Because of the uniform application interface - there are only GET, PUT,
-   DELETE and POST operations - receiving participants can fetch messages
-   through a GET on the resource URL or sending messages by a POST on the
-   resource URL (with some additional query parameters or header variables to
+   Because o the uniform application interface - there are only GET, PUT,
+   DELET and POST operations - receiving participants can fetch messages th
+   ough a GET on the resource URL or sending messages by a POST on the
+   resource URL (with some additional query parameters or header var ables to
    point to the appropriate receivers).
 
-   To illustrate this we use the simple ECC application curl to send a
-   message from one participant to another:
-   curl -i -H 'X-EcsAuthId: pid01' \  
-           -H 'X-EcsReceiverMemberships: mid02' \  
-           -H 'Content-Type: application/json' \  
+   To illustrate t is we use the simple ECC application curl to send a
+   message f om one participant to another:
+   curl -i -H 'X-EcsAu hId: pid01' \  
+           -H 'X-EcsRec iverMemberships: mid02' \  
+           -H 'Content-T pe: application/json' \  
            -X POST \  
            -d '{  
-                 "name": "Mathematics II",  
-                 "url" : "http://ilias...?target=pg_26_43&client_id=ecs2",  
+                 "name": "M thematics II",  
+                 "url" : "ht p://ilias...?target=pg_26_43&client_id=ecs2",  
                  ...  
                }' \  
-           http://ecs.freeit.de/campusconnect/courselinks
+           http://ecs.freeit.d /campusconnect/courselinks
 
-   In order to receive a message (in fifo mode) the receiving participant may
+   In order to receive a messa e (in fifo mode) the receiving participant may
    call:
-   curl -i -H 'X-EcsAuthId: pid02' \  
-           -H 'Accept: text/plain; application/json' \  
+   curl -i -H 'X-EcsAuthId: pi 02' \  
+           -H 'Accept: text/pl in; application/json' \  
            -X GET \  
-           http://ecs.freeit.de/campusconnect/courselinks/fifo
+           http://ecs.freeit.de/ ampusconnect/courselinks/fifo
 
-   Of course, there are several ways to operate on a resource. For details on
+   Of course, there are several way to operate on a resource. For details on
    using the resources located on an ECS and the different parameters (http
-   headers, query strings) please see XXX for details.
+   headers, query strings) plea e see XXX for details.
 
 Chapter 2
 Participants
@@ -165,7 +187,7 @@ Participants
 
     2.2.1 Retrieving resource representations indirectly
 
-   Figure 2.1 on page 20 shows the communication procedure how a LMS
+   Figure 2.1 on page 15 shows the communication procedure how a LMS
    retrieves a resource representation (coursedata) indirectly through ECS.
    Indirect addressing takes place when the ECS returns resource
    representations with Content-Type: text/uri-list (rfc2483).
@@ -207,7 +229,29 @@ Participants
 
      ----------------------------------------------------------------------
 
-   PIC
+                       +---------+
+                       |auths:ECS|
+                       +---------+
+                            |
+                            | ^
+                            | | 1.2:auth_repr:=post()
+                            |
+                            |   1.3:course_repr:=get(auth_repr.hash)
+                            |    --->
+                        +------+                 +----------+
+                        | :LMS |-----------------|data:Proxy|
+                        +------+                 +----------+
+                          |   |
+        1:event:=post() | |   |  | 1.1:meta_course_resource:=get()
+                        v |   |  v
+                          |   |
+                          |   |  | 1.4:delete()
+                          |   |  v
+                          |   |
+           +---------------+ +----------------------------+
+           |events/fifo:ECS| | campusconnect/courses/5:ECS|
+           +---------------+ +----------------------------+
+     
    Figure 2.1: Indirect LMS coursedata retrieval communication procedure.
 
      ----------------------------------------------------------------------
@@ -247,8 +291,11 @@ ECS
    All participants have to be authenticated in order to use ECS services. A
    participant is deemed to be authenticated if the X-EcsAuthId header is set
    and the ECS knows it. The real authentication take place in front of the
-   ECS, normally at the Webserver (Proxy). But this depends on
+   ECS, normally at the Webserver. But this depends on
    configuration/installation of ECS:
+
+     ----------------------------------------------------------------------
+
         +-----------+    .
         |   ECS     |   /_\
         | (RAILS)   |    |
@@ -263,6 +310,10 @@ ECS
         +-----------+    |
         |Participant|    |
         +-----------+
+     
+   Figure 3.1: Message flow through ECS application.
+
+     ----------------------------------------------------------------------
 
    Currently supported authentication methods:
      * Basic Auth
@@ -469,7 +520,7 @@ Developing
    /campusconnect/directory_trees and /campusconnect/course_members). The
    essential LSFproxy communication to ECS could be substituted with curl
    scripts/calls. In presence of a LSFproxy, its resource representations has
-   to be retrieved indirectly through ECS (see 2.2.1 on page 17 for
+   to be retrieved indirectly through ECS (see 2.2.1 on page 14 for
    retrieving course representations). For each development party you should
    create a separate LSFproxy participant at ECS. For easier usage we provide
    a shell script (LSFproxy.sh) simulating an LSFproxy. Please have a look at
@@ -558,3 +609,61 @@ List of Figures
 
    1.1 ECSA components.
    2.1 Indirect LMS coursedata retrieval
+   3.1 ECS Message flow
+
+List of Symbols
+
+   ECC
+           elearning community client
+
+   ECP
+           elearning community proxy
+
+   ECS
+           elearning community server
+
+   ECSA
+           elearning community service architecture
+
+   LMS
+           learning management system
+
+   MOM
+           message orientated middleware
+
+   participant
+           a client in ECSA network
+
+Index
+
+   anonymous-participants, 9
+   authentication, 8
+   auths resource, 11
+
+   developing, 15
+
+   ECS, 8
+       anonymous participants, 9
+       authentication, 8
+       auths resource, 11
+       events resource, 9
+       memberschips resource, 10
+       selfrouting, 8
+       system resources, 9
+   ECSA
+       overview, 2
+   events resource, 9
+
+   memberships resource, 10
+
+   participant, 4
+       architecture, 4
+       authentication, 4
+       authorization, 4
+       communication, 5
+       ressource extensions, 5
+       retrieving resources indirectly, 5
+       technology, 4
+
+   selfrouting, 8
+   system resources, 9

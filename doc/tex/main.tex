@@ -1,4 +1,4 @@
-\documentclass[12pt,oneside]{book}
+\documentclass[12pt,oneside,a4]{book}
 \usepackage[german,english]{babel}
 \usepackage{textcomp,marvosym}
 \usepackage[utf8]{inputenc}
@@ -7,14 +7,15 @@
 \usepackage{color}
 \usepackage{graphicx}
 \usepackage{chngpage}
-\usepackage{ifthen}
+%\usepackage{ifthen}
+\usepackage{etoolbox}
 \usepackage{makeidx}
 %\usepackage{xkeyval, xfor, amsgen}
 %\usepackage[toc,nonumberlist,acronym]{glossaries}
 \usepackage{nomencl}
 %\usepackage{pstricks}
 %\usepackage{showkeys, showidx}
-\usepackage{todonotes}
+%\usepackage{todonotes}
 \usepackage{listings}
 \usepackage{varioref}
 \usepackage{url}
@@ -42,6 +43,11 @@
 \makeindex
 \makenomenclature
 \renewcommand{\nomname}{List of Symbols}
+
+\typein[\doctype]{document type (text,graphics):}
+
+\changepage{2in}{0.4in}{}{}{}{-1.25in}{}{}{}
+
 \begin{document}
 \hypersetup{%
   pdftitle={ECSA},

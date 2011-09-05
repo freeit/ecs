@@ -84,10 +84,36 @@ will be informed by the ECS, so that the real course data  could be deleted.
 Of course this information occurs only if all addressed participants has
 successfully fetched the message on the proxy and if the
 \rs{/campusconnect/course} resource is not tagged as a postrouted resource. 
-
 \begin{figure}[p]
 \noindent \begin{centering}
-\includegraphics{../diagrams/participant_course_retrieval_indirectly}
+\begin{SaveVerbatim}{EcsTxtGr}
+                  +---------+                                  
+                  |auths:ECS|                                  
+                  +---------+                                  
+                       |                                       
+                       | ^                                     
+                       | | 1.2:auth_repr:=post()               
+                       |                                       
+                       |   1.3:course_repr:=get(auth_repr.hash)
+                       |    ---> 
+                   +------+                 +----------+       
+                   | :LMS |-----------------|data:Proxy|       
+                   +------+                 +----------+       
+                     |   |                                     
+   1:event:=post() | |   |  | 1.1:meta_course_resource:=get()  
+                   v |   |  v                                  
+                     |   |                                     
+                     |   |  | 1.4:delete()                     
+                     |   |  v                                  
+                     |   |                                     
+      +---------------+ +----------------------------+         
+      |events/fifo:ECS| | campusconnect/courses/5:ECS|         
+      +---------------+ +----------------------------+         
+
+\end{SaveVerbatim}
+\ifdefstring{\doctype}{text}%
+  {\UseVerbatim{EcsTxtGr}}%
+  {\includegraphics{../diagrams/participant_course_retrieval_indirectly}}
 \par\end{centering}
 \caption[Indirect LMS coursedata
 retrieval]{\label{fig:participant_coursedata_retrieval_indirectly}Indirect LMS

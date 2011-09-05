@@ -40,8 +40,10 @@ resource}.
 All participants have to be authenticated in order to use ECS services. A
 participant is deemed to be authenticated if the \hv{X-EcsAuthId} header is set and
 the ECS knows it. The real authentication take place in front of the ECS,
-normally at the Webserver (Proxy). But this depends on
-configuration/installation of ECS:
+normally at the Webserver. But this depends on configuration/installation of
+ECS:
+\begin{figure}[p]
+\noindent \begin{centering}
 \begin{txtg}
    +-----------+    .        
    |   ECS     |   /_\       
@@ -57,7 +59,12 @@ configuration/installation of ECS:
    +-----------+    |        
    |Participant|    |        
    +-----------+             
+
 \end{txtg}
+\par\end{centering}
+\label{fig:ecs_message_flow}
+\caption[ECS Message flow]{Message flow through ECS application.}
+\end{figure}
 Currently supported authentication methods:
 \begin{itemize}
   \item Basic Auth
