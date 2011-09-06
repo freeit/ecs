@@ -1,8 +1,12 @@
+SHELL=bash
 INC_TEX_FILES:=$(wildcard *.inc.tex)
 IMAGE_FILES:=$(wildcard images/*)
 INTERMEDIATE_FILES:= *.ac[nr] *.alg *.gl[gos] *.idx *.ilg *.ind *.ist *.aux *.lof *.out *.toc *.log *.dvi *.4ct *.4tc *.haux *.hind *.htoc *.idv *.lg *.nlo *.nls *.tmp *.xref html/* 
 TARGET_FILES:= main.ps.[0-9][0-9][0-9] main.ps.gz main.dvi main.pdf
 DOCTYPE:=graphics
+#DOCVERSION:=$(shell git show --format="%h" HEAD | awk 'NR==1{print $1}')
+DOCVERSION:=$(shell git rev-parse --short --verify HEAD)
+DOCDATE:=$(shell date "+%m/%Y")
 
 .PHONY: dvi ps pdf vdvi vps vpdf fax html txt ftp distclean clean all
 
@@ -19,11 +23,11 @@ clean:
 	rm -f main.dvi
 
 main.dvi: clean main.tex $(INC_TEX_FILES) $(IMAGE_FILES)
-	echo $(DOCTYPE) | latex main.tex
-	echo $(DOCTYPE) | latex main.tex
+	echo -e "$(DOCTYPE)\n$(DOCVERSION)\n$(DOCDATE)" | latex main.tex
+	echo -e "$(DOCTYPE)\n$(DOCVERSION)\n$(DOCDATE)" | latex main.tex
 	makeindex main.idx
 	makeindex main.nlo -s nomencl.ist -o main.nls
-	echo $(DOCTYPE) | latex main.tex
+	echo -e "$(DOCTYPE)\n$(DOCVERSION)\n$(DOCDATE)" | latex main.tex
 
 main.ps.gz: dvi
 	dvips -t a4 -o main.ps main.dvi
@@ -55,13 +59,13 @@ fax: main.ps.gz
 	rm -f main.ps
 
 html: dvi
-	echo $(DOCTYPE) | ./htlatex main.tex "main,graphics-130" "" "-dhtml/"
+	echo "$(DOCTYPE) $(DOCVERSION) $(DOCDATE)" | ./htlatex main.tex "main,graphics-130" "" "-dhtml/"
 	cp html/* ../html
 	mv ../html/main.html ../html/index.html
 
 txt: DOCTYPE:=text
 txt: dvi
-	echo $(DOCTYPE) | ./htlatex main.tex "main,graphics-130" "" "-dhtml/"
+	echo "$(DOCTYPE) $(DOCVERSION) $(DOCDATE)" | ./htlatex main.tex "main,graphics-130" "" "-dhtml/"
 	links -dump  html/main.html > main.txt
 
 all: pdf html txt

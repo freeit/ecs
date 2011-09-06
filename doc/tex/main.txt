@@ -1,7 +1,9 @@
 ECSA - Elearning Community Service Architecture
 
    Heiko Bernlo:hr
-   2011
+
+   Version: 09/2011*
+   *Abbreviated commit hash. See GIT repository .
 
 Contents
 

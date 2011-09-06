@@ -36,15 +36,17 @@
 \DefineVerbatimEnvironment{code}{Verbatim}{numbers=left} % source code or command lines
 \DefineVerbatimEnvironment{txtg}{Verbatim}{} % text graphic
 
+\typein[\doctype]{document type (text,graphics):}
+\typein[\docversion]{document version:}
+\typein[\docdate]{document year:}
+
 \title{ECSA -- Elearning Community Service Architecture}
 \author{Heiko Bernlöhr}
-\date{2011}
+\date{\docdate\\[2em]Version: \docversion\thanks{Abbreviated commit hash. See \href{http://repo.or.cz/w/ecs.git}{GIT repository}~.}}
 
 \makeindex
 \makenomenclature
 \renewcommand{\nomname}{List of Symbols}
-
-\typein[\doctype]{document type (text,graphics):}
 
 \changepage{2in}{0.4in}{}{}{}{-1.25in}{}{}{}
 
