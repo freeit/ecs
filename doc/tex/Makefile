@@ -6,7 +6,9 @@ TARGET_FILES:= main.ps.[0-9][0-9][0-9] main.ps.gz main.dvi main.pdf
 DOCTYPE:=graphics
 #DOCVERSION:=$(shell git show --format="%h" HEAD | awk 'NR==1{print $1}')
 DOCVERSION:=$(shell git rev-parse --short --verify HEAD)
+DOCVERSION_LONG:=$(shell git rev-parse --verify HEAD)
 DOCDATE:=$(shell date "+%m/%Y")
+DOCVERSION_DATE:=$(shell date -u --date="`git show --format='%ai' HEAD | sed -n '1p'`" "+%Y-%m-%dT%H:%M:%SZ")
 
 .PHONY: dvi ps pdf vdvi vps vpdf fax html txt ftp distclean clean all
 
@@ -71,6 +73,7 @@ txt: dvi
 all: pdf html txt
 
 ftp: all
+	cp main.txt ../txt/$(DOCVERSION_LONG).txt
 	(cd ../html ; for i in *; do ncftpput -m -f ~/.ncftp/prosite.dat -C $$i /htdocs/documents/ecsa/$$i ; done)
 	ncftpput -m -f ~/.ncftp/prosite.dat -C main.pdf /htdocs/documents/ecsa/ecsa.pdf
 	ncftpput -m -f ~/.ncftp/prosite.dat -C main.txt /htdocs/documents/ecsa/ecsa.txt
