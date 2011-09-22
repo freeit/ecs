@@ -1,0 +1,190 @@
+{
+  "description":"Data schema for JSON representation of CampusConnect courses resource",
+  "type":"object",
+  "properties": {
+    "basicData": {
+      "type":"object",
+      "properties": {
+        "organisation": {"type":"string"},
+        "id": {"type":"string"},
+        "term": {"type":"string"},
+        "number": {"type":"string"},
+        "title": {"type":"string"},
+        "courseType": {"type":"string"},
+        "hoursPerWeek": {"type":"integer"},
+        "maxParticipants": {"type":"integer"},
+        "parallelGroupScenario": {"type":"integer"}
+      },
+      "lecturers": {
+        "type":"array",
+        "items": {
+          "type":"object",
+          "properties":{
+            "firstName": {"type":"string"},
+            "lastName": {"type":"string"}
+          }
+        }
+      },
+      "degreeProgrammes": {
+        "required":true,
+        "type":"array",
+        "items": {
+          "type":"object",
+          "required":true,
+          "properties":{
+            "id": {"type":"string"},
+            "title": {"type":"string"},
+            "code": {"type":"string"},
+            "courseUnitYearOfStudy": {
+              "type":"object",
+              "properties": {
+                "from":{"type":"integer"},
+                "to":{"type":"integer"}
+              }
+            }
+          }
+        }
+      },
+      "allocations": {
+        "type":"array",
+        "items": {
+          "type":"object",
+          "properties":{
+            "parentID": {"type":"integer"},
+            "order": {"type":"integer"}
+          }
+        }
+      },
+      "comment1": {"type":"string"},
+      "comment2": {"type":"string"},
+      "comment3": {"type":"string"},
+      "recommendedReading": {"type":"string"},
+      "organisationalUnit": {
+        "type":"array",
+        "items": {
+          "type":"object",
+          "properties":{
+            "id": {"type":"string"},
+            "title": {"type":"string"}
+          }
+        }
+      },  
+      "prerequisites": {"type":"string"},
+      "courseAssessmentMethod": {"type":"string"},
+      "courseTopics": {"type":"string"},
+      "linkToCurriculum": {"type":"string"},
+      "targetAudience": {"type":"string"},
+      "links": {
+        "type":"array",
+        "items": {
+          "type":"object",
+          "properties":{
+            "href": {"type":"string", "format":"uri"},
+            "title": {"type":"string"}
+          }
+        }
+      },  
+      "linkToCourse": {
+          "type":"object",
+          "properties":{
+            "href": {"type":"string", "format":"uri"},
+            "title": {"type":"string"}
+          }
+      },  
+      "parallelGroups": {
+        "type":"array",
+        "items": {
+          "type":"object",
+          "properties": {
+            "title": {"type":"string"},
+            "id": {"type":"string"},
+            "comment": {"type":"string"},
+            "datesAndVenues": {
+              "type":"array",
+              "items": {
+                "type":"object",
+                "properties": {
+                  "cycle": {"type":"string"},
+                  "venue": {"type":"string"},
+                  "firstDate": {
+                    "type":"object",
+                    "properties": {
+                      "startDatetime": {"type":"string", "format":"date-time"},
+                      "endDatetime": {"type":"string", "format":"date-time"}
+                    }
+                  },
+                  "lastDate": {
+                    "type":"object",
+                    "properties": {
+                      "startDatetime": {"type":"string", "format":"date-time"},
+                      "endDatetime": {"type":"string", "format":"date-time"}
+                    }
+                  }
+                }
+              }
+            },  
+            "singleDatesAndVenues": {
+              "type":"array",
+              "items": {
+                "type":"object",
+                "properties": {
+                  "startDatetime": {"type":"string", "format":"date-time"},
+                  "endDatetime": {"type":"string", "format":"date-time"}
+                }
+              }
+            },
+            "maxParticipants": {"type":"integer"},
+            "takesPlace":{"type":"boolean"},
+            "lecturers": {
+              "type":"array",
+              "items": {
+                "type":"object",
+                "properties": {
+                  "firstName": {"type":"string"},
+                  "lsatName": {"type":"string"}
+                }
+              }
+            },
+            "canceledDates": {
+              "type":"array",
+              "items": {
+                "type":"object",
+                "properties": {
+                  "datetime": {"type":"string", "format":"date-time"},
+                  "comment": {"type":"string"}
+                }
+              }
+            }
+          }
+        }
+      },
+      "modules": {
+        "type":"array",
+        "items": {
+          "type":"object",
+          "properties": {
+            "id": {"type":"string", "required":"true"},
+            "title": {"type":"string"},
+            "number": {"type":"integer"},
+            "credits": {"type":"integer"},
+            "hoursPerWeek": {"type":"integer"},
+            "duration": {"type":"integer"},
+            "cycle": {"type":"string"},
+            "degreeProgramme": {"type":"string"},
+            "finalExamination": {"type":"string"},
+            "label": {"type":"string"},
+            "regulationsVersion": {"type":"string"},
+            "degreeProgrammeCode": {"type":"string"},
+            "prerequisites": {"type":"string"},
+            "learningObjectives": {"type":"string"},
+            "recommendedReading": {"type":"string"},
+            "description": {"type":"string"},
+            "workload": {"type":"string"},
+            "studyAssessmentMethods": {"type":"string"},
+            "examinationAssessmentMethods": {"type":"string"}
+          }
+        }
+      }
+    }
+  }
+}
