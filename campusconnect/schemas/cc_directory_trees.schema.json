@@ -1,0 +1,19 @@
+{
+  "description":"Data schema for JSON representation of CampusConnect directory_trees resource",
+  "type":"object",
+  "properties": {
+    "directoryTreeTitle": {"type":"string", "required":true},
+    "id": {"type":"string", "required":true},
+    "title": {"type":"string", "required":true},
+    "order": {"type":"string"},
+    "term": {"type":"string"},
+    "parent": {
+      "type":"object",
+      "properties": {
+        "order": {"type":"string", "required":true},
+        "title": {"type":"string"}
+      }
+    },
+    "rootID": {"type":"string"}
+  }
+}
