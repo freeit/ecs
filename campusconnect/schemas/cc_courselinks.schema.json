@@ -1,0 +1,65 @@
+{
+  "description":"Data schema for JSON representation of CampusConnect courselinks resource",
+  "type":"object",
+  "properties": {
+    "url": {"type":"string", "required":true, "format":"uri"},
+    "destinationForDisplay": {"type":"string", "format":"uri"},
+    "lang": {"type":"string"},
+    "hoursPerWeek": {"type":"integer"},
+    "id": {"type":"string"},
+    "number": {"type":"string"},
+    "term": {"type":"string"},
+    "credits": {"type":"integer"},
+    "status": {"type":"string"},
+    "courseType": {"type":"string"},
+    "title": {"type":"string"},
+    "firstDate": {"type":"string"},
+    "datesAndVenues": {
+      "type":"array",
+      "items": {
+        "type":"object",
+        "properties": {
+          "day": {"type":"string"},
+          "start": {"type":"string"},
+          "end": {"type":"string"},
+          "cycle": {"type":"string"},
+          "venue": {"type":"string"},
+          "firstDate": {
+            "type":"object",
+            "properties": {
+              "startDatetime": {"type":"string", "format":"date-time"},
+              "endDatetime": {"type":"string", "format":"date-time"}
+            }
+          },
+          "lastDate": {
+            "type":"object",
+            "properties": {
+              "startDatetime": {"type":"string", "format":"date-time"},
+              "endDatetime": {"type":"string", "format":"date-time"}
+             }
+          }
+        }
+      }
+    },
+    "degreeProgrammes": {
+      "type":"array",
+      "items": {
+        "type":"object",
+        "properties": {
+          "title": {"type":"string"},
+          "code": {"type":"string"}
+        }
+      }
+    },
+    "lecturers": {
+      "type":"array",
+      "items": {
+        "type":"object",
+        "properties": {
+          "fisrtName": {"type":"string"},
+          "lastName": {"type":"string"}
+        }
+      }
+    }
+  }
+}
