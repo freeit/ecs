@@ -13,6 +13,6 @@
     "telephone": {"type":"string"},
     "fax": {"type":"string"},
     "email": {"type":"string"},
-    "href": {"type":"string"},
+    "href": {"type":"string"}
   }
 }
