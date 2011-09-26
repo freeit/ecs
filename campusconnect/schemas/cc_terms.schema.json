@@ -1,0 +1,12 @@
+{
+  "description":"Data schema for JSON representation of CampusConnect terms resource",
+  "type":"object",
+  "properties": {
+    "id": {"type":"string", "required":true},
+    "title": {"type":"string", "required":true},
+    "start": {"type":"string", "format":"date-time"},
+    "end": {"type":"string", "format":"date-time"},
+    "lecturePeriodStart": {"type":"string", "format":"date-time"},
+    "lecturePeriodEnd": {"type":"string", "format":"date-time"}
+  }
+}
