@@ -1,0 +1,24 @@
+{
+  "description":"Data schema for JSON representation of CampusConnect course_members resource",
+  "type":"object",
+  "properties": {
+    "courseID": {"type":"string", "required":true},
+    "members": {
+      "type":"array",
+      "items": {
+        "type":"object",
+        "properties": {
+          "personID": {"type":"string", "required":true},
+          "courseRole": {"type":"string"},
+          "parallelGroups": {
+            "type":"array",
+            "items": {
+              "id": {"type":"string"},
+              "groupRole": {"type":"string"}
+            }
+          }
+        }
+      }
+    }
+  }
+}
