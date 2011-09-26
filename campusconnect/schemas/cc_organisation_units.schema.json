@@ -1,0 +1,18 @@
+{
+  "description":"Data schema for JSON representation of CampusConnect organization_units resource",
+  "type":"object",
+  "properties": {
+    "id": {"type":"string", "required":true},
+    "number": {"type":"string"},
+    "title": {"type":"string"},
+    "organisationUnitTreeAssignment": {"type":"string"},
+    "type": {"type":"string"},
+    "postalCode": {"type":"string"},
+    "city": {"type":"string"},
+    "street": {"type":"string"},
+    "telephone": {"type":"string"},
+    "fax": {"type":"string"},
+    "email": {"type":"string"},
+    "href": {"type":"string"},
+  }
+}
