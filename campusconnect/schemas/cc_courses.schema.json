@@ -98,11 +98,17 @@
           "title": {"type":"string"},
           "id": {"type":"string"},
           "comment": {"type":"string"},
+          "firstDate": {"type":"string"},
+          "lastDate": {"type":"string"},
           "datesAndVenues": {
             "type":"array",
             "items": {
               "type":"object",
               "properties": {
+                "day": {"type":"string"},
+                "start": {"type":"string"},
+                "end": {"type":"string"},
+                "timeZone": {"type":"string"},
                 "cycle": {"type":"string"},
                 "venue": {"type":"string"},
                 "firstDate": {
