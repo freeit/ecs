@@ -1,0 +1,21 @@
+[glossary]
+ECSA::
+  elearning community service architecture
+
+MOM::
+  message orientated middleware
+
+ECS::
+  elearning community server
+
+ECC::
+  elearning community client
+
+ECP::
+  elearning community proxy
+
+LMS::
+  learning management system
+
+IETF::
+  internet engeneering task force

@@ -1,0 +1,56 @@
+ECSA -- Elearning Community Service Architecture
+================================================
+:author:          Heiko Bernlöhr
+:authorinitials:  hb
+:email:           Heiko.Bernloehr@FreeIT.de
+:website:         http://FreeIT.de
+:revdate:
+:revnumber:
+:toc:
+:icons:
+:numbered:
+
+include::overview.txt[]
+include::participants.txt[]
+include::ecs.txt[]
+include::developing.txt[]
+
+:numbered!:
+
+////////////////////
+[appendix]
+Appendix
+--------
+
+include::definitions.txt[]
+
+[bibliography]
+Example Bibliography
+--------------------
+The bibliography list is a style of AsciiDoc bulleted list.
+
+include::bibliography.txt[]
+////////////////////
+
+
+[glossary]
+Glossary
+--------
+
+include::glossary.txt[]
+
+////////////////////
+[colophon]
+Example Colophon
+----------------
+Text at the end of a book describing facts about its production.
+////////////////////
+
+
+[index]
+Index
+-----
+////////////////////////////////////////////////////////////////
+The index is normally left completely empty, it's contents being
+generated automatically by the DocBook toolchain.
+////////////////////////////////////////////////////////////////

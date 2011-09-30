@@ -1,0 +1,254 @@
+ECS
+---
+(((ECS)))
+The elearning community server (ECS) is designed as a message oriented
+middleware (MOM) and is implemented as a
+http://en.wikipedia.org/wiki/REST[REST] conform application.
+
+Because the ECS was born in an elearning context the following definition shows
+consideration of that. Nevertheless the ECS could be used in other areas of
+responsibility.
+
+The ECS groups its participants in so called _communities_. Participants
+could address each other only if they share a community. Therefore they could
+address an explicit participant, a participant list or the whole members of the
+community (see ECS API for details).
+
+All participants have to register at the ECS. Every registered participant has
+access to at least three system resources (`/sys/memberships`,
+`/sys/events`, `/sys/auths`) to get informed and take part at a ECSA
+network. To design/map your specific application communication you can create as many
+application resources you want.
+
+Community selfrouting
+~~~~~~~~~~~~~~~~~~~~~
+(((selfrouting)))
+(((ECS,selfrouting)))
+If community selfrouting is activated at the participant (administration area)
+you can decide if you also want to receive the message which you send to an
+appropriate community, i.e. you get an event notification (if events on this
+resource is activated) and you get it listed by its
+https://ecs.uni-stuttgart.de/ecsa-wiki/HeikoBernloehr/FreeLancer/ECS/ecs2/core#list-ressource[list
+resource] and could access it through its
+https://ecs.uni-stuttgart.de/ecsa-wiki/HeikoBernloehr/FreeLancer/ECS/ecs2/core#queue-ressource[queue
+resource]. Of course, as sender of the message you can always access it by its
+https://ecs.uni-stuttgart.de/ecsa-wiki/HeikoBernloehr/FreeLancer/ECS/ecs2/core#message-resource[message
+resource]. 
+
+
+Authentication
+~~~~~~~~~~~~~~
+(((authentication)))
+(((ECS,authentication)))
+All participants have to be authenticated in order to use ECS services. A
+participant is deemed to be authenticated if the `X-EcsAuthId` header is set and
+the ECS knows it. The real authentication take place in front of the ECS,
+normally at the Webserver. But this depends on configuration/installation of
+ECS:
+
+.Message flow through ECS application.
+[[fig:ecs_message_flow]]
+
+   +-----------+    .        
+   |   ECS     |   /_\       
+   | (RAILS)   |    |        
+   +-----------+    |        
+   |Rack Module|    |        
+   | (optional)|    |        
+   +-----------+    | Message
+   | Webserver |    | Flow   
+   |  (Proxy)  |    |        
+   +-----------+    |        
+         |          |        
+   +-----------+    |        
+   |Participant|    |        
+   +-----------+             
+
+Currently supported authentication methods:
+
+- Basic Auth
+- X.509 certificates
+
+Anonymous participants
+~~~~~~~~~~~~~~~~~~~~~~
+(((anonymous-participants)))
+(((ECS,anonymous participants)))
+The creation of a new anonymous participant automatically takes place by every
+call to an ECS resource if the calling participant didn't set `X-EcsAuthId` or
+`Cookie` header, by setting a `Set-Cookie` header in the response. On
+subsequent calls the participant has to provide this cookie in a `Cookie`
+header in order to be identified as the previously calling participant.
+Additionally those participants were automatically joined to the 'public'
+community. Further their lifetime will be limited and all resources will be
+silently deleted after this lifetime becomes zero. With succesional accesses to
+ECS this lifetime will be refreshed. For general cookie handling see also
+http://en.wikipedia.org/wiki/HTTP_cookie[HTTP cookies]. See also
+https://ecs.uni-stuttgart.de/ecsa-wiki/HeikoBernloehr/FreeLancer/ECS/ecs2/core/examples[examples].
+
+
+System resources
+~~~~~~~~~~~~~~~~
+(((system resources)))
+(((ECS,system resources)))
+
+Events
+^^^^^^
+(((events resource)))
+(((ECS,events resource)))
+Provides a general queue which accumulates the resource tasks: creation,
+deletion and renewal. Available representations are application/json and
+application/xml. It's recommended to use the events queue to supervise all your
+possible application specific resources. Further you only have to poll the
+events queue in order to supervise all your application specific ressources and
+this further take down system load. 
+
+Remark: If you wisely decide to use the events queue to supervise your
+application specific ressources you have to manage the validity of events queue
+yourself, i.e. you shouldn't additionally poll your application specific
+ressources directly, because then you will get stale events in the events
+queue. 
+
+/sys/events:: GET provides a list of events for the appropriate calling
+  participant. Optionally the query string parameter 'count' could be used
+  to limit the amount of returned events. 
+/sys/events/fifo:: GET provides an event (the oldest one) for the
+  appropriate calling participant. Optionally the query string parameter
+  'count' could be used to extend the amount of returned events.  POST
+  provides an event (the oldest one) for the appropriate calling participant
+  and removes it from the events queue. Optionally the query string parameter
+  'count' could be used to extend the amount of returned events.
+
+Following a sample representation in JSON:
+
+------------------------------------------
+[
+  {
+    "status": "created",
+    "ressource": "numlab/exercises/7"
+  },
+  {
+    "status": "destroyed",
+    "ressource": "numlab/exercises/3"
+  }
+]
+------------------------------------------
+
+
+Memberships
+^^^^^^^^^^^
+(((memberships resource)))
+(((ECS,memberschips resource)))
+Provides information of the affiliation of the calling participant to the
+available communities. Available representations are `application/json` and
+`application/xml`.
+
+/sys/memberships:: GET provides a list of memberships for the
+  appropriate calling participant. It implies all participants joining an
+  appropriate community including the caller itself.
+
+With the `itsyou` key the caller of the `/sys/memberships` resource will be
+informed which participant in the different communities is assigned to him.
+
+Following a sample representation in JSON:
+
+-------------------------------------------------------
+[
+  {
+    "community": {
+      "name": "cc_courselinks",
+      "description": "CampusConnect courselinks."
+    },
+    "participants": [
+      {
+        "name": "ILIAS-ECS Client 1",
+        "itsyou": true,
+        "org": {
+          "name": "Leifos",
+          "abbr": "LEI"
+        },
+        "mid": 1,
+        "description": "Development participant.",
+        "dns": "n/a",
+        "email": "meyer@leifos.com"
+      },
+      {
+        "name": "FreeIT.de Testparticipant",
+        "itsyou": false,
+        "org": {
+          "name": "FreeIT Softwaredevelopment.",
+          "abbr": "FreeIT"
+        },
+        "mid": 2,
+        "description": "A general test participant.",
+        "dns": "n/a",
+        "email": "Heiko.Bernloehr@FreeIT.de"
+      },
+      {
+        "name": "ILIAS-ECS Client 2",
+        "itsyou": false,
+        "org": {
+          "name": "Leifos",
+          "abbr": "LEI"
+        },
+        "mid": 3,
+        "description": "",
+        "dns": "n/a",
+        "email": "meyer@leifos.com"
+      }
+    ]
+  }
+]
+-------------------------------------------------------
+
+Auths
+^^^^^
+(((auths resource)))
+(((ECS,auths resource)))
+This means authorization through one touch tokens. Provides a mechanism to
+grant each participant authorization to consume services from any
+service-providing-participant in an ECS network.
+
+The interface is the same as for
+https://ecs.uni-stuttgart.de/ecsa-wiki/HeikoBernloehr/FreeLancer/ECS/ecs2/core#application_resources[application
+resources]. If you want to create an authorization token, you have to provide
+at least a json formated URL (authorization context) as body text:
+
+-------------------------------------------------------
+curl ... -X POST -d '{"url":"https://freeit.de/mycourse"}' https://.../sys/auths
+-------------------------------------------------------
+
+and you will get back something like this:
+
+-------------------------------------------------------
+{
+  "hash": "5a944e72346e6e3102d32ccfecc18862d23e1dc0",
+  "sov": "2011-03-08T23:25:27+01:00",
+  "eov": "2011-03-08T23:26:27+01:00",
+  "url": "https://freeit.de/testcourse",
+  "abbr": "LEI"
+}
+-------------------------------------------------------
+
+hash:: povides the authorization token (one touch token) 
+sov:: stands for start of validation 
+eov:: stands for end of validation 
+url:: provides the authorization context 
+abbr:: provides an abbreviation of the participant which has been
+  created the authorization token (deprecated) 
+
+You're allowed to set the `sov` and/or `eov` to distinguish the validity
+period of the authorization token. If you do not, the validity period is set to
+one minute starting at current time.
+
+The recommended way to fetch an authorization token when knowing the one touch hash:
+
+-------------------------------------------------------
+curl .... -X DELETE https://.../sys/auths/<one touch hash>
+-------------------------------------------------------
+
+This will return the auths representation (same structure/form as when
+creating; see above) and delete it server side. If the authorization token is
+outtimed, i.e. the current time is not between `sov` and `eov`, you will
+get back a return code 409 (conflict) and following descriptional text in the
+body: 'Authorization token outtimed'.
+
