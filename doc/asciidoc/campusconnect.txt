@@ -1,17 +1,16 @@
-Developing
-----------
+CampusConnect
+-------------
 (((developing)))
+(((campusconnect)))
 
-Tools
-~~~~~
 Scriptable REST commandline client
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 As the ECSA is derived from an architecture style for distributed systems
 called REST, the major tool for developing in an ECSA context is a scriptable
 REST commandline client. An excellent choice would be `curl`.
 
 Monitoring resources
-
+^^^^^^^^^^^^^^^^^^^^
 Following code monitors the events resource every 5 seconds and
 shows/highlights the differences in the output:
 
@@ -23,11 +22,9 @@ watch -n 5 --differences=cumulative --no-title \
      --pass "secure pwd" \
      -X GET https://ecscc.uni-stuttgart.de/ra/ecs-test/sys/events'
 ------------------------------------------------------------------
-CampusConnect
-~~~~~~~~~~~~~
 
 Simulating LSFproxy
-^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~
 To develop without a running LSFproxy you could simply provide static resources
 inside the ECSA network. At ECS you have to create the specific CampusConnect
 resources (`/campusconnect/courses`, `/campusconnect/directory_trees` and
@@ -45,7 +42,7 @@ drive all parts by your own and have to fill out the lines by your personal
 data.
 
 Create
-++++++
+^^^^^^
 To POST new LSFproxy course to a community participant (e.g. a LMS) call the
 script like this:
 
@@ -76,7 +73,7 @@ constatnts at top of the script and setup your own static LSFproxy data
 representations at your local web sever.
 
 Get, Delete and Update
-++++++++++++++++++++++
+^^^^^^^^^^^^^^^^^^^^^^
 After you have created some messages, you can of course DELETE them (you are
 the owner). But first you have to distinguish the resource id on ECS. Either
 you have noticed the id at creation time looking at the provided `Location`
@@ -105,7 +102,7 @@ In order to update a resource call the script like this:
 ----------------------------
 
 Show Memberships
-++++++++++++++++
+^^^^^^^^^^^^^^^^
 You can also show your memberships by calling:
 
 ----------------------------
@@ -113,7 +110,7 @@ You can also show your memberships by calling:
 ----------------------------
 
 Show Usage
-++++++++++
+^^^^^^^^^^
 And last you can show a usage help text by calling the script with no
 parameters and options or with the \kw{-h} option:
 
