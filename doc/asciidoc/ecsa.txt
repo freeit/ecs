@@ -13,7 +13,7 @@ ECSA -- Elearning Community Service Architecture
 include::overview.txt[]
 include::participants.txt[]
 include::ecs.txt[]
-include::developing.txt[]
+include::campusconnect.txt[]
 
 :numbered!:
 
