@@ -20,6 +20,121 @@ access to at least three system resources (`/sys/memberships`,
 network. To design/map your specific application communication you can create as many
 application resources you want.
 
+HTTP Header
+~~~~~~~~~~~
+ECS specific headers
+^^^^^^^^^^^^^^^^^^^^
+X-EcsAuthId::
+  Has to be a valid participant id. In a standard ECS configuration this HTTP
+  header will be attached by the authentication process running on the proxy
+  server. 
+X-EcsReceiverCommunities::
+  Has to be a valid community id/ids or community name/names. Adresses all
+  participants joined the comimunity/communities. You are able to note
+  multiple communities, either by name or by id, spaced by comma. Only allowed by POST. 
+X-EcsReceiverMemberships::
+  Has to be a valid membership id/ids. Adresses all listed memberships. You are
+  able to note multiple memberships spaced by comma.  Only allowed by POST. 
+X-EcsSender::
+  Describes the sender of a message. If you GET a resource this header variable
+  shows the sender membership id. Additionally the ECS sets the
+  X-EcsReceiverCommunities variable to the community from which you have
+  received the message. If the message reach you from several communities
+  X-EcsSender show you a comma separated list of membership ids representing
+  the appropriate membership id of the sender in these communities. In this
+  case the X-EcsReceiverCommunities variable would also represent a comma
+  seperated list of a corresponding community ids.
+X-EcsQueryStrings::
+  Used to provide querystrings.
+// make link to querystrings 
+
+HTTP standard header
+^^^^^^^^^^^^^^^^^^^^
+Accept::
+  Content-Types that are acceptable.
+Content-Type::
+  The mime type of the body of the request (used with POST and PUT requests).
+If-None-Match::
+  Allows a 304 Not Modified to be returned if content is unchanged.
+Cookie::
+  An HTTP cookie previously sent by the server with Set-Cookie.
+Content-Type::
+  The mime type of this content.
+ETag::
+  An identifier for a specific version of a resource.
+Location::
+  Used in redirection, or when a new resource has been created.
+Set-Cookie::
+  An HTTP cookie.
+
+Addressing
+~~~~~~~~~~
+In order to communicate to each other you have to provide a unique address.
+These addresses can either be a so called membership id or a community id or
+community name. 
+
+Membership IDs
+^^^^^^^^^^^^^^
+These are unique ids in the scope of an ECS. They establish a relationship
+between a participant and a community:
+
+ +------------+ 1        N +-----------+ N        1 +-----------+
+ |participants|------------|memberships|------------|communities|
+ +------------+            +-----------+            +-----------+
+
+Therefore a participant can be associated to different communities. Every
+participant can inquire his membership ids by calling the memberships
+resource.
+// make link to memberships
+
+Community names and ids
+^^^^^^^^^^^^^^^^^^^^^^^
+A community can be referenced by his community id (cid) or his community name.
+If you address a community you implicit address all members of the community.
+This applies also to the sender joining the receiver community if the sender
+has set his community_selfrouting flag (default off), otherwise the sender will
+be implicitly excluded from the receiver list. Every participant can inquire
+his communities memberships by calling the memberships resource.
+// make link to memberships
+
+Create a resource
+^^^^^^^^^^^^^^^^^^
+If you want to POST to a resource you have to provide either a
+`X-EcsReceiverMemberships` or `X-EcsReceiverCommunities` header or both together.
+
+If you want to address a single membership or a dedicated number of memberships
+you have to set the `X-EcsReceiverMemberships` header. This header can have a
+list of values, e.g.
+
+------------------------------------------------------
+X-EcsReceiverMemberships: 3,6,47
+------------------------------------------------------
+
+If you want to address a community you have to set the `X-EcsReceiverCommunities`
+header. This header can have a list of values, e.g.
+
+------------------------------------------------------
+X-EcsReceiverCommunities: SWS,23,25
+------------------------------------------------------
+
+Get a resource
+^^^^^^^^^^^^^^
+If you GET a resource then the ECS set the `X-EcsSender` and the
+`X-EcsReceiverCommunities` header to show you from whom and where your received
+message comes. If there is a list of `X-EcsReceiverCommunities` values than there
+is also a list of corresponding `X-EcsSender` values, i.e. the sending
+participant is member of multiple communities and addressed his message to
+multiple communities also, e.g.
+
+------------------------------------------------------
+X-EcsSender: 3,19
+X-EcsReceiverCommunities: UnisBW,SUV
+------------------------------------------------------
+
+This means that this message is addressed to you through two communities
+(UnisBW, SUV) and the sender has the membership id 3 in UnisBW and 19 in SUV.
+
+
 Community selfrouting
 ~~~~~~~~~~~~~~~~~~~~~
 (((selfrouting)))
@@ -99,13 +214,13 @@ Provides a general queue which accumulates the resource tasks: creation,
 deletion and renewal. Available representations are application/json and
 application/xml. It's recommended to use the events queue to supervise all your
 possible application specific resources. Further you only have to poll the
-events queue in order to supervise all your application specific ressources and
+events queue in order to supervise all your application specific resources and
 this further take down system load. 
 
 Remark: If you wisely decide to use the events queue to supervise your
-application specific ressources you have to manage the validity of events queue
+application specific resources you have to manage the validity of events queue
 yourself, i.e. you shouldn't additionally poll your application specific
-ressources directly, because then you will get stale events in the events
+resources directly, because then you will get stale events in the events
 queue. 
 
 /sys/events:: GET provides a list of events for the appropriate calling
