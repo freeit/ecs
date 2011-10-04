@@ -3,7 +3,10 @@ Participants
 (((ECSA,overview)))
 A particpant represents a legal client in an ECSA network.
 
-[[participant_basic_requirements,mylink]]
+///////////
+[[participant_basic_requirements]]
+///////////
+
 Basic functionalities and requirements
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Technology / Architecture
