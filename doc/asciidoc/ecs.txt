@@ -67,6 +67,22 @@ Location::
 Set-Cookie::
   An HTTP cookie.
 
+HTTP return codes
+~~~~~~~~~~~~~~~~~
+200::
+  Successful GET.
+201::
+  Successful POST.
+304::
+  A _Not Modified_ response on a conditional GET. This means the requested
+  resource has not been changed.
+404::
+  Resource not available.
+4xx::
+  General client side error.
+5xx::
+  General server side errors.
+
 Addressing
 ~~~~~~~~~~
 In order to communicate to each other you have to provide a unique address.
@@ -203,6 +219,7 @@ https://ecs.uni-stuttgart.de/ecsa-wiki/HeikoBernloehr/FreeLancer/ECS/ecs2/core/e
 
 System resources
 ~~~~~~~~~~~~~~~~
+(((resources)))
 (((system resources)))
 (((ECS,system resources)))
 
@@ -366,4 +383,321 @@ creating; see above) and delete it server side. If the authorization token is
 outtimed, i.e. the current time is not between `sov` and `eov`, you will
 get back a return code 409 (conflict) and following descriptional text in the
 body: 'Authorization token outtimed'.
+
+Application specific resources
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(((resources)))
+(((application resources)))
+(((ECS,application resources)))
+All application specific resources have to be configured at ECS. There are three types of application specific resources:
+
+1. messages
+2. lists
+3. queues
+
+Generally resources are an abtract concept:
+
+* clearly identifiable (in an HTTP context through URLs)
+* have one ore more representations (e.g. JSON, XML, text, ...)
+
+According to resources it plays no role how a representation is produced. It
+could be done by returning a static file or running a complex server side
+application, that doesn't matter. Furthermore by looking at a resource you
+can't conclude how the representation has been made. An evaluation of a
+resource based on internal operations and circumstances, it is thus also
+negligible, and even be inadmissible.
+
+Resource structure
+^^^^^^^^^^^^^^^^^^
+
+ /<projectnamespace>/<name>
+ /<projectnamespace>/<name>/details
+ /<projectnamespace>/<name>/<id>
+ /<projectnamespace>/<name>/<id>/receivers
+ /<projectnamespace>/<name>/<id>/details
+ /<projectnamespace>/<name>/fifo
+ /<projectnamespace>/<name>/lifo
+
+
+Message resource
+^^^^^^^^^^^^^^^^
+A message resource receives/saves messages for each participant. The
+participant can fetch (GET) his messages from the resource. A message resource
+could hold its messages enduringly (see <<_postrouting>>), so new participants
+joining a community after a message has been sent to this community will also
+receive it. 
+
+GET::
+  Returns message with status code 200.
+DELETE::
+  Deletes message and returns deleted resource representation with ststus code 200.
+PUT::
+  Renew message and returns with status code 200.
+POST::
+  Illegal call. Returns with status code 405 (Method Not Allowed).
+
+Resource structure: `/<projectnamespace>/<name>/<id>`
+
+Subresource details
++++++++++++++++++++
+
+You can ask for detailed (meta) information of a posted message. Only the
+original sender or a receiver can do that:
+
+GET::
+  Returns details about the requested message.
+
+Resource structure: `/<projectnamespace>/<name>/<id>/details`
+
+You will get back something like this:
+
+ {
+   "receivers": [
+     {
+       "itsyou": false,
+       "mid": 1,
+       "cid": 2
+       "pid": 19,
+     },
+     {
+       "itsyou": false,
+       "mid": 4,
+       "cid": 3
+       "pid": 29,
+     }
+   ],
+   "senders": [
+     {
+       "mid": 5
+     },
+     {
+       "mid": 7
+     }
+   ],
+   "url": "courselinks/10",
+   "content_type": "application/json"
+   "owner": {
+     "pid": 3,
+     "itsyou": true
+   }
+ }
+
+The "receivers" and "senders" have corresponding arrays: The first array entry
+in "senders" has been addressed the first array entry of "receivers" and so on. 
+
+List resource
+^^^^^^^^^^^^^
+GET::
+  Returns URI message list  with status code 200. If there are no messages to
+  list the HTTP body will be empty (`Content-Length: 0`). The `Content-Type`
+  will be `text/uri-list`. The URI list will be represented by
+  http://www.rfc-ref.org/RFC-TEXTS/3986/chapter5.html[relative references]. URIs
+  are specified in http://www.rfc-ref.org/RFC-TEXTS/3986[RFC3986].
+DELETE::
+  Illegal call. Returns with status code 405 (Method Not Allowed).
+PUT::
+  Illegal call. Returns with status code 405 (Method Not Allowed).
+POST::
+  Creates new message, returns with status code 201 and a HTTP header
+  `Location:` providing the new message URI.
+
+Resource structure: `/<projectnamespace>/<name>`
+
+Subresource details
++++++++++++++++++++
+Now it's possible to ask for detailed (meta) information of a list resource.
+All querystrings supported my normal list resources could be used. Only the
+original sender can do that:
+
+GET::
+  Returns details about all resource URIs listed.
+
+Resource structure: `/<projectnamespace>/<name>/details`
+
+You will get back something like this:
+
+ [
+   {
+     "senders": [
+ 
+     ],
+     "receivers": [
+ 
+     ],
+     "url": "courselinks/35",
+     "content_type": "text/plain",
+     "owner": {
+       "pid": 3,
+       "itsyou": true
+     }
+   },
+   {
+     "senders": [
+       {
+         "mid": 2
+       }
+     ],
+     "receivers": [
+       {
+         "mid": 19,
+         "cid": 2,
+         "pid": 19,
+         "itsyou": false
+       }
+     ],
+     "url": "courselinks/36",
+     "content_type": "text/plain",
+     "owner": {
+       "pid": 3,
+       "itsyou": true
+     }
+   },
+   {
+     "senders": [
+       {
+         "mid": 2
+       }
+     ],
+     "receivers": [
+       {
+         "mid": 19,
+         "cid": 2,
+         "pid": 19,
+         "itsyou": false
+       }
+     ],
+     "url": "courselinks/37",
+     "content_type": "text/plain",
+     "owner": {
+       "pid": 3,
+       "itsyou": true
+     }
+   }
+ ]
+
+The first element of the returned array of the details list subresource
+probably needs some explanation. Both senders and receivers are empty lists.
+This means that the appropriate message isn't any more addressed to any
+participant. This further implies that all participants which had been
+addressed in the past have been received the message from their appropriate
+resource.  But why was the message then not deleted ? Because the
+resource has been configured to be "postrouted". If that has not been the case,
+ECS would has been removed the message.
+
+Querystrings
+++++++++++++
+To affect the returned representation you could assign the following
+querystrings to `X-EcsQueryStrings` header variable:
+
+receiver::
+  It's possible to filter the returned index from a list resource to only those
+  items to which the calling participant was formerly an addressed receiver:
+
+    curl .... -H 'X-EcsQueryStrings: receiver=true' -X GET https://server/<namespace>/<name>
+    This is also the default, therefore it could be omited.
+
+sender::
+  It's possible to filter the returned index from a list resource to only those
+  items to which the calling participant is the original sender:
+  
+    curl .... -H 'X-EcsQueryStrings: sender=true' -X GET https://server/<namespace>/<name>
+
+all::
+  It's possible to filter the returned index from a list resource to show all
+  messages either as addressed receiver or as original sender:
+
+    curl .... -H 'X-EcsQueryStrings: all=true' -X GET https://server/<namespace>/<name>
+
+Using the `X-EcsQueryStrings` header variable is the recommended way to use
+querystrings. If you have to assign multiple querystrings please delimit the
+querystrings by comma (,).
+
+Of course you can also specify the querystring by appending it to the end of
+the resource url, e.g.
+
+ curl .... -X GET https://server/<namespace>/<name>?all=true
+
+Queue resource
+^^^^^^^^^^^^^^
+The queue resource is modelled as a subresource of a list resource and it can
+operate either in lifo (last in first out) or fifo (first in first out) mode.
+
+GET::
+  Returns last (lifo) or first (fifo) message with status code 200. If there
+  are no more messages in queue you will get an empty message (`Content-Length:
+  0`) and also status code 200.
+DELETE::
+  Illegal call. Returns with status code 405 (Method Not Allowed).
+POST::
+  Returns last (lifo) or first (fifo) message with status code 200 and deletes it. 
+  If there are no more messages in queue you will get an empty message
+  (`Content-Length: 0`) and also status code 200.
+PUT::
+  Illegal call. Returns with status code 405 (Method Not Allowed).
+
+Resource structure: `/<projectnamespace>/<name>/fifo` or `/<projectnamespace>/<name>/lifo`
+
+Postrouting
+^^^^^^^^^^^
+If a resource has set its postroute flag, then all new participants will get
+postrouted this resources e.g. if you have posted some messages to a community
+named testcommunity and later joins a new participant to this community, he
+will get postrouted the former posted messages. 
+
+Participant Cluster
+~~~~~~~~~~~~~~~~~~~
+The ECS is able to cluster participants. In the ECS network a cluster is seen
+as an ordinary participant.
+
+Cluster building
+^^^^^^^^^^^^^^^^
+First lets show the topology of a clustered ECS network:
+
+ +---------+  +---------+  +---------+
+ | Partic. |  | Partic. |  | Partic. |
+ |    A    |  |    B    |  |    C    |
+ +---------+  +---------+  +---------+
+      |            |            |     
+      |            |            |     
+ +-----------------------------------+
+ |                ECS                |
+ +-----------------------------------+
+                   |                  
+                   |                  
+ +-----------------------------------+
+ | virtueller Participant (Cluster)  |
+ +--------+--------+--------+--------+
+ | Cluster| Cluster| Cluster| Cluster|
+ | Partic.| Partic.| Partic.| Partic.|
+ |    1   |    2   |   3    |   n    |
+ +--------+--------+--------+--------+
+
+
+1. The ECS registers a virtual participant. All cluster participants use this
+   registration, i.e. the ECS doesn't know which cluster participant is
+   communicating. This way you can scale your cluster easily by attaching
+   another cluster participant also using the previously generated virtual
+   participant registration. You don't have to make any further settings at
+   ECS.
+2. If you want to send a message to the cluster you only have to send it to the virtual
+   participant. When all cluster participants compete against each other to get
+   a message this would maybe the simplest resource access mode (message
+   dispatching). Every cluster participant have to access the appropriate
+   resource as a queue resource via DELETE method. This assures that every
+   message could only be fetched by one cluster participant.
+
+Cluster broadcasting
+^^^^^^^^^^^^^^^^^^^^
+In order to explicitely communicate with a cluster participant we have to use a
+broadcasting mechanism. Every resource could be used as a broadcasting
+resource. It only depends on how the cluster participants access this resource.
+They have to do it like this:
+
+1. Every cluster participant checks the broadcast resource as a queue resource with the idempotent
+   GET method and decides by looking inside the message if this message is
+   targeted to him. If it does belong to him he should compute and DELETE the
+   message. 
+2. The ECS garbage collects the broadcast resource at a default time period.
+
+
 

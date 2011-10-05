@@ -2,7 +2,7 @@ ECSA -- Elearning Community Service Architecture
 ================================================
 :author:          Heiko Bernlöhr
 :authorinitials:  hb
-:email:           Heiko.Bernloehr@FreeIT.de
+:email:           Info@FreeIT.de
 :website:         http://FreeIT.de
 :revdate:
 :revnumber:
