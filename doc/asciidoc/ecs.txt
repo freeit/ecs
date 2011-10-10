@@ -98,6 +98,48 @@ between a participant and a community:
  |participants|------------|memberships|------------|communities|
  +------------+            +-----------+            +-----------+
 
+[graphviz]
+---------------------------------------------------------------------
+digraph G { rankdir=LR; Graphviz->AsciiDoc->HTML}
+---------------------------------------------------------------------
+
+[graphviz]
+---------------------------------------------------------------------
+graph ER {
+  node [shape=box]; participants; memberships; communities;
+
+  participants -- memberships [label="1"];
+  memberships -- communities [label="N"];
+}
+---------------------------------------------------------------------
+
+[graphviz]
+---------------------------------------------------------------------
+graph ER {
+  node [shape=box]; course; institute; student;
+  node [shape=ellipse]; {node [label="name"] name0; name1; name2;}
+    code; grade; number;
+  node [shape=diamond,style=filled,color=lightgrey]; "C-I"; "S-C"; "S-I";
+
+  name0 -- course;
+  code -- course;
+  course -- "C-I" [label="n",len=1.00];
+  "C-I" -- institute [label="1",len=1.00];
+  institute -- name1;
+  institute -- "S-I" [label="1",len=1.00];
+  "S-I" -- student [label="n",len=1.00];
+  student -- grade;
+  student -- name2;
+  student -- number;
+  student -- "S-C" [label="m",len=1.00];
+  "S-C" -- course [label="n",len=1.00];
+
+  label = "\n\nEntity Relation Diagram\ndrawn by NEATO";
+  fontsize=5;
+}
+---------------------------------------------------------------------
+
+
 Therefore a participant can be associated to different communities. Every
 participant can inquire his membership ids by calling the memberships
 resource.
@@ -640,7 +682,7 @@ Resource structure: `/<projectnamespace>/<name>/fifo` or `/<projectnamespace>/<n
 Postrouting
 ^^^^^^^^^^^
 If a resource has set its postroute flag, then all new participants will get
-postrouted this resources e.g. if you have posted some messages to a community
+postrouted this resource e.g. if you have posted some messages to a community
 named testcommunity and later joins a new participant to this community, he
 will get postrouted the former posted messages. 
 
@@ -699,5 +741,59 @@ They have to do it like this:
    message. 
 2. The ECS garbage collects the broadcast resource at a default time period.
 
+Filter plugins
+--------------
+Messages could be changed at runtime by so called filter plugins. These filters
+could be attached to 5 different queues and triggered by one of the actions
+hereafter. The filter queues were mapped to a special path under the
+filesystem:  
+
+1. Show filter. Triggered when calling a message/queue resource with GET:
+   filter path: `app/controllers/<project-name-space>/filter/<name>/show`
+2. Index filter. Triggered when calling a list resource with GET:
+   filter path: `app/controllers/<project-name-space>/filter/<name>/index`
+3. Create filter. Triggered when calling a list resource with POST:
+   filter path: `app/controllers/<project-name-space>/filter/<name>/create`
+4. Update filter. Triggered when calling a message/queue resource with PUT:
+   filter path: `app/controllers/<project-name-space>/filter/<name>/update`
+5. Delete filter. Triggered when calling a message/queue resource with DELETE
+   filter path: `app/controllers/<project-name-space>/filter/<name>/delete`
+
+You're able to create as many filters you want. They will be all
+queued/concatenated in lexical order: 
 
 
+ unfiltered +-------+   +-------+   +-------+ filtered 
+ ---------->| 1-fil |-->| 2-fil |...| n-fil |--------->
+ message    +-------+   +-------+   +-------+ message  
+
+If a filter was created and copied into the appropriate filesystem path, it
+would be automatically activated at runtime without additional configuration.
+
+
+Filter template
+~~~~~~~~~~~~~~~
+A valid filter has to be a ruby module and following layout:
+
+ modul SomeModuleName
+   def self.start
+     # here comes the filter code
+   end
+ end
+
+The ECS core provides the constant `FILTER_API` as an API for accessing ECS messages:
+
+FILTER_API.params::
+  It's a hash to access the qureystrings of message call:
+
+   http://ecs.rus.uni-stuttgart.de/numlab/exercises/23?properties=name,description
+   ...
+   elements = FILTER_API.params["elements"].split(",")
+   ...
+
+FILTER_API.record::
+  This object provides access to the message body:
+
+   message = FILTER_API.record.body
+
+   
