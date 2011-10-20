@@ -72,8 +72,8 @@ download these static representations from the URLs assigned to the DATA_URL
 constatnts at top of the script and setup your own static LSFproxy data
 representations at your local web sever.
 
-Get, Delete and Update
-^^^^^^^^^^^^^^^^^^^^^^
+Delete
+^^^^^^
 After you have created some messages, you can of course DELETE them (you are
 the owner). But first you have to distinguish the resource id on ECS. Either
 you have noticed the id at creation time looking at the provided `Location`
@@ -90,15 +90,19 @@ deleting it:
   -c ... you want to work with courses
   -i ... resource id
   delete ... delete resource
-\end{code}
+----------------------------
+
+Update
+^^^^^^
 In order to update a resource call the script like this:
-\begin{code}
+
+----------------------------
   ./lsfproxy.sh -c -i 2445 -k 11 -u 4 update
   -c ... you want to work with courses
   -i ... resource id
   -k ... you address membership 11
   -u ... static course data with DATA_URL4
-  update ... POST this message to ECS
+  update ... PUT this message to ECS
 ----------------------------
 
 Show Memberships
@@ -112,7 +116,7 @@ You can also show your memberships by calling:
 Show Usage
 ^^^^^^^^^^
 And last you can show a usage help text by calling the script with no
-parameters and options or with the \kw{-h} option:
+parameters and options or with the `-h` option:
 
 ----------------------------
   ./lsfproxy.sh -h
