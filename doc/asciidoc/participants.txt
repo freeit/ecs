@@ -15,18 +15,18 @@ Technology / Architecture
 (((participant,architecture)))
 
 - item has to communicate with the ECS as a
-  http://en.wikipedia.org/wiki/REST[REST] client.
-- http://www.w3.org/Protocols/rfc2616/rfc2616.html[HTTP 1.1] as transport and
-  application protocol
+  {doctype@hyper:{rest_home_lnk}[REST]:REST footnote\:[REST Homepage see {rest_home_txt}]} client.
+- {doctype@hyper:{http_1_1_lnk}[HTTP 1.1]:HTTP 1.1 footnote\:[HTTP 1.1 see {http_1_1_txt}]}
+  as transport and application protocol
 - provide persistent connection (keep-alive)
 - provide SSL/TLS transport layer
-- has to use http://en.wikipedia.org/wiki/UTF-8[UTF-8] data encoding
+- has to use {doctype@hyper:{utf_8_lnk}[UTF-8]:UTF-8 footnote\:[UTF-8 see {utf_8_txt}]}
 
 Authentication
 ^^^^^^^^^^^^^^
 (((participant,authentication)))
 
-- http://en.wikipedia.org/wiki/Basic_access_authentication[HTTP Basic auth]
+- {doctype@hyper:{http_basic_auth_lnk}[HTTP Basic auth]:HTTP Basic auth footnote\:[HTTP Basic auth see {http_basic_auth_txt}]}
 - X.509 Certificates (SSL/TLS client authentication)
 
 Authorization
@@ -80,7 +80,7 @@ The <<fig:participant_coursedata_retrieval_indirectly>> shows the communication
 procedure how a LMS retrieves a resource representation (coursedata) indirectly
 through ECS. Indirect addressing takes place when the ECS returns resource
 representations with `Content-Type: text/uri-list` (mime type see 
-http://tools.ietf.org/html/rfc2483#section-5[rfc2483]).
+{doctype@hyper:{mime_type_lnk}[rfc2483]:rfc2483 footnote\:[mime type see {mime_type_txt}]}).
 
 1::
   First the LMS fetches (POST)  an event message from its event resource

@@ -9,13 +9,37 @@ ECSA -- Elearning Community Service Architecture
 :toc:
 :icons:
 :numbered:
+:numbered!:
+:ietf_json_schema_lnk:    http\://tools.ietf.org/html/draft-zyp-json-schema-03
+:ietf_json_schema_txt:   \http\://tools.ietf.org/html/draft-zyp-json-schema-03
+:json_schema_home_lnk:    http\://json-schema.org 
+:json_schema_home_txt:   \http\://json-schema.org 
+:lsfproxy_sh_lnk:    http\://repo.or.cz/w/ecs.git/blob_plain/HEAD\:/campusconnect/scripts/lsfproxy.sh
+:lsfproxy_sh_txt:   \http\://repo.or.cz/w/ecs.git/blob_plain/HEAD\:/campusconnect/scripts/lsfproxy.sh
+:rest_home_lnk:  http\://en.wikipedia.org/wiki/REST
+:rest_home_txt: \http\://en.wikipedia.org/wiki/REST
+:http_1_1_lnk:   http\://www.w3.org/Protocols/rfc2616/rfc2616.html
+:http_1_1_txt:  \http\://www.w3.org/Protocols/rfc2616/rfc2616.html
+:utf_8_lnk:  http\://en.wikipedia.org/wiki/UTF-8
+:utf_8_txt: \http\://en.wikipedia.org/wiki/UTF-8
+:http_basic_auth_lnk:  http\://en.wikipedia.org/wiki/Basic_access_authentication
+:http_basic_auth_txt: \http\://en.wikipedia.org/wiki/Basic_access_authentication
+:mime_type_lnk:  http\://tools.ietf.org/html/rfc2483#section-5
+:mime_type_txt: \http\://tools.ietf.org/html/rfc2483#section-5
+:http_cookies_lnk:   http\://en.wikipedia.org/wiki/HTTP_cookie
+:http_cookies_txt:  \http\://en.wikipedia.org/wiki/HTTP_cookie
+:ecsa_examples_lnk:  https\://ecs.uni-stuttgart.de/ecsa-wiki/HeikoBernloehr/FreeLancer/ECS/ecs2/core/examples 
+:ecsa_examples_txt: \https\://ecs.uni-stuttgart.de/ecsa-wiki/HeikoBernloehr/FreeLancer/ECS/ecs2/core/examples 
+:relative_uri_lnk:   http\://www.rfc-ref.org/RFC-TEXTS/3986/chapter5.html
+:relative_uri_txt:  \http\://www.rfc-ref.org/RFC-TEXTS/3986/chapter5.html
+:uri_lnk:  http\://www.rfc-ref.org/RFC-TEXTS/3986
+:uri_txt: \http\://www.rfc-ref.org/RFC-TEXTS/3986
 
 include::overview.txt[]
 include::participants.txt[]
 include::ecs.txt[]
 include::campusconnect.txt[]
 
-:numbered!:
 
 ////////////////////
 [appendix]

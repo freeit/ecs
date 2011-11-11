@@ -33,8 +33,8 @@ could be substituted with curl scripts/calls. In presence of a LSFproxy, its
 resource representations has to be retrieved indirectly through ECS (see
 <<_retrieving_resource_representations_indirectly>>). For each development
 party you should create a separate LSFproxy participant at ECS. For easier
-usage we provide a shell script
-http://repo.or.cz/w/ecs.git/blob_plain/HEAD:/campusconnect/scripts/lsfproxy.sh[(LSFproxy.sh)]
+usage we provide a
+{doctype@hyper:{lsfproxy_sh_lnk}[shell script]:shell script footnote\:[LSFproxy shell script see {lsfproxy_sh_txt}]}
 simulating an LSFproxy. Please have a look at the top of the script and adjust
 the appropriate lines. For development we provide an ECS, LSFproxy certificates
 and LSFproxy data. Please contact us (info[at]freeit[dot]de). Of course you can
@@ -140,10 +140,10 @@ application. So please adjust it to your needs.
 JSON-Schemas
 ~~~~~~~~~~~~
 A json media type for describing the structure and meaning of json documents.
-It's http://tools.ietf.org/html/draft-zyp-json-schema-03[defined] as an
-Internet-Draft working document of the IETF. There is also a
-http://json-schema.org[homepage] where you can start to discover more over
-JSON-Schemas.
+It's {doctype@hyper:{ietf_json_schema_lnk}[defined]:defined} as an Internet-Draft
+working document of the IETF{doctype@hyper:.:footnote\:[JSON-Schemas IETF see {ietf_json_schema_txt}].}
+There is also a homepage where you can start to discover more over
+{doctype@hyper:{json_schema_home_lnk}[JSON-Schemas]:JSON-Schemas footnote\:[JSON-Schemas Homepage see {json_schema_home_txt}]}.
 
 All resource representations must have a `Content-Type` header variable
 containing an optional parameter `profile` pointing to its describing
@@ -171,33 +171,52 @@ Resources
 ~~~~~~~~~
 /campusconnect/courses
 ^^^^^^^^^^^^^^^^^^^^^^
-https://ecs.uni-stuttgart.de/ecsa-wiki/CampusConnect/Arbeitspakete/EcsREST/CmsCourses[example], 
-http://repo.or.cz/w/ecs.git/blob_plain/HEAD:/campusconnect/schemas/cc_courses.schema.json[schema]
+{hyperdoc#}https://ecs.uni-stuttgart.de/ecsa-wiki/CampusConnect/Arbeitspakete/EcsREST/CmsCourses[example],
+{hyperdoc#}http://repo.or.cz/w/ecs.git/blob_plain/HEAD:/campusconnect/schemas/cc_courses.schema.json[schema]
+{hyperdoc%}example (see \https://ecs.uni-stuttgart.de/ecsa-wiki/CampusConnect/Arbeitspakete/EcsREST/CmsCourses),
+
+{hyperdoc%}schema (see \http://repo.or.cz/w/ecs.git/blob_plain/HEAD:/campusconnect/schemas/cc_courses.schema.json)
 
 /campusconnect/organisation_units
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-https://ecs.uni-stuttgart.de/ecsa-wiki/CampusConnect/Arbeitspakete/EcsREST/CmsInstitutions[example], 
-http://repo.or.cz/w/ecs.git/blob_plain/HEAD:/campusconnect/schemas/cc_organisation_units.schema.json[schema]
+{hyperdoc#}https://ecs.uni-stuttgart.de/ecsa-wiki/CampusConnect/Arbeitspakete/EcsREST/CmsInstitutions[example], 
+{hyperdoc#}http://repo.or.cz/w/ecs.git/blob_plain/HEAD:/campusconnect/schemas/cc_organisation_units.schema.json[schema]
+{hyperdoc%}example (see \https://ecs.uni-stuttgart.de/ecsa-wiki/CampusConnect/Arbeitspakete/EcsREST/CmsInstitutions), 
+
+{hyperdoc%}schema (see \http://repo.or.cz/w/ecs.git/blob_plain/HEAD:/campusconnect/schemas/cc_organisation_units.schema.json)
 
 /campusconnect/terms
 ^^^^^^^^^^^^^^^^^^^^
-https://ecs.uni-stuttgart.de/ecsa-wiki/CampusConnect/Arbeitspakete/EcsREST/CmsSemesters[example], 
-http://repo.or.cz/w/ecs.git/blob_plain/HEAD:/campusconnect/schemas/cc_terms.schema.json[schema]
+{hyperdoc#}https://ecs.uni-stuttgart.de/ecsa-wiki/CampusConnect/Arbeitspakete/EcsREST/CmsSemesters[example], 
+{hyperdoc#}http://repo.or.cz/w/ecs.git/blob_plain/HEAD:/campusconnect/schemas/cc_terms.schema.json[schema]
+{hyperdoc%}example (see \https://ecs.uni-stuttgart.de/ecsa-wiki/CampusConnect/Arbeitspakete/EcsREST/CmsSemesters), 
+
+{hyperdoc%}schema (see \http://repo.or.cz/w/ecs.git/blob_plain/HEAD:/campusconnect/schemas/cc_terms.schema.json)
 
 /campusconnect/course_members
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-https://ecs.uni-stuttgart.de/ecsa-wiki/CampusConnect/Arbeitspakete/EcsREST/CmsCourseMembers[example], 
-http://repo.or.cz/w/ecs.git/blob_plain/HEAD:/campusconnect/schemas/cc_course_members.schema.json[schema]
+{hyperdoc#}https://ecs.uni-stuttgart.de/ecsa-wiki/CampusConnect/Arbeitspakete/EcsREST/CmsCourseMembers[example], 
+{hyperdoc#}http://repo.or.cz/w/ecs.git/blob_plain/HEAD:/campusconnect/schemas/cc_course_members.schema.json[schema]
+{hyperdoc%}example (see \https://ecs.uni-stuttgart.de/ecsa-wiki/CampusConnect/Arbeitspakete/EcsREST/CmsCourseMembers), 
+
+{hyperdoc%}schema (see \http://repo.or.cz/w/ecs.git/blob_plain/HEAD:/campusconnect/schemas/cc_course_members.schema.json)
 
 /campusconnect/directory_trees
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-https://ecs.uni-stuttgart.de/ecsa-wiki/CampusConnect/Arbeitspakete/EcsREST/CmsDirectoryTrees[example], 
-http://repo.or.cz/w/ecs.git/blob_plain/HEAD:/campusconnect/schemas/cc_directory_trees.schema.json[schema]
+{hyperdoc#}https://ecs.uni-stuttgart.de/ecsa-wiki/CampusConnect/Arbeitspakete/EcsREST/CmsDirectoryTrees[example], 
+{hyperdoc#}http://repo.or.cz/w/ecs.git/blob_plain/HEAD:/campusconnect/schemas/cc_directory_trees.schema.json[schema]
+{hyperdoc%}example (see \https://ecs.uni-stuttgart.de/ecsa-wiki/CampusConnect/Arbeitspakete/EcsREST/CmsDirectoryTrees),
+
+{hyperdoc%}schema (see \http://repo.or.cz/w/ecs.git/blob_plain/HEAD:/campusconnect/schemas/cc_directory_trees.schema.json)
 
 /campusconnect/courselinks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
-https://ecs.uni-stuttgart.de/ecsa-wiki/CampusConnect/Arbeitspakete/EcsREST/CmsCourselinks[example], 
-http://repo.or.cz/w/ecs.git/blob_plain/HEAD:/campusconnect/schemas/cc_courselinks.schema.json[schema]
+{hyperdoc#}https://ecs.uni-stuttgart.de/ecsa-wiki/CampusConnect/Arbeitspakete/EcsREST/CmsCourselinks[example], 
+{hyperdoc#}http://repo.or.cz/w/ecs.git/blob_plain/HEAD:/campusconnect/schemas/cc_courselinks.schema.json[schema]
+{hyperdoc%}example (see \https://ecs.uni-stuttgart.de/ecsa-wiki/CampusConnect/Arbeitspakete/EcsREST/CmsCourselinks),
+
+{hyperdoc%}schema (see \http://repo.or.cz/w/ecs.git/blob_plain/HEAD:/campusconnect/schemas/cc_courselinks.schema.json)
+
 
 ///////////////////////////////
 

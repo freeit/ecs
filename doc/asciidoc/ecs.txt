@@ -99,9 +99,8 @@ between a participant and a community:
  +------------+            +-----------+            +-----------+
 
 Therefore a participant can be associated to different communities. Every
-participant can inquire his membership ids by calling the memberships
-resource.
-// make link to memberships
+participant can inquire his membership ids by calling the 
+{doctype@hyper:<<_memberships,memberships resource>>:memberships resource (see <<_memberships>>)}.
 
 Community names and ids
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -110,8 +109,8 @@ If you address a community you implicit address all members of the community.
 This applies also to the sender joining the receiver community if the sender
 has set his community_selfrouting flag (default off), otherwise the sender will
 be implicitly excluded from the receiver list. Every participant can inquire
-his communities memberships by calling the memberships resource.
-// make link to memberships
+his communities memberships by calling the 
+{doctype@hyper:<<_memberships,memberships resource>>:memberships resource (see <<_memberships>>)}.
 
 Create a resource
 ^^^^^^^^^^^^^^^^^^
@@ -159,13 +158,11 @@ If community selfrouting is activated at the participant (administration area)
 you can decide if you also want to receive the message which you send to an
 appropriate community, i.e. you get an event notification (if events on this
 resource is activated) and you get it listed by its
-https://ecs.uni-stuttgart.de/ecsa-wiki/HeikoBernloehr/FreeLancer/ECS/ecs2/core#list-ressource[list
-resource] and could access it through its
-https://ecs.uni-stuttgart.de/ecsa-wiki/HeikoBernloehr/FreeLancer/ECS/ecs2/core#queue-ressource[queue
-resource]. Of course, as sender of the message you can always access it by its
-https://ecs.uni-stuttgart.de/ecsa-wiki/HeikoBernloehr/FreeLancer/ECS/ecs2/core#message-resource[message
-resource]. 
-
+{doctype@hyper:<<_list_resource,list resource>>:list resource (see <<_list_resource>>)}.
+and could access it through its
+{doctype@hyper:<<_queue_resource,queue resource>>:queue resource (see <<_queue_resource>>)}.
+Of course, as sender of the message you can always access it by its
+{doctype@hyper:<<_message_resource,message resource>>:message resource (see <<_message_resource>>)}.
 
 Authentication
 ~~~~~~~~~~~~~~
@@ -213,8 +210,9 @@ Additionally those participants were automatically joined to the 'public'
 community. Further their lifetime will be limited and all resources will be
 silently deleted after this lifetime becomes zero. With succesional accesses to
 ECS this lifetime will be refreshed. For general cookie handling see also
-http://en.wikipedia.org/wiki/HTTP_cookie[HTTP cookies]. See also
-https://ecs.uni-stuttgart.de/ecsa-wiki/HeikoBernloehr/FreeLancer/ECS/ecs2/core/examples[examples].
+{doctype@hyper:{http_cookies_lnk}[HTTP cookies]:HTTP cookies footnote\:[HTTP cookies see {http_cookies_txt}]}.
+See also ECS curl
+{doctype@hyper:{ecsa_examples_lnk}[examples]:examples footnote\:[ECS curl examples see {ecsa_examples_txt}]}.
 
 
 System resources
@@ -341,8 +339,8 @@ grant each participant authorization to consume services from any
 service-providing-participant in an ECS network.
 
 The interface is the same as for
-https://ecs.uni-stuttgart.de/ecsa-wiki/HeikoBernloehr/FreeLancer/ECS/ecs2/core#application_resources[application
-resources]. If you want to create an authorization token, you have to provide
+{doctype@hyper:<<_application_specific_resources,application specific resources>>:application specific resources (see <<_application_specific_resources>>)}.
+If you want to create an authorization token, you have to provide
 at least a json formated URL (authorization context) as body text:
 
 -------------------------------------------------------
@@ -491,8 +489,9 @@ GET::
   Returns URI message list  with status code 200. If there are no messages to
   list the HTTP body will be empty (`Content-Length: 0`). The `Content-Type`
   will be `text/uri-list`. The URI list will be represented by
-  http://www.rfc-ref.org/RFC-TEXTS/3986/chapter5.html[relative references]. URIs
-  are specified in http://www.rfc-ref.org/RFC-TEXTS/3986[RFC3986].
+  {doctype@hyper:{relative_uri_lnk}[relative references]:relative references footnote\:[relative URIs see {relative_uri_txt}]}.
+  URIs are specified in
+  {doctype@hyper:{uri_lnk}[RFC3986]:RFC3986 footnote\:[URIs see {uri_txt}]}.
 DELETE::
   Illegal call. Returns with status code 405 (Method Not Allowed).
 PUT::
@@ -706,16 +705,16 @@ could be attached to 5 different queues and triggered by one of the actions
 hereafter. The filter queues were mapped to a special path under the
 filesystem:  
 
-1. Show filter. Triggered when calling a message/queue resource with GET:
-   filter path: `app/controllers/<project-name-space>/filter/<name>/show`
-2. Index filter. Triggered when calling a list resource with GET:
-   filter path: `app/controllers/<project-name-space>/filter/<name>/index`
-3. Create filter. Triggered when calling a list resource with POST:
-   filter path: `app/controllers/<project-name-space>/filter/<name>/create`
-4. Update filter. Triggered when calling a message/queue resource with PUT:
-   filter path: `app/controllers/<project-name-space>/filter/<name>/update`
-5. Delete filter. Triggered when calling a message/queue resource with DELETE
-   filter path: `app/controllers/<project-name-space>/filter/<name>/delete`
+1. Show filter. Triggered when calling a message/queue resource with GET. Filter path: +
+   `app/controllers/<project-name-space>/filter/<name>/show`
+2. Index filter. Triggered when calling a list resource with GET. Filter path: +
+   `app/controllers/<project-name-space>/filter/<name>/index`
+3. Create filter. Triggered when calling a list resource with POST. Filter path: +
+   `app/controllers/<project-name-space>/filter/<name>/create`
+4. Update filter. Triggered when calling a message/queue resource with PUT. Filter path: +
+   `app/controllers/<project-name-space>/filter/<name>/update`
+5. Delete filter. Triggered when calling a message/queue resource with DELETE. Filter path: +
+   `app/controllers/<project-name-space>/filter/<name>/delete`
 
 You're able to create as many filters you want. They will be all
 queued/concatenated in lexical order: 
