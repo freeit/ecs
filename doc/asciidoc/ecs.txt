@@ -218,12 +218,10 @@ See also ECS curl
 System resources
 ~~~~~~~~~~~~~~~~
 (((resources)))
-(((system resources)))
 (((ECS,system resources)))
 
 Events
 ^^^^^^
-(((events resource)))
 (((ECS,events resource)))
 Provides a general queue which accumulates the resource tasks: creation,
 deletion and renewal. Available representations are application/json and
@@ -263,10 +261,30 @@ Following a sample representation in JSON:
 ]
 ------------------------------------------
 
+////
+TODO:
+extend the resource representation of sys/auths with a "value" attribute, e.g.:
+
+  {
+    "status": "created",
+    "ressource": "numlab/exercises/7",
+    "value": "data"
+  }
+
+Possible values for the "value" attribute are:
+
+"data"::
+  Represents normal resource data.
+"reference"::
+  Indicates that the addressed resource on the ECS provides a URL either
+  pointing to the real resource data as in
+  {doctype@hyper:<<_direct_participant_to_participant_communication,communication procedure between LSF-Proxy &harr; ECS &harr; LMS>>:communication procedure between LSF-Proxy &harr; ECS &harr; LMS (see <<_direct_participant_to_participant_communication>>)} 
+  or to further indirect addresses (indirect address chaining). 
+////
+
 
 Memberships
 ^^^^^^^^^^^
-(((memberships resource)))
 (((ECS,memberschips resource)))
 Provides information of the affiliation of the calling participant to the
 available communities. Available representations are `application/json` and
@@ -332,7 +350,6 @@ Following a sample representation in JSON:
 
 Auths
 ^^^^^
-(((auths resource)))
 (((ECS,auths resource)))
 This means authorization through one touch tokens. Provides a mechanism to
 grant each participant authorization to consume services from any
@@ -385,7 +402,6 @@ body: 'Authorization token outtimed'.
 Application specific resources
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 (((resources)))
-(((application resources)))
 (((ECS,application resources)))
 All application specific resources have to be configured at ECS. There are three types of application specific resources:
 
@@ -642,6 +658,36 @@ If a resource has set its postroute flag, then all new participants will get
 postrouted this resource e.g. if you have posted some messages to a community
 named testcommunity and later joins a new participant to this community, he
 will get postrouted the former posted messages. 
+
+JSON-Schemas
+~~~~~~~~~~~~
+A json media type for describing the structure and meaning of json documents.
+It's {doctype@hyper:{ietf_json_schema_lnk}[defined]:defined} as an Internet-Draft
+working document of the IETF{doctype@hyper:.:footnote\:[JSON-Schemas IETF see {ietf_json_schema_txt}].}
+There is also a homepage where you can start to discover more over
+{doctype@hyper:{json_schema_home_lnk}[JSON-Schemas]:JSON-Schemas footnote\:[JSON-Schemas Homepage see {json_schema_home_txt}]}.
+
+All resource representations must have a `Content-Type` header variable
+containing an optional parameter `profile` pointing to its describing
+schema. For a respond on a `/campusconnect/courses` request this could be:
+
+----------------------------
+Content-Type: application/json; \
+              profile=http://repo.or.cz/w/ecs.git/blob_plain/ \
+              e5cc81b2201ac24294d2ac3e732f9ddac954cc84:/ \
+              campusconnect/schemas/cc_courses.schema.json
+----------------------------
+
+It's up to you to validate and check the received data against the provided
+schema or to decide if you are able to process the format just receiving. There
+is always a version id inbetween the `profile` URL representing the commit id
+of the git repository. For the last `Content-Type` example this was
+`e5cc81b2201ac24294d2ac3e732f9ddac954cc84`. You can always ask for the latest
+schema of an appropriate resourse by using `HEAD` as the version id.
+
+Of course you can use the schema of an appropriate resource for discovering the
+names and types of the data elements in order to match them dynamically to
+other internal meta data of your application.
 
 Participant Cluster
 ~~~~~~~~~~~~~~~~~~~

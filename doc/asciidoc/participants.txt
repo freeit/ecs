@@ -34,9 +34,10 @@ Authorization
 (((participant,authorization)))
 
 A client should be able to use a simple "one touch token" authorization through
-the ECS /authtokens ressource. This authorization should be used either in
-redirecting users clicking on course links or maybe used in accessing
-participants in interconnected ECS networks. 
+the ECS `sys/auths` resource. This token could be used to accomplish deligated
+authorization for accessing resources on participants of a common ECSA network.
+E.g. in redirecting users clicking on course links or in
+{doctype@hyper:<<_direct_participant_to_participant_communication,direct communicating of participants>>:direct communicating of participants (see <<_direct_participant_to_participant_communication>>)}.
 
 //////////////////////////////////
 ECS REST interface
@@ -71,48 +72,126 @@ Communication procedures / scenarios
 In order to take part in an ECSA network a participant has to communicate with
 the ECS and other participants in different ways.
 
-Retrieving resource representations indirectly
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-(((participant,retrieving resources indirectly)))
-[[heading:participant_coursedata_retrieval_indirectly]]
+Direct participant to participant communication
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+This communication procedure takes place if a participant wants to get resource
+data directly from another participant. Normally all participants communicate
+only with the ECS and not face to face to each other. For example
+this could be necessary if you're sharing a central ECS with other
+organizations and you are not allowed to give away sensible data out of the
+control of your organization. Of course therefore the communicating
+participants have to be in the controlling area of your organization.
 
-The <<fig:participant_coursedata_retrieval_indirectly>> shows the communication
-procedure how a LMS retrieves a resource representation (coursedata) indirectly
-through ECS. Indirect addressing takes place when the ECS returns resource
-representations with `Content-Type: text/uri-list` (mime type see 
-{doctype@hyper:{mime_type_lnk}[rfc2483]:rfc2483 footnote\:[mime type see {mime_type_txt}]}).
+Assuming following situation: A Proxy (first participant) wants to send course data
+to a LMS (second participant). This message holds sensible data,
+which doesn't have to leave the controlling area of the organization by law.
+Both participants were controlled by the organization. 
+
+This procedure guarantiee that the appropriate course data will remain on the
+proxy until the LMS has successfully fetched the data.
+
+[[fig:direct_participant_to_participant_communication]]
+
+
+               +---------+                                  
+               |auths:ECS|-----------------------------------+   
+               +---------+    <--                            |   
+                    |         2.3.1:auth2:=delete(auth.hash) |   
+                    |                                        |
+                    | ^                                      |   
+                    | | 2.2:auth:=post()                     |
+                    |                                        |   
+                    |   2.3:coursedata:=get(auth.hash)       |
+                    |    --->                                |
+                +------+                     +------------------+
+                | :LMS |---------------------|746354389534:Proxy|       
+                +------+                     +------------------+
+                 |    |                                      |  
+  2:ev:=post() | |    | | 2.1:coursedata_url:=get()          |
+               v |    | v                                    |  
+                 |    |                                      |  
+                 |    | | 2.4:delete()                       |  
+                 |    | v                                    |  
+                 |    |                                      |  
+  +---------------+   |                                      |
+  |events/fifo:ECS|   |<<local>>                             |
+  +---------------+  +--------------------+                  |
+                 |   | cc/courses/345:ECS |                  |
+                 |   +--------------------+                  |
+                 |                                           |
+                 |                                           |
+               ^ |                                           |
+ 3:ev2:=post() | |                                           |
+                 |                                           |
+                 |       +------+                            |
+                 +-------|:Proxy|----------------------------+
+                         +------+      --->
+                             |         3.1:delete()
+                             |
+                             | | 1:create()
+                             | v
+                             |
+                     +--------------+
+                     |cc/courses:ECS|
+                     +--------------+
+
+     +-----+
+     |     | | 1.1:make_new_create_event(cc/courses/345)
+ +----+    | v
+ |:ECS|    |
+ +----+    | | 2.5[IF no more participant references]:
+     |     | v    make_new_no-more-reference_event(cc/courses/345)
+     |     |  
+     +-----+  
 
 1::
-  First the LMS fetches (POST)  an event message from its event resource
-  (`/sys/events/fifo`) of ECS , which gives it a new or updated course resource
-  meta data URL on ECS. Supposing this would be `/campusconnect/course/5` .
+  The proxy creates a new course representation on the ECS, which was addressed
+  to the LMS. The proxy doesn't store the sensible data there, instead it
+  stores an URL were the real data could be fetched.
 1.1::
+  The ECS make a new create event on the event queue of the receiving LMS,
+  storing the new generated resource URL `cc/courses/345` in it.
+2::
+  Then the LMS fetches (POST)  this event message from its event resource
+  (`sys/events/fifo`) of ECS , which gives it a new or updated coursedata URL
+  on ECS. This would be `cc/courses/345` with `Content-Type: text/uri-list`
+  (mime type see {doctype@hyper:{mime_type_lnk}[rfc2483]:rfc2483 footnote\:[mime type see {mime_type_txt}]}).
+2.1::
   Now the LMS takes this URL and fetches (GET) it from ECS (the LMS only
   fetches the message via a GET, so that the message will still be there).
   Only now the LMS gets the real resource URL to fetch the desired course data
-  from the proxy. This url maybe an encoded url like
-  `https://.../58680c636c8bc4a16e047d758f2e7773118fa141`
-1.2::
-  Next the LMS fetches (POST) a one touch token from the `/sys/auths` resource
+  from the proxy. This url maybe an obscured url like
+  `https://.../746354389534`
+2.2::
+  Next the LMS fetches (POST) a one touch token from the `sys/auths` resource
   of ECS in case the proxy use it for authorization against ECS.
-1.3::
+2.3::
   Then the LMS gets (GET) the actual course data from the proxy URL provided by
-  the received message in 1.1 . 
-1.4::
-  Until it will get back the course resource representation in 1.3
-  successfully, it deletes (DELETE) the message `/campusconnect/course/5`
-  received in 1.1 on ECS.
+  the received message in 2.1 . 
+2.3.1::
+  The proxy returns the coursedata to the LMS if the auth token (auth.hash)
+  provided in 2.3 is still available at `sys/auths` resource on ECS.
+2.4::
+  When it will get back the course resource representation in 2.3
+  successfully, it deletes (DELETE) the message `cc/courses/345`
+  received in 2.1 on ECS.
+2.5::
+  If there are no further references on `cc/courses/345` ECS makes a new
+  no-more-reference event for `cc/courses/345` addressed to the proxy (original
+  sender).
+3::
+  Proxy is fetching (POST) its events queuer.
+3.1::
+  If the received event in 3 was a no-more-reference event for
+  `cc/courses/345`, Proxy knows, that nobody further references
+  `cc/courses/345`. This tells the Proxy, that every addressed participants have
+  fetched `cc/courses/345` on ECS and hence all participants has fetched
+  `https://.../746354389534`. If this resource was not configured persistent Proxy
+  could delete `https://.../746354389534`.
 
-This procedure guarantiee that the appropriate course data will remain on the
-proxy until the LMS has successfully fetched the data, because after the
-message `/campusconnect/course/5` has been deleted by the LMS the proxy
-will be informed by the ECS, so that the real course data  could be deleted.
-Of course this information occurs only if all addressed participants has
-successfully fetched the message on the proxy and if the
-`/campusconnect/courses` resource is not tagged as a postrouted resource. 
 
-.Indirect LMS coursedata retrieval communication procedure.
-[[fig:participant_coursedata_retrieval_indirectly]]
+
+///////////////////////
 ifdef::my_use_eps[]
 image::diagrams/participant_course_retrieval_indirectly.eps[Indirect LMS coursedata retrieval]
 endif::my_use_eps[]
@@ -129,15 +208,15 @@ ifdef::my_use_txt[]
                 +---------+                                  
                      |                                       
                      | ^                                     
-                     | | 1.2:auth_repr:=post()               
+                     | | 1.2:auth:=post()               
                      |                                       
-                     |   1.3:course_repr:=get(auth_repr.hash)
+                     |   1.3:course:=get(course_url,auth.hash)
                      |    ---> 
-                 +------+                 +----------+       
-                 | :LMS |-----------------|data:Proxy|       
-                 +------+                 +----------+       
+                 +------+                 +---------------------+
+                 | :LMS |-----------------|course_resource:Proxy|       
+                 +------+                 +---------------------+
                    |   |                                     
- 1:event:=post() | |   |  | 1.1:meta_course_resource:=get()  
+ 1:event:=post() | |   |  | 1.1:course_url:=get()  
                  v |   |  v                                  
                    |   |                                     
                    |   |  | 1.4:delete()                     
@@ -148,4 +227,5 @@ ifdef::my_use_txt[]
     +---------------+ +----------------------------+         
 
 endif::my_use_txt[]
+///////////////////////
 

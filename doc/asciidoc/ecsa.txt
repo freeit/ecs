@@ -9,7 +9,6 @@ ECSA -- Elearning Community Service Architecture
 :toc:
 :icons:
 :numbered:
-:numbered!:
 :ietf_json_schema_lnk:    http\://tools.ietf.org/html/draft-zyp-json-schema-03
 :ietf_json_schema_txt:   \http\://tools.ietf.org/html/draft-zyp-json-schema-03
 :json_schema_home_lnk:    http\://json-schema.org 
