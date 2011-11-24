@@ -101,7 +101,6 @@ curl -i -H 'X-EcsAuthId: pid02' \
         -H 'Accept: text/plain; application/json' \
         -X GET \             
         http://ecs.freeit.de/campusconnect/courselinks/fifo
-\end{verbatim}                 
 --------------------------------------------------
 
 Of course, there are several ways  to operate on a resource. 
