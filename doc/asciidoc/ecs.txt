@@ -158,7 +158,7 @@ If community selfrouting is activated at the participant (administration area)
 you can decide if you also want to receive the message which you send to an
 appropriate community, i.e. you get an event notification (if events on this
 resource is activated) and you get it listed by its
-{doctype@hyper:<<_list_resource,list resource>>:list resource (see <<_list_resource>>)}.
+{doctype@hyper:<<_list_resource,list resource>>:list resource (see <<_list_resource>>)}
 and could access it through its
 {doctype@hyper:<<_queue_resource,queue resource>>:queue resource (see <<_queue_resource>>)}.
 Of course, as sender of the message you can always access it by its

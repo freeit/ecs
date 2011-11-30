@@ -149,7 +149,7 @@ proxy until the LMS has successfully fetched the data.
   to the LMS. The proxy doesn't store the sensible data there, instead it
   stores an URL were the real data could be fetched.
 1.1::
-  The ECS make a new create event on the event queue of the receiving LMS,
+  The ECS makes a new create event on the event queue of the receiving LMS,
   storing the new generated resource URL `cc/courses/345` in it.
 2::
   Then the LMS fetches (POST)  this event message from its event resource
@@ -180,7 +180,7 @@ proxy until the LMS has successfully fetched the data.
   no-more-reference event for `cc/courses/345` addressed to the proxy (original
   sender).
 3::
-  Proxy is fetching (POST) its events queuer.
+  Proxy is fetching (POST) its events queue.
 3.1::
   If the received event in 3 was a no-more-reference event for
   `cc/courses/345`, Proxy knows, that nobody further references
