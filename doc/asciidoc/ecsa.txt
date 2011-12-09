@@ -29,8 +29,8 @@ ECSA -- Elearning Community Service Architecture
 :http_cookies_txt:  \http\://en.wikipedia.org/wiki/HTTP_cookie
 :ecsa_examples_lnk:  https\://ecs.uni-stuttgart.de/ecsa-wiki/HeikoBernloehr/FreeLancer/ECS/ecs2/core/examples 
 :ecsa_examples_txt: \https\://ecs.uni-stuttgart.de/ecsa-wiki/HeikoBernloehr/FreeLancer/ECS/ecs2/core/examples 
-:relative_uri_lnk:   http\://www.rfc-ref.org/RFC-TEXTS/3986/chapter5.html
-:relative_uri_txt:  \http\://www.rfc-ref.org/RFC-TEXTS/3986/chapter5.html
+:relative_uri_lnk:   http\://tools.ietf.org/html/rfc3986#section-5
+:relative_uri_txt:  \http\://tools.ietf.org/html/rfc3986#section-5
 :uri_lnk:  http\://www.rfc-ref.org/RFC-TEXTS/3986
 :uri_txt: \http\://www.rfc-ref.org/RFC-TEXTS/3986
 

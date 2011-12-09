@@ -533,12 +533,8 @@ You will get back something like this:
 
  [
    {
-     "senders": [
- 
-     ],
-     "receivers": [
- 
-     ],
+     "senders": [ ],
+     "receivers": [ ],
      "url": "courselinks/35",
      "content_type": "text/plain",
      "owner": {
@@ -606,10 +602,10 @@ querystrings to `X-EcsQueryStrings` header variable:
 
 receiver::
   It's possible to filter the returned index from a list resource to only those
-  items to which the calling participant was formerly an addressed receiver:
+  items to which the calling participant was formerly an addressed receiver
+  (this is also the default, therefore it could be omited):
 
     curl .... -H 'X-EcsQueryStrings: receiver=true' -X GET https://server/<namespace>/<name>
-    This is also the default, therefore it could be omited.
 
 sender::
   It's possible to filter the returned index from a list resource to only those
