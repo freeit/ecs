@@ -38,6 +38,7 @@ include::overview.txt[]
 include::participants.txt[]
 include::ecs.txt[]
 include::campusconnect.txt[]
+include::interconnectivity.txt[]
 
 
 ////////////////////

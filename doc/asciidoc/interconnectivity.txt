@@ -1,0 +1,60 @@
+Interconnectivity
+-----------------
+We want to interconnect several ECSs without any change to their joined
+participants. In other words this interconnection should be fully transparent
+to the appropriate participants. So there is no need for extra registration
+overhead to other ECSs. From the viewpoint of a participant there are just some
+more participants joining the communities of its primary ECS.
+
+Necessary extensions to ECS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* In order to make use of event generation system the `sys/memberships`
+  resource should be mapped to a normal application resource.
+* Make ressources model an application resource `sys/resources`. 
+* participants should get a new attribute `foreign` which marks
+  them as members from another ECS.
+* resources should get a new attribute `foreign` which marks
+  them coming from another ECS.
+* communities should get a new attribute `foreign` which marks
+  them coming from another ECS.
+* ECS must provide full participant functionality.
+
+Interconnection procedure
+~~~~~~~~~~~~~~~~~~~~~~~~~
+* To bidirectional interconnect two ECSs they both have to be participants of
+  each other i.e. they have to register themself to each other.
+* To unidirectional interconnect two ECSs only one of the ECS has to be
+  registered at the other ECS. Then the registered ECS(2) provides its participants
+  addressability to the participants of the registering ECS(1).  
+
+     +----+                     +----+    
+     |ECS1+---------<-----------+ECS2|--------------+------+------+  
+     +-+--+                     +-+--+              |      |      |  
+       |                          |                 |      |      |  
+       |                   ..............................  |      |  
+  ............             . .............     .........................
+  .    |     .             . .    |      .     .    |   .  |      |    .
+  .   ++-+   .             . .   ++--+   .     .   ++-+ . ++-+   ++-+  .
+  .   |P1|   .             . .   |P1`|   .     .   |P2| . |P3|   |P4|  .
+  .   +--+   .             . .   +---+   .     .   +--+ . +--+   +--+  .
+  .        C1.             . .        C1`.     .        .            C2.
+  ............             . .............     .........................
+                           .                            .
+                           .                          C3.
+                           ..............................
+ 
+* As each normal participant, the ECS has to join the communities in interest.
+  In opposite to a normal participant the ECS could not be seen by the other
+  participants joining the same community hence they are not able to address an
+  ECS directly but the ECS can determine them by reading its `sys/memberships`
+  resource. Now the ECS is able to create the necessary remote participants and
+  communities on his side and also join the new created remote participants to
+  the right communities. This repeats whenever the ECS reads its
+  `sys/memberships` resource. These remotly imported participants, communities
+  and resources could not be altered in any way by the importing ECS.
+* By calling `sys/resources` the ECS is also able to import and create  all the
+  resources from the remote ECS.
+* Remotly added participants, communities and resources must not be imported by
+  further ECSs. This prevents loops and retains full access determination of
+  participants, communities and resources of the origin/owning ECS.
+
