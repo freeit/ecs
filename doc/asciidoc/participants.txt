@@ -14,7 +14,7 @@ Technology / Architecture
 (((participant,technology)))
 (((participant,architecture)))
 
-- item has to communicate with the ECS as a
+- has to communicate with the ECS as a
   {doctype@hyper:{rest_home_lnk}[REST]:REST footnote\:[REST Homepage see {rest_home_txt}]} client.
 - {doctype@hyper:{http_1_1_lnk}[HTTP 1.1]:HTTP 1.1 footnote\:[HTTP 1.1 see {http_1_1_txt}]}
   as transport and application protocol
@@ -44,7 +44,7 @@ ECS REST interface
 ~~~~~~~~~~~~~~~~~~
 //////////////////////////////////
 
-Ressource extensions / Alterations
+Ressource extensions / alterations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 (((participant,ressource extensions)))
 

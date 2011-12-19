@@ -72,7 +72,7 @@ resources provided from the ECS to an explicit LMS (point to point) or to a
 community of LMSs (point to multipoint). 
          
 Because of  the uniform application interface -- there are only GET,
-PUT, DELET  and POST operations -- receiving participants can fetch
+PUT, DELETE  and POST operations -- receiving participants can fetch
 messages through a GET on the resource URL or sending messages
 by a POST on the resource URL (with some additional query parameters
 or header variables to point to the appropriate receivers).
