@@ -107,12 +107,7 @@ class MessagesController < ApplicationController
       Message.destroy_unlinked_and_not_postrouted(@record)
       raise Ecs::OuttimedAuthsException, 'Authorization token outtimed'
     when @participant.sender?(@record)
-      participants = Participant.for_message(@record).uniq
-      participants.each do |participant| 
-        Event.make(:event_type_name => EvType.find(2).name, :participant => participant, :message => @record)
-      end if @record.ressource.events
-      MembershipMessage.delete_relations(@record)
-      @record.destroy_ressource
+      Message.destroy_msg(@record)
     else
       raise ActiveRecord::RecordNotFound if @memberships.empty?
       MembershipMessage.delete_relations(@record, @memberships)

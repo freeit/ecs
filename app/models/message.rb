@@ -211,6 +211,15 @@ class Message < ActiveRecord::Base
     self
   end
 
+  def self.destroy_msg(record)
+    participants = Participant.for_message(record).uniq
+    participants.each do |participant| 
+      Event.make(:event_type_name => EvType.find(2).name, :participant => participant, :message => record)
+    end if record.ressource.events
+    MembershipMessage.delete_relations(record)
+    record.destroy_ressource
+  end
+
   def outtimed_auths_resource_by_non_owner?(app_namespace, resource_name, memberships, participant)
     app_namespace  == 'sys' and
     resource_name == 'auths' and
