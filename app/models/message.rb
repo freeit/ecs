@@ -148,18 +148,21 @@ class Message < ActiveRecord::Base
   end
     
 
-  # TODO: In order to use additional Classes, we have to define unique start modules, because of the other classes in the directory.
   def self.filter(action_name, app_namespace, ressource_name, record, params)
-    d="app/controllers/#{app_namespace}/filter/#{ressource_name}/#{action_name}/*.rb"
-    filters=Dir[d]
+    d="filter/#{app_namespace}/#{ressource_name}/#{action_name}/*"
+    filters=Dir[d].collect{|f| File.directory?(f) ? f : nil}.compact
     return if filters.empty?
     FILTER_API.params= params
     FILTER_API.record= record
     filters.sort!
     filters.each do |f|
+      files= Dir[f+'/*.rb']
+      next if files.empty?
       EcsFilter.constants.each {|c| EcsFilter.instance_eval { remove_const c.to_sym } }
-      EcsFilter.module_eval IO.read(f)
-      eval "EcsFilter::"+EcsFilter.constants[0]+".start"
+      files.each do |e|
+        EcsFilter.module_eval IO.read(e)
+      end
+      eval "EcsFilter::Filter.start"
     end
   end
 
