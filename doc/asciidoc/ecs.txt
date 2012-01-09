@@ -748,15 +748,15 @@ hereafter. The filter queues were mapped to a special path under the
 filesystem:  
 
 1. Show filter. Triggered when calling a message/queue resource with GET. Filter path: +
-   `app/controllers/<project-name-space>/filter/<name>/show`
+   `filter/<project-name-space>/<resource-name>/show/filter-name>`
 2. Index filter. Triggered when calling a list resource with GET. Filter path: +
-   `app/controllers/<project-name-space>/filter/<name>/index`
+   `filter/<project-name-space>/<resource-name>/index/filter-name>`
 3. Create filter. Triggered when calling a list resource with POST. Filter path: +
-   `app/controllers/<project-name-space>/filter/<name>/create`
+   `filter/<project-name-space>/<resource-name>/create/filter-name>`
 4. Update filter. Triggered when calling a message/queue resource with PUT. Filter path: +
-   `app/controllers/<project-name-space>/filter/<name>/update`
+   `filter/<project-name-space>/<resource-name>/update/filter-name>`
 5. Delete filter. Triggered when calling a message/queue resource with DELETE. Filter path: +
-   `app/controllers/<project-name-space>/filter/<name>/delete`
+   `filter/<project-name-space>/<resource-name>/delete/filter-name>`
 
 You're able to create as many filters you want. They will be all
 queued/concatenated in lexical order: 
@@ -769,16 +769,29 @@ queued/concatenated in lexical order:
 If a filter was created and copied into the appropriate filesystem path, it
 would be automatically activated at runtime without additional configuration.
 
+If there are any exceptions while reading (class loading) the filter the
+appropriate filter will be canceled and the processed message will be queued to
+the next one. If there are any exceptions while running the filter the
+appropriate filter will also be canceled and the processed message will also be
+queued to the next filter, but keep in mind, that all changes to the message
+prior to the occured exception will remain. You are always working with the
+original message (no copy). There will be error messages in the logfile of
+the form: "ERROR   Filter Error: ...".
 
-Filter template
-~~~~~~~~~~~~~~~
-A valid filter has to be a ruby module and following layout:
+Template
+~~~~~~~~
+In the <filter-name> directory must be at least a file called
+"filter.rb" with following structure:
 
- modul SomeModuleName
-   def self.start
-     # here comes the filter code
-   end
- end
+  module Filter
+    def self.start
+      ...
+    end
+  end
+
+ECS will call "Filter.start". From there its on you :)
+ECS will also load any file with ".rb" extention under the directory
+<filter-name> into the namespace of "Filter".
 
 The ECS core provides the constant `FILTER_API` as an API for accessing ECS messages:
 
@@ -795,4 +808,4 @@ FILTER_API.record::
 
    message = FILTER_API.record.body
 
-   
+
