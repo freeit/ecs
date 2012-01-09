@@ -164,6 +164,12 @@ class Message < ActiveRecord::Base
       end
       eval "EcsFilter::Filter.start"
     end
+  rescue SyntaxError
+    logger.error "Filter SyntaxError: "+$!.backtrace[0]
+    logger.error "Filter SyntaxError: "+$!.message
+  rescue Exception
+    logger.error "Filter Error: "+$!.backtrace[0]
+    logger.error "Filter Error: "+$!.message
   end
 
   # Request body has to be in json format.
