@@ -94,9 +94,9 @@ Membership IDs
 These are unique ids in the scope of an ECS. They establish a relationship
 between a participant and a community:
 
- +------------+ 1        N +-----------+ N        1 +-----------+
- |participants|------------|memberships|------------|communities|
- +------------+            +-----------+            +-----------+
+ +--------------+ 1        N +-------------+ N        1 +-------------+
+ | participants +------------+ memberships +------------+ communities |
+ +--------------+            +-------------+            +-------------+
 
 Therefore a participant can be associated to different communities. Every
 participant can inquire his membership ids by calling the 
@@ -697,15 +697,15 @@ First lets show the topology of a clustered ECS network:
  +---------+  +---------+  +---------+
  | Partic. |  | Partic. |  | Partic. |
  |    A    |  |    B    |  |    C    |
- +---------+  +---------+  +---------+
+ +----+----+  +----+----+  +----+----+
       |            |            |     
       |            |            |     
- +-----------------------------------+
+ +----+------------+------------+----+
  |                ECS                |
- +-----------------------------------+
+ +-----------------+-----------------+
                    |                  
                    |                  
- +-----------------------------------+
+ +-----------------+-----------------+
  | virtueller Participant (Cluster)  |
  +--------+--------+--------+--------+
  | Cluster| Cluster| Cluster| Cluster|

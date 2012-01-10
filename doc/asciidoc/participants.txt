@@ -93,9 +93,9 @@ proxy until the LMS has successfully fetched the data.
 [[fig:direct_participant_to_participant_communication]]
 
 
-               +---------+                                  
-               |auths:ECS|-----------------------------------+   
-               +---------+    <--                            |   
+               +----------+                                  
+               |auths:ECS +----------------------------------+   
+               +----+-----+   <--                            |   
                     |         2.3.1:auth2:=delete(auth.hash) |   
                     |                                        |
                     | ^                                      |   
@@ -103,9 +103,9 @@ proxy until the LMS has successfully fetched the data.
                     |                                        |   
                     |   2.3:coursedata:=get(auth.hash)       |
                     |    --->                                |
-                +------+                     +------------------+
-                | :LMS |---------------------|746354389534:Proxy|       
-                +------+                     +------------------+
+                +---+--+                    +----------------+--+
+                | :LMS +--------------------+ 746354389534:Proxy|       
+                ++----++                    +----------------+--+
                  |    |                                      |  
   2:ev:=post() | |    | | 2.1:coursedata_url:=get()          |
                v |    | v                                    |  
@@ -113,9 +113,9 @@ proxy until the LMS has successfully fetched the data.
                  |    | | 2.4:delete()                       |  
                  |    | v                                    |  
                  |    |                                      |  
-  +---------------+   |                                      |
+  +--------------++   |                                      |
   |events/fifo:ECS|   |<<local>>                             |
-  +---------------+  +--------------------+                  |
+  +--------------++  ++-------------------+                  |
                  |   | cc/courses/345:ECS |                  |
                  |   +--------------------+                  |
                  |                                           |
@@ -123,23 +123,23 @@ proxy until the LMS has successfully fetched the data.
                ^ |                                           |
  3:ev2:=post() | |                                           |
                  |                                           |
-                 |       +------+                            |
-                 +-------|:Proxy|----------------------------+
-                         +------+      --->
+                 |      +--------+                           |
+                 +------+ :Proxy +---------------------------+
+                        +--------+     --->
                              |         3.1:delete()
                              |
                              | | 1:create()
                              | v
                              |
-                     +--------------+
+                     +-------+------+
                      |cc/courses:ECS|
                      +--------------+
 
      +-----+
      |     | | 1.1:make_new_create_event(cc/courses/345)
- +----+    | v
+ +---++    | v
  |:ECS|    |
- +----+    | | 2.5[IF no more participant references]:
+ +---++    | | 2.5[IF no more participant references]:
      |     | v    make_new_no-more-reference_event(cc/courses/345)
      |     |  
      +-----+  
