@@ -24,7 +24,7 @@ CACERT="/path/to/ca.cert.pem"
 CERT="/path/to/lsfproxy.cert.pem"
 KEY="/path/to/lsfproxy.key.pem"
 PASS="secure_password"
-ECS_URL="URL to EVS"
+ECS_URL="URL to ECS"
 DATA_URL1="data url1"
 DATA_URL2="data url2"
 DATA_URL3="data url3"
@@ -35,7 +35,7 @@ NO_ARGS=0
 E_OPTERROR=85
 RESOURCE=
 VERBOSE=
-CID=
+RID=
 MID=
 DATA_URL_ID=
 COURSES=
@@ -110,7 +110,7 @@ if [ X$MEMBERSHIPS = Xtrue ]; then
   echo "ERROR: memberships: only \"get\" operation allowed"
   exit 90
 fi
-if [ -z $CID ]; then 
+if [ -z $RID ]; then 
   echo "ERROR: no resource id specified (option -i <resource id>)"
   exit $E_OPTERROR
 fi
@@ -126,7 +126,7 @@ curl $CURL_OPTIONS --cacert $CACERT --cert $CERT --key $KEY --pass $PASS \
      -H "Content-Type: text/uri-list" \
      -H "X-EcsReceiverMemberships: $MID" \
      -d `eval expr $"DATA_URL$DATA_URL_ID"` \
-     -X PUT $ECS_URL/$RESOURCE/$CID
+     -X PUT $ECS_URL/$RESOURCE/$RID
 echo ""
 }
 
@@ -139,12 +139,12 @@ if [ X$MEMBERSHIPS = Xtrue ]; then
   echo "ERROR: memberships: only \"get\" operation allowed"
   exit 90
 fi
-if [ -z $CID ]; then 
+if [ -z $RID ]; then 
   echo "ERROR: no resource id specified (option -i <resource id>)"
   exit $E_OPTERROR
 fi
 curl $CURL_OPTIONS --cacert $CACERT --cert $CERT --key $KEY --pass $PASS \
-     -X DELETE $ECS_URL/$RESOURCE/$CID
+     -X DELETE $ECS_URL/$RESOURCE/$RID
 echo ""
 }
 
@@ -158,7 +158,7 @@ if [ X$MEMBERSHIPS = Xtrue ]; then
   curl $CURL_OPTIONS --cacert $CACERT --cert $CERT --key $KEY --pass $PASS \
        -X GET  $ECS_URL/$RESOURCE
 else
-  if [ -z $CID ]; then 
+  if [ -z $RID ]; then 
     curl $CURL_OPTIONS --cacert $CACERT --cert $CERT --key $KEY --pass $PASS \
        -H "Accept: text/uri-list" \
        -H "X-EcsQueryStrings: all=true" \
@@ -166,7 +166,7 @@ else
   else
     url=`curl -s --cacert $CACERT --cert $CERT --key $KEY --pass $PASS \
          -H "Accept: text/uri-list" \
-         -X GET $ECS_URL/$RESOURCE/$CID`
+         -X GET $ECS_URL/$RESOURCE/$RID`
     if [ X$VERBOSE = Xtrue ]; then 
       echo "Indirect URL address from ECS: $url"
       echo "and its representation from lsfproxy:"
@@ -175,7 +175,8 @@ else
       echo "ERROR: Invalid resource id"
       exit 99
     else
-      curl $CURL_OPTIONS -X GET $url
+      curl $CURL_OPTIONS -cacert $CACERT --cert $CERT --key $KEY --pass $PASS \
+           -X GET $url
     fi
   fi
 fi
@@ -197,7 +198,7 @@ fi
 while getopts ":i:k:u:cmtsv" Option
 do
   case $Option in
-    i) CID=$OPTARG;;
+    i) RID=$OPTARG;;
     k) MID=$OPTARG;;
     u) DATA_URL_ID=$OPTARG;;
     v) VERBOSE=true;;
