@@ -1,21 +1,3 @@
-# Copyright (C) 2007, 2008, 2009, 2010 Heiko Bernloehr (FreeIT.de).
-# 
-# This file is part of ECS.
-# 
-# ECS is free software: you can redistribute it and/or modify it
-# under the terms of the GNU Affero General Public License as
-# published by the Free Software Foundation, either version 3 of
-# the License, or (at your option) any later version.
-# 
-# ECS is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Affero General Public License for more details.
-# 
-# You should have received a copy of the GNU Affero General Public
-# License along with ECS. If not, see <http://www.gnu.org/licenses/>.
-
-
 # Don't change this file!
 # Configure your app in config/environment.rb and config/environments/*.rb
 
@@ -80,8 +62,12 @@ module Rails
         gem 'rails'
       end
     rescue Gem::LoadError => load_error
-      $stderr.puts %(Missing the Rails #{version} gem. Please `gem install -v=#{version} rails`, update your RAILS_GEM_VERSION setting in config/environment.rb for the Rails version you do have installed, or comment out RAILS_GEM_VERSION to use the latest version installed.)
-      exit 1
+      if load_error.message =~ /Could not find RubyGem rails/
+        STDERR.puts %(Missing the Rails #{version} gem. Please `gem install -v=#{version} rails`, update your RAILS_GEM_VERSION setting in config/environment.rb for the Rails version you do have installed, or comment out RAILS_GEM_VERSION to use the latest version installed.)
+        exit 1
+      else
+        raise
+      end
     end
 
     class << self
@@ -125,18 +111,4 @@ module Rails
 end
 
 # All that for this:
-class Rails::Boot
-  def run
-    load_initializer
-
-    Rails::Initializer.class_eval do
-      def load_gems
-        @bundler_loaded ||= Bundler.require :default, Rails.env
-      end
-    end
-
-    Rails::Initializer.run(:set_load_path)
-  end
-end
-
 Rails.boot!
