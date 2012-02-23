@@ -61,6 +61,28 @@ usage() {
   echo "  -h|? ... usage"
   echo ""
 }
+
+###
+### Prerequisites
+###
+prerequisites() {
+curl --version  >/dev/null 2>&1
+if [ "$?" != "0" ]; then
+  cat <<-'EOF'
+
+		-------------------------------------
+		ERROR:
+		Can't find "curl". Please install it.
+		In a Debian system just run as root:
+
+		   apt-get install curl
+		-------------------------------------
+
+	EOF
+  exit 1
+fi
+}
+
 ###
 ### resource select helper
 ###
@@ -187,6 +209,9 @@ echo ""
 ###
 ### main
 ###
+
+prerequisites
+
 if [ $# -eq "$NO_ARGS" ]    # Script invoked with no command-line args?
 then
   usage
