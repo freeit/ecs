@@ -39,8 +39,8 @@ class ApplicationController < ActionController::Base
   rescue_from Ecs::InvalidMimetypeException, :with => :rescue_body_415
 
   #helper :all # include all helpers, all the time
-  #protect_from_forgery # See ActionController::RequestForgeryProtection for details
-  #session :on
+  protect_from_forgery # See ActionController::RequestForgeryProtection for details
+  # session :on
 
   # Scrub sensitive parameters from your log
   # filter_parameter_logging :password

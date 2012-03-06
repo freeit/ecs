@@ -39,5 +39,9 @@ module Admin::Helper
   end
 
 
+  def reset_the_session_key
+    reset_session
+  end
+
 
 end

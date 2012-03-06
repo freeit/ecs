@@ -25,6 +25,8 @@ class Admin::CommunitiesController < ApplicationController
          :add_flash => { :notice => "Failed to execute last action" },
          :redirect_to => :index_admin_communities_url
 
+  before_filter :reset_the_session_key
+
   def index
     list
     render :action => 'list'

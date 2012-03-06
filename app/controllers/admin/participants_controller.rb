@@ -27,6 +27,8 @@ class Admin::ParticipantsController < ApplicationController
          :add_flash => { :notice => "Failed to execute last action" },
          :redirect_to => :admin_participants_path
 
+  before_filter :reset_the_session_key
+
   def default
     redirect_to admin_participants_path
   end
@@ -126,5 +128,4 @@ class Admin::ParticipantsController < ApplicationController
     redirect_to admin_participant_communities_path(params[:id])
   end
   
-
 end

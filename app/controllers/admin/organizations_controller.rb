@@ -25,6 +25,8 @@ class Admin::OrganizationsController < ApplicationController
          :add_flash => { :notice => "Failed to execute last action" },
          :redirect_to => :admin_organization_path
 
+  before_filter :reset_the_session_key
+
   def index
     list
     render :action => 'list'
