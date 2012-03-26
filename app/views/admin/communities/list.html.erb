@@ -27,6 +27,7 @@ License along with ECS. If not, see <http://www.gnu.org/licenses/>.
 <table class="list">
 
   <TR class="table-resource-label">
+  <TH class="box2">Id</TH>
   <TH class="box2">Name</TH>
   <TH class="box2">Description (optional)</TH>
   <TH class="box2" align="center">Operations</TH>
@@ -35,6 +36,7 @@ License along with ECS. If not, see <http://www.gnu.org/licenses/>.
   
   <% for community in @communities %>
   	<tr valign="top" class="<%= cycle('list-line-odd', 'list-line-even') %>">
+      <TD> <%= community.id %></TD>
   		<TD> <%= h community.name %> </TD>
       <TD> <%= h truncate(community.description,:length => 80) %> </TD>
       <TD>
