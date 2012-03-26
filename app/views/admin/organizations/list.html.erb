@@ -27,6 +27,7 @@ License along with ECS. If not, see <http://www.gnu.org/licenses/>.
 <table class="list">
 
   <TR class="table-resource-label">
+    <TH class="box2">Id</TH>
     <TH class="box2">Name</TH>
     <TH class="box2">Abreviation</TH>
     <TH class="box2">Description</TH>
@@ -36,6 +37,7 @@ License along with ECS. If not, see <http://www.gnu.org/licenses/>.
   
   <% for organization in @organizations %>
   	<tr valign="top" class="<%= cycle('list-line-odd', 'list-line-even') %>">
+      <TD> <%= organization.id %></TD>
   		<TD> <%= h organization.name %> </TD>
   		<TD class="center"> <%= h organization.abrev %> </TD>
   		<TD> <%= h truncate(organization.description, :length => 80) %> </TD>
