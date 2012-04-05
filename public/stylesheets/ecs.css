@@ -421,4 +421,7 @@ th.underline {
   margin-bottom: 20px;
 }
 
-
+.text-link {
+  display: inline;
+  margin-right: 0.5em;
+}

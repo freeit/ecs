@@ -9,4 +9,5 @@ gem "i18n", '0.3.7'
 gem "ruby-debug"
 gem 'rake', '~> 0.9.2.2'
 gem "rdoc", '~> 3.12'
+gem "haml"
 
