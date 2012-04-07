@@ -1,0 +1,149 @@
+-#
+  Copyright (C) 2007, 2008, 2009, 2010, 2011, 2012 Heiko Bernloehr (FreeIT.de).
+  
+  This file is part of ECS.
+  
+  ECS is free software: you can redistribute it and/or modify it
+  under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of
+  the License, or (at your option) any later version.
+  
+  ECS is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Affero General Public License for more details.
+  
+  You should have received a copy of the GNU Affero General Public
+  License along with ECS. If not, see <http://www.gnu.org/licenses/>.
+
+
+%h1.box1 Show Participant
+
+%p
+  = link_to 'Edit', edit_admin_participant_path(:id => @participant)
+  |
+  = link_to 'Back', admin_participants_path
+
+.normal-skip
+  %span.box5
+    %label.box4.table-resource-label(for="participant_name") Name:
+    = @participant.name
+
+- unless @participant.dns.blank?
+  .small-skip
+    %span.box5
+      %label.box4.table-resource-label(for="participant_dns") DNS:
+      = @participant.dns
+
+- unless @participant.email.blank?
+  .small-skip
+    %span.box5
+      %label.box4.table-resource-label(for="participant_email") Email:
+      = @participant.email
+
+.small-skip
+  %span.box5
+    %label.box4.table-resource-label Community Selfrouting:
+    // = check_box_tag "participant[community_selfrouting]",1,@participant.community_selfrouting, :disabled => true
+    = @participant.community_selfrouting.to_s
+
+- unless @participant.description.blank?
+  %p
+    .formular-input-width.table-border
+      .table-header
+        %label.table-resource-label Description (optional):
+      = @participant.description.gsub(/\r\n/, '<BR>')
+
+- unless @participant.identities.blank?
+  %p
+    .show-output-width.table-border
+      .table-header
+        %label.table-resource-label Identities:
+    
+      %table.list(width="100%")
+        %tr(align="left")
+          %th ID:
+          %th Description:
+        - @participant.identities.each do |ident|
+          %tr{:class => [cycle('list-line-odd', 'list-line-even')]}
+            %td= ident.name
+            %td= h(ident.description).gsub(/\r\n/, '<BR>')
+
+- unless @participant.communities.blank?
+  %p
+    .show-output-width.table-border
+      .table-header
+        %label.table-resource-label Communities:
+    
+      %table.list(width="100%")
+        %tr(align="left")
+          %th Name:
+          %th Description:
+          %th(align="right") mid:
+        - @participant.communities.each do |comm|
+          %tr{:class => [cycle('list-line-odd', 'list-line-even')]}
+            %td= link_to h(comm.name), admin_community_path(comm)
+            %td= h(comm.description).gsub(/\r\n/, '<BR>')
+            %td(align="right")= Membership.for_participant_id_and_community_id(@participant.id, comm.id)[0].id.to_s
+
+%p
+  = link_to 'Edit', edit_admin_participant_path(:id => @participant)
+  | 
+  = link_to 'Back', admin_participants_path
+
+- unless (messages =  Message.for_participant_receiver(@participant).uniq).blank?
+  %p
+    .show-output-width.table-border
+      .table-header
+        %label.table-resource-label Messages (Receiver):
+    
+      %table.list(width="100%")
+        %tr(align="left")
+          %th Id:
+          %th Resource:
+          %th Content-Type:
+          %th Date:
+        - messages.each do |msg|
+          %tr{:class => [cycle('list-line-odd', 'list-line-even')]}
+            %td= msg.id
+            %td= msg.ressource.namespace+'/'+msg.ressource.ressource
+            %td= msg.content_type
+            %td= msg.created_at
+
+- unless (messages =  Message.for_participant_sender(@participant).uniq).blank?
+  %p
+    .show-output-width.table-border
+      .table-header
+        %label.table-resource-label Messages (Sender):
+    
+      %table.list(width="100%")
+        %tr(align="left")
+          %th Id:
+          %th Resource:
+          %th Content-Type:
+          %th Date:
+        - messages.each do |msg|
+          %tr{:class => [cycle('list-line-odd', 'list-line-even')]}
+            %td= msg.id
+            %td= msg.ressource.namespace+'/'+msg.ressource.ressource
+            %td= msg.content_type
+            %td= msg.created_at
+
+- unless (events = Event.for_participant(@participant,-1).uniq).blank?
+  %p
+    .show-output-width.table-border
+      .table-header
+        %label.table-resource-label Events:
+    
+      %table.list(width="100%")
+        %tr(align="left")
+          %th Id:
+          %th Message-Id:
+          %th Event-Type:
+          %th Date:
+        - events.each do |event|
+          %tr{:class => [cycle('list-line-odd', 'list-line-even')]}
+            %td= event.id
+            %td= event.message.id
+            %td= event.ev_type.name
+            %td= event.created_at

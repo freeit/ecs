@@ -53,8 +53,7 @@ tr.list {
   font-size: 100%;
   font-style: normal;
   color: #005A46;
-  vertical-align:middle;
-  padding:2px;
+  padding-left:2px;
 }
 
 .table-resource-value {
@@ -407,11 +406,18 @@ h1 {
 }
 
 .box3 {
+  display: inline;
   border: 1px solid #BBBBBB;
+  padding-right: 0.5em;
 }
 
 .box4 {
   background-color: #edfada;
+}
+
+.box5 {
+  border: 1px solid #BBBBBB;
+  padding-right: 0.5em;
 }
 
 
@@ -423,5 +429,23 @@ th.underline {
 
 .text-link {
   display: inline;
-  margin-right: 0.5em;
+  margin-right: 0em;
+  margin-left: 0px;
+  padding-left:0px;
+  padding-right:0px;
+}
+
+.inline {
+  display: inline;
+}
+
+
+.small-skip {
+  margin-bottom:0em;
+  margin-top:0.5em;
+}
+
+.normal-skip {
+  margin-bottom:0em;
+  margin-top:1em;
 }
