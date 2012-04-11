@@ -60,11 +60,6 @@ class Message < ActiveRecord::Base
     end
   end 
 
-  def destroy_ressource
-    Message.destroy_ressource(self)
-  end
-
-
   # return first messages from fifo/lifo queue
   def self.fifo_lifo_rest(namespace, ressource, participant_id, options={:queue_type => :fifo})
     find(:first, :readonly => false, 
@@ -140,13 +135,6 @@ class Message < ActiveRecord::Base
     end
   end
 
-  # If the record has zero relations to memberships and is not tagged for
-  # postrouting it will be deleted.
-  def self.destroy_unlinked_and_not_postrouted(msg_id)
-    msg = find(msg_id)
-    msg.destroy_ressource if msg.membership_messages.blank? and !msg.ressource.postroute
-  end
-    
 
   def self.filter(action_name, app_namespace, ressource_name, record, params)
     d="filter/#{app_namespace}/#{ressource_name}/#{action_name}/*"
@@ -217,13 +205,23 @@ class Message < ActiveRecord::Base
     self
   end
 
-  def self.destroy_msg(record)
-    participants = Participant.for_message(record).uniq
+  # If the record has zero relations to memberships and is not tagged for
+  # postrouting it will be deleted.
+  def destroy_unlinked_and_not_postrouted
+    destroy_or_tag_as_removed if membership_messages.blank? and !ressource.postroute
+  end
+    
+
+  # Delete a message and send appropriate events. It will only be "fully"
+  # deleted when there are no references from any events otherwise it will be
+  # tagged as deleted.
+  def destroy_
+    participants = Participant.for_message(self).uniq
     participants.each do |participant| 
-      Event.make(:event_type_name => EvType.find(2).name, :participant => participant, :message => record)
-    end if record.ressource.events
-    MembershipMessage.delete_relations(record)
-    record.destroy_ressource
+      Event.make(:event_type_name => EvType.find(2).name, :participant => participant, :message => self)
+    end if ressource.events
+    MembershipMessage.delete_relations(self)
+    destroy_or_tag_as_removed
   end
 
   def outtimed_auths_resource_by_non_owner?(app_namespace, resource_name, memberships, participant)
@@ -263,12 +261,14 @@ private
     arm.body = request.raw_post
   end
 
-  def self.destroy_ressource(message)
-    if message.events.blank?
-      message.destroy
+  # Deletes the message if there are no references from events otherwise it
+  # will be tagged as deleted.
+  def destroy_or_tag_as_removed
+    if self.events.blank?
+      destroy
     else
-      message.removed = true
-      message.save!
+      self.removed = true
+      save!
     end
   end
 

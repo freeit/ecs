@@ -104,14 +104,14 @@ class MessagesController < ApplicationController
     case
     when @record.outtimed_auths_resource_by_non_owner?(@app_namespace, @resource_name, @memberships, @participant)
       MembershipMessage.delete_relations(@record, @memberships)
-      Message.destroy_unlinked_and_not_postrouted(@record)
+      @record.destroy_unlinked_and_not_postrouted
       raise Ecs::OuttimedAuthsException, 'Authorization token outtimed'
     when @participant.sender?(@record)
-      Message.destroy_msg(@record)
+      @record.destroy_
     else
       raise ActiveRecord::RecordNotFound if @memberships.empty?
       MembershipMessage.delete_relations(@record, @memberships)
-      Message.destroy_unlinked_and_not_postrouted(@record)
+      @record.destroy_unlinked_and_not_postrouted
     end
     @body = @record.body
     show_render
@@ -215,7 +215,7 @@ protected
             @record.lock!
             if @record
               MembershipMessage.delete_relations(@record, @memberships)
-              Message.destroy_unlinked_and_not_postrouted(@record)
+              @record.destroy_unlinked_and_not_postrouted
             else
               raise ActiveRecord::RecordNotFound
             end
