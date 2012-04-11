@@ -232,36 +232,6 @@ protected
     end
   end
 
- def my_lock
-   logger.info("Starting sleep for 5 sec")
-   sleep(5)
-   logger.info("Wake up!")
- end
-
-  def outtimed_auths_resource_by_non_owner?
-    @app_namespace  == 'sys' and
-    @ressource_name == 'auths' and
-    !@memberships.empty? and
-    !@participant.sender?(@record) and
-    !@record.test_auths_validation_window
-  end
-
-
-  def valid_auths_resource_fetched_by_non_owner?
-    @app_namespace  == 'sys' and
-    @ressource_name == 'auths' and
-    !@memberships.empty? and
-    !@participant.sender?(@record) and
-    test_auths_validation_window(@record)
-  end
-
-  def valid_no_auths_resource_fetched_by_non_owner?
-    @app_namespace  != 'sys' and
-    @ressource_name != 'auths' and
-    !@memberships.empty? and
-    !@participant.sender?(@record)
-  end
-
   # inititialize instance variables dependent from request object
   def late_initialize
     @app_namespace= request.path.sub(/^\//,'').sub(/\/.*/,'')
