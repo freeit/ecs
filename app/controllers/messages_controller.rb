@@ -79,7 +79,7 @@ class MessagesController < ApplicationController
         Event.make(:event_type_name => EvType.find(3).name, :participant => participant, :message => @record)
       end if @record.ressource.events
       if @app_namespace == 'sys' and @ressource_name == 'auths'
-        Message.post_create_auths_resource(@record,@participant)
+        @record.post_create_auths_resource(@participant)
       end
     end
     update_render

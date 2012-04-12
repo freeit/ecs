@@ -63,7 +63,7 @@ class Message < ActiveRecord::Base
         Event.make(:event_type_name => EvType.find(1).name, :participant => p, :message => message)
       end if message.ressource.events
       if app_namespace == 'sys' and ressource_name == 'auths'
-        Message.post_create_auths_resource(message,participant)
+        message.post_create_auths_resource(participant)
       end
       message
     end
@@ -169,13 +169,13 @@ class Message < ActiveRecord::Base
   # Request body has to be in json format.
   # Preprocess request body if it's a /sys/auths resource.
   # Generate a one touch token (hash)
-  def self.post_create_auths_resource(record, participant)
+  def post_create_auths_resource(participant)
     ttl = 60.seconds
-    unless Mime::Type.lookup(record.content_type).to_sym == :json
+    unless Mime::Type.lookup(self.content_type).to_sym == :json
       raise Ecs::InvalidMimetypeException, "Body format has to be in JSON"
     end
     begin
-      b = JSON.parse(record.body)
+      b = JSON.parse(self.body)
     rescue JSON::ParserError
       raise Ecs::InvalidMessageException, "Invalid JSON body"
     end
@@ -208,9 +208,9 @@ class Message < ActiveRecord::Base
     b["abbr"] = participant.organization.abrev
     one_touch_token_hash = Digest::SHA1.hexdigest(rand.to_s+Time.now.to_s)
     b["hash"] = one_touch_token_hash
-    record.body = JSON.pretty_generate(b)
-    record.auth = Auth.new :one_touch_hash => one_touch_token_hash
-    record.save!
+    self.body = JSON.pretty_generate(b)
+    self.auth = Auth.new :one_touch_hash => one_touch_token_hash
+    save!
     self
   end
 
