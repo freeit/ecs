@@ -56,21 +56,7 @@ class MessagesController < ApplicationController
   # Create and save a new message. Then render "Created 201" response.
   # - todo: exceptions for: create, constantize
   def create
-    Message.transaction do
-      Message.filter(__method__, @app_namespace, @ressource_name, @record, params)
-      @record = Message.create_rest(request, @app_namespace, @ressource_name, @participant.id)
-      MembershipMessage.populate_jointable(@record,
-                                           request.headers["X-EcsReceiverMemberships"],
-                                           request.headers["X-EcsReceiverCommunities"],
-                                           @participant)
-      participants = Participant.for_message(@record).uniq
-      participants.each do |participant| 
-        Event.make(:event_type_name => EvType.find(1).name, :participant => participant, :message => @record)
-      end if @record.ressource.events
-      if @app_namespace == 'sys' and @ressource_name == 'auths'
-        Message.post_create_auths_resource(@record,@participant)
-      end
-    end
+    @record= Message.create__(request, @app_namespace, @ressource_name, @participant)
     @body = @record.body
     create_render
   end

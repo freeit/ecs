@@ -47,6 +47,30 @@ class Message < ActiveRecord::Base
     :order => "id ASC",
     :conditions => {:ressources => {:namespace => namespace, :ressource => name}}}}
 
+  def self.create__(request, app_namespace, ressource_name, participant)
+    transaction do
+      message = create! do |arm|
+        create_update_helper(arm, request, app_namespace, ressource_name, participant.id) 
+      end
+      MembershipMessage.extract_x_ecs_receiver_communities(request.headers["X-EcsReceiverCommunities"]).each do |cid|
+        message.communities << Community.find(cid)
+      end
+      MembershipMessage.populate_jointable(message,
+                                           request.headers["X-EcsReceiverMemberships"],
+                                           request.headers["X-EcsReceiverCommunities"],
+                                           participant)
+      Participant.for_message(message).uniq.each do|p|
+        Event.make(:event_type_name => EvType.find(1).name, :participant => p, :message => message)
+      end if message.ressource.events
+      if app_namespace == 'sys' and ressource_name == 'auths'
+        Message.post_create_auths_resource(message,participant)
+      end
+      message
+    end
+  rescue ActiveRecord::RecordInvalid
+    raise Ecs::InvalidMessageException, $!.to_s
+  end
+
 
   def validate
     if content_type.blank? then
@@ -69,21 +93,6 @@ class Message < ActiveRecord::Base
       :order => :messages.to_s+".id #{(options[:queue_type]==:fifo)?'ASC':'DESC'}")
   end
  
-  # create a new message
-  def self.create_rest(request, app_namespace, ressource_name, participant_id) 
-    transaction do
-      m = create! do |arm|
-        create_update_helper(arm, request, app_namespace, ressource_name, participant_id) 
-      end
-      MembershipMessage.extract_x_ecs_receiver_communities(request.headers["X-EcsReceiverCommunities"]).each do |cid|
-        m.communities << Community.find(cid)
-      end
-      m
-    end
-  rescue ActiveRecord::RecordInvalid
-    raise Ecs::InvalidMessageException, $!.to_s
-  end
-
   # update a message
   def self.update_rest(record, request, app_namespace, ressource_name, participant_id) 
     transaction do
