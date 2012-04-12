@@ -59,7 +59,7 @@ class Message < ActiveRecord::Base
                                            request.headers["X-EcsReceiverMemberships"],
                                            request.headers["X-EcsReceiverCommunities"],
                                            participant)
-      Participant.for_message(message).uniq.each do|p|
+      Participant.for_message(message).uniq.each do |p|
         Event.make(:event_type_name => EvType.find(1).name, :participant => p, :message => message)
       end if message.ressource.events
       if app_namespace == 'sys' and ressource_name == 'auths'
@@ -71,6 +71,31 @@ class Message < ActiveRecord::Base
     raise Ecs::InvalidMessageException, $!.to_s
   end
 
+  def update__(request, app_namespace, ressource_name, participant)
+    raise(Ecs::AuthorizationException, "You are not the original sender of the message.") unless participant.sender?(self)
+    transaction do
+      Message.create_update_helper(self, request, app_namespace, ressource_name, participant.id)
+      save!
+      MembershipMessage.de_populate_jointable(self)
+      MembershipMessage.populate_jointable(self,
+                                           request.headers["X-EcsReceiverMemberships"],
+                                           request.headers["X-EcsReceiverCommunities"],
+                                           participant)
+      # TODO: if there are only the headers X-EcsReceiverMemberships and
+      # X-EcsReceiverCommunities are updated, then we have to generate events only
+      # for these new and removed receivers. To distinguish if the message body
+      # is untouched we can use the ETag functionality.
+      Participant.for_message(self).uniq.each do |p|
+        Event.make(:event_type_name => EvType.find(1).name, :participant => p, :message => self)
+      end if self.ressource.events
+      if app_namespace == 'sys' and ressource_name == 'auths'
+        post_create_auths_resource(participant)
+      end
+      self
+    end
+  rescue ActiveRecord::RecordInvalid
+    raise Ecs::InvalidMessageException, $!.to_s
+  end
 
   def validate
     if content_type.blank? then
@@ -93,16 +118,6 @@ class Message < ActiveRecord::Base
       :order => :messages.to_s+".id #{(options[:queue_type]==:fifo)?'ASC':'DESC'}")
   end
  
-  # update a message
-  def self.update_rest(record, request, app_namespace, ressource_name, participant_id) 
-    transaction do
-      create_update_helper(record, request, app_namespace, ressource_name, participant_id)
-      record.save!
-    end
-  rescue ActiveRecord::RecordInvalid
-    raise Ecs::InvalidMessageException, $!.to_s
-  end
-
   # get a record  out of the message table
   def self.get_record(msg_id, app_namespace, ressource_name)
     outdated_auth_token = nil

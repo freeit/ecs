@@ -62,26 +62,7 @@ class MessagesController < ApplicationController
   end
 
   def update
-    raise(Ecs::AuthorizationException, "You are not the original sender of the message.") unless @participant.sender?(@record)
-    Message.transaction do
-      Message.update_rest(@record, request, @app_namespace, @ressource_name, @participant.id)
-      MembershipMessage.de_populate_jointable(@record)
-      MembershipMessage.populate_jointable(@record,
-                                           request.headers["X-EcsReceiverMemberships"],
-                                           request.headers["X-EcsReceiverCommunities"],
-                                           @participant)
-      # TODO: if there are only the headers X-EcsReceiverMemberships and
-      # X-EcsReceiverCommunities are updated, then we have to generate events only
-      # for these new and removed receivers. To distinguish if the message body
-      # is untouched we can use the ETag functionality.
-      participants = Participant.for_message(@record).uniq
-      participants.each do |participant| 
-        Event.make(:event_type_name => EvType.find(3).name, :participant => participant, :message => @record)
-      end if @record.ressource.events
-      if @app_namespace == 'sys' and @ressource_name == 'auths'
-        @record.post_create_auths_resource(@participant)
-      end
-    end
+    @record.update__(request, @app_namespace, @ressource_name, @participant)
     update_render
   end
 
