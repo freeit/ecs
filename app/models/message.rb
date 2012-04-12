@@ -50,7 +50,7 @@ class Message < ActiveRecord::Base
   def self.create__(request, app_namespace, ressource_name, participant)
     transaction do
       message = create! do |arm|
-        create_update_helper(arm, request, app_namespace, ressource_name, participant.id) 
+        arm.create_update_helper(request, app_namespace, ressource_name, participant.id) 
       end
       MembershipMessage.extract_x_ecs_receiver_communities(request.headers["X-EcsReceiverCommunities"]).each do |cid|
         message.communities << Community.find(cid)
@@ -74,7 +74,7 @@ class Message < ActiveRecord::Base
   def update__(request, app_namespace, ressource_name, participant)
     raise(Ecs::AuthorizationException, "You are not the original sender of the message.") unless participant.sender?(self)
     transaction do
-      Message.create_update_helper(self, request, app_namespace, ressource_name, participant.id)
+      create_update_helper(request, app_namespace, ressource_name, participant.id)
       save!
       MembershipMessage.de_populate_jointable(self)
       MembershipMessage.populate_jointable(self,
@@ -272,18 +272,17 @@ class Message < ActiveRecord::Base
     !participant.sender?(@record)
   end
 
-private
-
   # Helper function for create and update 
-  # ttl:integer livetime of message in seconds 
-  def self.create_update_helper(arm, request, app_namespace, ressource_name, participant_id)
+  def create_update_helper(request, app_namespace, ressource_name, participant_id)
     ressource = Ressource.find_by_namespace_and_ressource(app_namespace, ressource_name)
     raise(Ecs::InvalidRessourceUriException, "*** ressource uri error ***") unless ressource
-    arm.ressource_id = ressource.id
-    arm.content_type = request.headers["CONTENT_TYPE"]
-    arm.sender = participant_id
-    arm.body = request.raw_post
+    self.ressource_id = ressource.id
+    self.content_type = request.headers["CONTENT_TYPE"]
+    self.sender = participant_id
+    self.body = request.raw_post
   end
+
+private
 
   # Deletes the message if there are no references from events otherwise it
   # will be tagged as deleted.
