@@ -173,13 +173,13 @@ protected
 
   def queue(queue_options = {:queue_type => :fifo})
     begin
-      MembershipMessage.transaction do
+      Message.transaction do
+        # returned record holds a lock (pessimistic locking)
         @record = Message.fifo_lifo_rest(@app_namespace, @ressource_name,@participant.id, queue_options)
         if @record
           @memberships = Membership.receiver(@participant.id, @record.id)
           @body = @record.body 
           if request.post?
-            @record.lock!
             if @record
               MembershipMessage.delete_relations(@record, @memberships)
               @record.destroy_unlinked_and_not_postrouted
@@ -189,12 +189,11 @@ protected
           end
           show_render
         else
-          index_render
+          raise ActiveRecord::RecordNotFound
         end
       end
     rescue ActiveRecord::StaleObjectError, ActiveRecord::RecordNotFound => error
-      logger.info "**** Concurrent access at queue resource."                                                                               
-      logger.info "**** Error: #{error.to_s}."                                                                                              
+      logger.info "Concurrent access at queue resource"
       raise
     end
   end

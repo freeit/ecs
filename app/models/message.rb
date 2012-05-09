@@ -111,7 +111,7 @@ class Message < ActiveRecord::Base
 
   # return first messages from fifo/lifo queue
   def self.fifo_lifo_rest(namespace, ressource, participant_id, options={:queue_type => :fifo})
-    find(:first, :readonly => false, 
+    find(:first, :readonly => false, :lock => true,
       :joins => [:ressource, { :membership_messages => { :membership => :participant } }], 
       :conditions => { :participants => { :id => participant_id },
                        :ressources => { :namespace => namespace, :ressource => ressource } },
