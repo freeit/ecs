@@ -26,6 +26,7 @@ class Community < ActiveRecord::Base
     end
   end
   has_many :community_messages, :dependent => :destroy
+  has_many :messages, :through => :community_messages
   validates_presence_of :name
   validates_uniqueness_of :name
 
