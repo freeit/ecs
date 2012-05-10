@@ -189,7 +189,7 @@ protected
           end
           show_render
         else
-          raise ActiveRecord::RecordNotFound
+          empty_render
         end
       end
     rescue ActiveRecord::StaleObjectError, ActiveRecord::RecordNotFound => error
@@ -211,6 +211,10 @@ protected
     @record, @outdated_auth_token = Message.get_record(record_id, app_namespace, ressource_name)
   end
     
+  def empty_render
+    render :text => "", :content_type => "application/json"
+  end
+
   def index_render
     render :text => @body, :content_type => "text/uri-list"
   end
