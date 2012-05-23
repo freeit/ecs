@@ -38,8 +38,6 @@ GEM
     simple-navigation (3.6.0)
       activesupport (>= 2.3.2)
     sqlite3 (1.3.5)
-    sqlite3-ruby (1.3.3)
-      sqlite3 (>= 1.3.3)
 
 PLATFORMS
   ruby
@@ -55,4 +53,3 @@ DEPENDENCIES
   ruby-debug
   simple-navigation
   sqlite3
-  sqlite3-ruby
