@@ -65,6 +65,7 @@ class ApplicationController < ActionController::Base
 protected
 
   def authentication
+    logger.info "X-EcsAuthId: #{request.headers['X-EcsAuthId']}" unless request.headers['X-EcsAuthId'].blank?
     # new anonymous participant
     if request.headers["X-EcsAuthId"].blank? and request.headers["Cookie"].blank?
       @participant, @cookie = Participant.generate_anonymous_participant
