@@ -1,7 +1,6 @@
 source "http://rubygems.org"
 gem "rails", "2.3.14"
 gem "sqlite3"
-gem 'sqlite3-ruby', :require => 'sqlite3'
 gem "json", "1.5.3"
 gem "jsonpretty"
 gem "simple-navigation"
