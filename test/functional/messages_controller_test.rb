@@ -143,6 +143,26 @@ class MessagesControllerTest < ActionController::TestCase
     assert_response 200
   end
 
+  test "update with event generation" do
+    @request.env["RAW_POST_DATA"] = "neuer Text"
+    @request.env["CONTENT_TYPE"] = "text/html"
+    @request.env["X-EcsAuthId"] = identities(:stgt_id1).name
+    @request.env["X-EcsReceiverMemberships"] = memberships(:ulm_wuv).id.to_s
+    @request.set_REQUEST_URI("/numlab/exercises")
+    ev_count = Event.all.count
+    m= Message.find(messages(:numlab_ex2).id)
+    m.ressource.events= true
+    m.save
+    post :update, { :id => messages(:numlab_ex2).id }
+    assert_response 200
+    assert_equal ev_count+1, Event.all.count
+    ev= Event.find(:last, :order => "id")
+    assert_equal ev.ev_type_id, 3
+    m= Message.find(messages(:numlab_ex2).id)
+    m.ressource.events= false
+    m.save
+  end
+
   test "update without ownership" do
     @request.env["RAW_POST_DATA"] = "neuer Text"
     @request.env["CONTENT_TYPE"] = "text/html"

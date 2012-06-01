@@ -86,7 +86,7 @@ class Message < ActiveRecord::Base
       # for these new and removed receivers. To distinguish if the message body
       # is untouched we can use the ETag functionality.
       Participant.for_message(self).uniq.each do |p|
-        Event.make(:event_type_name => EvType.find(1).name, :participant => p, :message => self)
+        Event.make(:event_type_name => EvType.find(3).name, :participant => p, :message => self)
       end if self.ressource.events
       if app_namespace == 'sys' and ressource_name == 'auths'
         post_create_auths_resource(participant)
