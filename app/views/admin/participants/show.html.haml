@@ -110,7 +110,7 @@
             %td= event.ev_type.name
             %td= event.created_at
 
-- unless (messages =  Message.for_participant_receiver(@participant).uniq).blank?
+- unless (messages =  Message.for_participant_receiver(@participant).for_not_removed.uniq).blank?
   %p
     .show-output-width.table-border
       .table-header
@@ -129,7 +129,7 @@
             %td= msg.content_type
             %td= msg.created_at
 
-- unless (messages =  Message.for_participant_sender(@participant).uniq).blank?
+- unless (messages =  Message.for_participant_sender(@participant).for_not_removed.uniq).blank?
   %p
     .show-output-width.table-border
       .table-header
