@@ -91,6 +91,25 @@
   | 
   = link_to 'Back', admin_participants_path
 
+- unless (events = Event.for_participant(@participant,-1).uniq).blank?
+  %p
+    .show-output-width.table-border
+      .table-header
+        %label.table-resource-label Events:
+    
+      %table.list(width="100%")
+        %tr(align="left")
+          %th Id:
+          %th Message-Id:
+          %th Event-Type:
+          %th Date:
+        - events.each do |event|
+          %tr{:class => [cycle('list-line-odd', 'list-line-even')]}
+            %td= event.id
+            %td= event.message.id
+            %td= event.ev_type.name
+            %td= event.created_at
+
 - unless (messages =  Message.for_participant_receiver(@participant).uniq).blank?
   %p
     .show-output-width.table-border
@@ -129,21 +148,3 @@
             %td= msg.content_type
             %td= msg.created_at
 
-- unless (events = Event.for_participant(@participant,-1).uniq).blank?
-  %p
-    .show-output-width.table-border
-      .table-header
-        %label.table-resource-label Events:
-    
-      %table.list(width="100%")
-        %tr(align="left")
-          %th Id:
-          %th Message-Id:
-          %th Event-Type:
-          %th Date:
-        - events.each do |event|
-          %tr{:class => [cycle('list-line-odd', 'list-line-even')]}
-            %td= event.id
-            %td= event.message.id
-            %td= event.ev_type.name
-            %td= event.created_at
