@@ -42,7 +42,7 @@ COURSES=
 COURSE_MEMBERS=
 MEMBERSHIPS=
 TREES=
-CURL_OPTIONS=
+CURL_OPTIONS="-i"
 
 ###
 ### Usage
@@ -197,7 +197,7 @@ else
       echo "ERROR: Invalid resource id"
       exit 99
     else
-      curl $CURL_OPTIONS -cacert $CACERT --cert $CERT --key $KEY --pass $PASS \
+      curl $CURL_OPTIONS --cacert $CACERT --cert $CERT --key $KEY --pass $PASS \
            -X GET $url
     fi
   fi
