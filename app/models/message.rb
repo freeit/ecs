@@ -42,6 +42,10 @@ class Message < ActiveRecord::Base
     :order => "id ASC",
     :conditions => {:removed => false}}}
 
+  named_scope :for_removed, lambda { {
+    :order => "id ASC",
+    :conditions => {:removed => true}}}
+
   named_scope :for_resource, lambda {|namespace, name| {
     :joins => :ressource,
     :order => "id ASC",
