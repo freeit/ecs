@@ -1,5 +1,0 @@
-Definitions
-~~~~~~~~~~~
-participant::
-a client in ECSA network
-
