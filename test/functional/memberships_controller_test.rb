@@ -19,20 +19,10 @@
 require 'test_helper'
 
 class MembershipsControllerTest < ActionController::TestCase
-  # Replace this with your real tests.
-  test "the truth" do
-    assert true
-  end
-
-  test "create_anonymous_client" do
-    @request.env["CONTENT_TYPE"] = "application/json"
-    get :index
-
-    assert_response 200
-    assert_match /ecs_anonymous=.*/, @response.headers["Set-Cookie"].to_s
-  end
 
   test "prettyfied memberships" do
+    @request.env["X-EcsAuthId"] = identities(:ulm_id1).name
+    @request.set_REQUEST_URI("/sys/memberships")
     @request.env["ACCEPT"] = "application/json"
     get  :index
     assert_response 200

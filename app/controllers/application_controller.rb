@@ -66,24 +66,24 @@ protected
 
   def authentication
     logger.info "X-EcsAuthId: #{request.headers['X-EcsAuthId']}" unless request.headers['X-EcsAuthId'].blank?
-    # new anonymous participant
-    if request.headers["X-EcsAuthId"].blank? and request.headers["Cookie"].blank?
-      @participant, @cookie = Participant.generate_anonymous_participant
-      Ressource.postrouting(@participant)
-      return @participant
-    end
-
-    # anonymous participants
-    if !(@cookie = cookies[:ecs_anonymous]).blank?
-      if (identity = Identity.find_by_name(@cookie)).blank?
-        raise Ecs::AuthenticationException, "No valid identity found for cookie: #{@cookie}"
-      elsif (participant = identity.participant).blank?
-        raise Ecs::AuthenticationException, "Cookie: #{@cookie}\" is not assigned any participant"
-      else
-        return @participant = participant
+    if ECS_CONFIG["participants"]["allow_anonymous"]
+      # new anonymous participant
+      if request.headers["X-EcsAuthId"].blank? and request.headers["Cookie"].blank?
+        @participant, @cookie = Participant.generate_anonymous_participant
+        Ressource.postrouting(@participant)
+        return @participant
+      end
+      # anonymous participants
+      if !(@cookie = cookies[:ecs_anonymous]).blank?
+        if (identity = Identity.find_by_name(@cookie)).blank?
+          raise Ecs::AuthenticationException, "No valid identity found for cookie: #{@cookie}"
+        elsif (participant = identity.participant).blank?
+          raise Ecs::AuthenticationException, "Cookie: #{@cookie}\" is not assigned any participant"
+        else
+          return @participant = participant
+        end
       end
     end
- 
     # authenticated participants
     if (auth_id = request.headers["X-EcsAuthId"]).blank?
       raise Ecs::AuthenticationException, "No \"X-EcsAuthId\" http header"

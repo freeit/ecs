@@ -25,3 +25,16 @@ class FilterApi
 end
 
 FILTER_API=FilterApi.new
+
+# read configuration data
+
+require 'yaml'
+
+begin
+  ECS_CONFIG = YAML::load_stream(File.open(Rails.root.join('config','ecs_config.yml')))[0]
+rescue Exception
+  Rails.logger.fatal "Reading #{Rails.root.join('config','ecs_config.yml')}"
+end
+
+ECS_CONFIG["participants"]["allow_anonymous"] = false unless defined? ECS_CONFIG["participants"]["allow_anonymous"]
+

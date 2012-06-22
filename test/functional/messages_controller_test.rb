@@ -316,7 +316,7 @@ class MessagesControllerTest < ActionController::TestCase
     assert_response 200
     assert_match /ecs_anonymous=.*/, @response.headers["Set-Cookie"].to_s
     assert_equal mm_count+1, MembershipMessage.all.count
-  end
+  end if ECS_CONFIG["participants"]["allow_anonymous"]
 
 
 end
