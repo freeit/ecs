@@ -28,9 +28,7 @@ Organization.create :name => "system", :description => "Internal ECS community."
 Participant.create :name => "ecs", :description => "ECS system participant", :dns => 'n/a', 
   :community_selfrouting => false, :organization_id => Organization.find_by_name("system").id 
 Community.create :name => "public", :description => "For anonymous participants."
-RessourceMonitor.create :name => "queue"
 %w(created destroyed updated notlinked).each do |evt|
   EvType.create :name => evt
 end
 Ressource.create :namespace => 'sys', :ressource => 'auth', :postroute => true, :events => false
-
