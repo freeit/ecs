@@ -38,10 +38,4 @@ module Admin::Helper
     flash[:notice] = "Participant \"#{Participant.find(participant_id).name}\" successfully joined Community \"#{Community.find(community_id).name}\"."
   end
 
-
-  def reset_the_session_key
-    reset_session
-  end
-
-
 end
