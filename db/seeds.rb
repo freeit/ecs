@@ -1,4 +1,5 @@
-# Copyright (C) 2007, 2008, 2009, 2010 Heiko Bernloehr (FreeIT.de).
+# Copyright (C) 2007, 2008, 2009, 2010, 2011, 2012
+# Heiko Bernloehr (FreeIT.de).
 # 
 # This file is part of ECS.
 # 
@@ -15,11 +16,33 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with ECS. If not, see <http://www.gnu.org/licenses/>.
 
-
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#   
-#   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
-#   Major.create(:name => 'Daley', :city => cities.first)
+Organization.create \
+  :name => "not available",
+  :description => "For anonymous participants.",
+  :abrev => "n/a" \
+  if Organization.find_by_name("not available").nil?
+Organization.create \
+  :name => "system",
+  :description => "Internal ECS community.",
+  :abrev => "sys" \
+  if Organization.find_by_name("system").nil?
+Participant.create \
+  :name => "ecs",
+  :description => "ECS system participant",
+  :dns => 'n/a',
+  :community_selfrouting => false,
+  :organization_id => Organization.find_by_name("system").id \
+  if Participant.find_by_name("ecs").nil?
+Community.create \
+  :name => "public",
+  :description => "For anonymous participants." \
+  if Community.find_by_name("public").nil?
+%w(created destroyed updated notlinked).each do |evt|
+  EvType.create :name => evt if EvType.find_by_name(evt).nil?
+end
+Ressource.create \
+  :namespace => 'sys',
+  :ressource => 'auths',
+  :postroute => true,
+  :events => false \
+  if Ressource.find_by_namespace_and_ressource("sys","auths").nil?
