@@ -27,7 +27,6 @@ end
 FILTER_API=FilterApi.new
 
 # read configuration data
-
 require 'yaml'
 
 begin
@@ -38,3 +37,34 @@ end
 
 ECS_CONFIG["participants"]["allow_anonymous"] = false unless defined? ECS_CONFIG["participants"]["allow_anonymous"]
 
+# Initialize database objects
+Organization.create \
+  :name => "not available",
+  :description => "For anonymous participants.",
+  :abrev => "n/a" \
+  if Organization.find_by_name("not available").nil?
+Organization.create \
+  :name => "system",
+  :description => "Internal ECS community.",
+  :abrev => "sys" \
+  if Organization.find_by_name("system").nil?
+Participant.create \
+  :name => "ecs",
+  :description => "ECS system participant",
+  :dns => 'n/a',
+  :community_selfrouting => false,
+  :organization_id => Organization.find_by_name("system").id \
+  if Participant.find_by_name("ecs").nil?
+Community.create \
+  :name => "public",
+  :description => "For anonymous participants." \
+  if Community.find_by_name("public").nil?
+%w(created destroyed updated notlinked).each do |evt|
+  EvType.create :name => evt if EvType.find_by_name(evt).nil?
+end
+Ressource.create \
+  :namespace => 'sys',
+  :ressource => 'auths',
+  :postroute => true,
+  :events => false \
+  if Ressource.find_by_namespace_and_ressource("sys","auths").nil?

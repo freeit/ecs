@@ -23,12 +23,3 @@
 #   
 #   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
 #   Major.create(:name => 'Daley', :city => cities.first)
-Organization.create :name => "not available", :description => "For anonymous participants.", :abrev => "n/a"
-Organization.create :name => "system", :description => "Internal ECS community.", :abrev => "sys"
-Participant.create :name => "ecs", :description => "ECS system participant", :dns => 'n/a', 
-  :community_selfrouting => false, :organization_id => Organization.find_by_name("system").id 
-Community.create :name => "public", :description => "For anonymous participants."
-%w(created destroyed updated notlinked).each do |evt|
-  EvType.create :name => evt
-end
-Ressource.create :namespace => 'sys', :ressource => 'auth', :postroute => true, :events => false
