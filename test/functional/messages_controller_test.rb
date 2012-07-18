@@ -214,6 +214,7 @@ class MessagesControllerTest < ActionController::TestCase
     @request.set_REQUEST_URI("/numlab/solutions")
     @request.env["X-EcsAuthId"] = identities(:numlab_comp_id1).name
     /[0-9]+$/ =~ @response.header['LOCATION']
+    memberships = Membership.receiver(identities(:numlab_comp_id1).participant, $~.to_s.to_i)
     post :destroy, { :id => $~.to_s.to_i }
     assert_response 200
     assert_equal $~.to_s, @request.parameters[:id]

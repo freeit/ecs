@@ -39,7 +39,7 @@ class MessagesController < ApplicationController
   def show
     @memberships = Membership.receiver(@participant.id, @record.id)
     case
-    when @record.outtimed_auths_resource_by_non_owner?(@app_namespace, @resource_name, @memberships, @participant)
+    when @record.outtimed_auths_resource_by_non_owner?(@app_namespace, @resource_name, @participant)
       raise Ecs::OuttimedAuthsException, 'Authorization token outtimed'
     when (!@memberships.empty? or @participant.sender?(@record))
       Message.filter(__method__, @app_namespace, @ressource_name, @record, params)
@@ -67,18 +67,15 @@ class MessagesController < ApplicationController
   end
 
   def destroy
-    @memberships = Membership.receiver(@participant.id, @record.id)
     case
-    when @record.outtimed_auths_resource_by_non_owner?(@app_namespace, @resource_name, @memberships, @participant)
-      MembershipMessage.delete_relations(@record, @memberships)
-      @record.destroy_unlinked_and_not_postrouted
+    when @record.outtimed_auths_resource_by_non_owner?(@app_namespace, @resource_name, @participant)
+      @record.destroy_as_receiver(@participant)
       raise Ecs::OuttimedAuthsException, 'Authorization token outtimed'
     when @participant.sender?(@record)
-      @record.destroy_
+      @record.destroy_as_sender
     else
-      raise ActiveRecord::RecordNotFound if @memberships.empty?
-      MembershipMessage.delete_relations(@record, @memberships)
-      @record.destroy_unlinked_and_not_postrouted
+      raise ActiveRecord::RecordNotFound if Membership.receiver(@participant.id, @record.id).empty?
+      @record.destroy_as_receiver(@participant)
     end
     @body = @record.body
     show_render
@@ -181,8 +178,7 @@ protected
           @body = @record.body 
           if request.post?
             if @record
-              MembershipMessage.delete_relations(@record, @memberships)
-              @record.destroy_unlinked_and_not_postrouted
+              @record.destroy_as_receiver(@participant)
             else
               raise ActiveRecord::RecordNotFound
             end

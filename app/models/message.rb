@@ -22,7 +22,7 @@ class Message < ActiveRecord::Base
   require 'json/add/rails'
 
   has_many :memberships, :through => :membership_messages
-  has_many :membership_messages, :dependent => :destroy
+  has_many :membership_messages
   has_many :events, :dependent => :destroy
   has_many :community_messages, :dependent => :destroy
   has_many :communities, :through => :community_messages
@@ -235,9 +235,14 @@ class Message < ActiveRecord::Base
 
   # If the record has zero relations to memberships and is not tagged for
   # postrouting it will be deleted.
-  def destroy_unlinked_and_not_postrouted
+  def destroy_unlinked_and_not_postrouted(participant=nil)
+    if participant
+      memberships= Membership.receiver(participant.id, self.id)
+      MembershipMessage.delete_relations(self, memberships)
+    end
     destroy_or_tag_as_removed if membership_messages.blank? and !ressource.postroute
   end
+  alias destroy_as_receiver destroy_unlinked_and_not_postrouted
     
 
   # Delete a message and send appropriate events. It will only be "fully"
@@ -251,8 +256,10 @@ class Message < ActiveRecord::Base
     MembershipMessage.delete_relations(self)
     destroy_or_tag_as_removed
   end
+  alias destroy_as_sender destroy_
 
-  def outtimed_auths_resource_by_non_owner?(app_namespace, resource_name, memberships, participant)
+  def outtimed_auths_resource_by_non_owner?(app_namespace, resource_name, participant)
+    memberships= Membership.receiver(participant.id, self.id)
     app_namespace  == 'sys' and
     resource_name == 'auths' and
     !memberships.empty? and
