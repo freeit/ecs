@@ -74,7 +74,6 @@ class MessagesController < ApplicationController
     when @participant.sender?(@record)
       @record.destroy_as_sender
     else
-      raise ActiveRecord::RecordNotFound if Membership.receiver(@participant.id, @record.id).empty?
       @record.destroy_as_receiver(@participant)
     end
     @body = @record.body

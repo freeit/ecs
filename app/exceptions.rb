@@ -24,4 +24,6 @@ module Ecs
   class InvalidRessourceUriException < StandardError; end
   class InvalidMimetypeException < StandardError; end
   class OuttimedAuthsException < StandardError; end
+  class MissingReceiverHeaderException < StandardError; end
+  class NoReceiverOfMessageException < StandardError; end
 end

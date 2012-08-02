@@ -28,11 +28,13 @@ class ApplicationController < ActionController::Base
 
   #rescue_from Exception, :with => :rescue_body_500
   rescue_from Ecs::InvalidMessageException, :with => :rescue_body_400
+  rescue_from Ecs::MissingReceiverHeaderException, :with => :rescue_body_400
   rescue_from Ecs::AuthenticationException, :with => :rescue_body_401
   rescue_from Ecs::AuthorizationException, :with => :rescue_body_403
   rescue_from Ecs::InvalidRessourceUriException, :with => :rescue_body_404
   rescue_from ActiveRecord::RecordNotFound, :with => :rescue_body_404
   rescue_from ActionController::RoutingError , :with => :rescue_body_404
+  rescue_from Ecs::NoReceiverOfMessageException, :with => :rescue_body_404
   rescue_from Ecs::OuttimedAuthsException, :with => :rescue_body_409
   rescue_from ActiveRecord::StaleObjectError, :with => :rescue_body_409
   rescue_from ActiveRecord::StatementInvalid, :with => :rescue_body_415

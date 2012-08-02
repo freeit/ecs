@@ -173,6 +173,15 @@ class MessagesControllerTest < ActionController::TestCase
     assert_response 403
   end
 
+  # not a receiver or sender of :numlab_sol
+  test "delete_forbidden_solution" do
+    @request.env["X-EcsAuthId"] = identities(:numlab_comp_id1).name
+    @request.set_REQUEST_URI("/numlab/solutions/#{messages(:numlab_sol).id.to_s}")
+    post :destroy, { :id => messages(:numlab_sol).id }
+    logger.debug "request.path = #{@request.path}"
+    assert_response 404
+  end
+
   test "delete_postrouted_message_as_owner_with_references_in_place" do
     @request.set_REQUEST_URI("/numlab/exercises/99999")
     @request.env["X-EcsAuthId"] = identities(:ulm_id1).name

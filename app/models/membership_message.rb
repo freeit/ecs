@@ -25,7 +25,7 @@ class MembershipMessage < ActiveRecord::Base
     rec_mids = extract_x_ecs_receiver_memberships(x_ecs_receiver_memberships)
     rec_cids = extract_x_ecs_receiver_communities(x_ecs_receiver_communities)
     if rec_cids.blank? and rec_mids.blank?
-      raise Ecs::InvalidMessageException, 
+      raise Ecs::MissingReceiverHeaderException, 
             "You must at least specify one of X-EcsReceiverMemberships or X-EcsReceiverCommunities header\r\n"
     end
 

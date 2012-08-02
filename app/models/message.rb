@@ -246,20 +246,25 @@ class Message < ActiveRecord::Base
 
   # If the record has zero relations to memberships and is not tagged for
   # postrouting it will be deleted.
-  def destroy_unlinked_and_not_postrouted(participant=nil)
+  def destroy_as_receiver(participant=nil)
+    memberships= Membership.receiver(participant.id, self.id)
+    if memberships.empty?
+      raise Ecs::NoReceiverOfMessageException,
+        "you are not a receiver of " +
+        "\"#{self.ressource.namespace}/#{self.ressource.ressource}/#{self.id.to_s}\""
+    end
     if participant
-      memberships= Membership.receiver(participant.id, self.id)
       MembershipMessage.delete_relations(self, memberships)
     end
     destroy_or_tag_as_removed if membership_messages.blank? and !ressource.postroute
   end
-  alias destroy_as_receiver destroy_unlinked_and_not_postrouted
+  alias destroy_unlinked_and_not_postrouted destroy_as_receiver 
     
 
   # Delete a message and send appropriate events. It will only be "fully"
   # deleted when there are no references from any events otherwise it will be
   # tagged as deleted.
-  def destroy_
+  def destroy_as_sender
     participants = Participant.for_message(self).uniq
     participants.each do |participant| 
       Event.make(:event_type_name => EvType.find(2).name, :participant => participant, :message => self)
@@ -267,7 +272,7 @@ class Message < ActiveRecord::Base
     MembershipMessage.delete_relations(self)
     destroy_or_tag_as_removed
   end
-  alias destroy_as_sender destroy_
+  alias destroy_ destroy_as_sender
 
   def outtimed_auths_resource_by_non_owner?(app_namespace, resource_name, participant)
     memberships= Membership.receiver(participant.id, self.id)
