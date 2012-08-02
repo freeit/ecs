@@ -80,17 +80,28 @@ class Message < ActiveRecord::Base
     transaction do
       create_update_helper(request, app_namespace, ressource_name, participant.id)
       save!
+      receivers_old = Participant.for_message(self).uniq
       MembershipMessage.de_populate_jointable(self)
       MembershipMessage.populate_jointable(self,
                                            request.headers["X-EcsReceiverMemberships"],
                                            request.headers["X-EcsReceiverCommunities"],
                                            participant)
+      receivers_new = Participant.for_message(self).uniq
       # TODO: if there are only the headers X-EcsReceiverMemberships and
       # X-EcsReceiverCommunities are updated, then we have to generate events only
       # for these new and removed receivers. To distinguish if the message body
       # is untouched we can use the ETag functionality.
-      Participant.for_message(self).uniq.each do |p|
+      (receivers_new & receivers_old).each do |p|
+        # generate updated events
         Event.make(:event_type_name => EvType.find(3).name, :participant => p, :message => self)
+      end if self.ressource.events
+      (receivers_old - receivers_new).each do |p|
+        # generate destroyed events
+        Event.make(:event_type_name => EvType.find(2).name, :participant => p, :message => self)
+      end if self.ressource.events
+      (receivers_new - receivers_old).each do |p|
+        # generate created events
+        Event.make(:event_type_name => EvType.find(1).name, :participant => p, :message => self)
       end if self.ressource.events
       if app_namespace == 'sys' and ressource_name == 'auths'
         post_create_auths_resource(participant)

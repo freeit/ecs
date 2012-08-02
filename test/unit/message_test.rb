@@ -18,9 +18,47 @@
 
 require 'test_helper'
 
-class MessageTest < ActiveSupport::TestCase
-  # Replace this with your real tests.
-  test "the truth" do
-    assert true
-  end
+# request stub
+class TestRequest
+  attr_accessor :headers, :raw_post
+  def initialize(h,rp); @headers, @raw_post = h, rp; end
 end
+
+class MessageTest < ActiveSupport::TestCase
+  test "named_scope__for_participant_receiver" do
+    m= Message.for_participant_receiver participants(:ilias_stgt)
+    assert_equal 2,m.length
+    assert m.include?(messages(:numlab_ex1))
+    assert m.include?(messages(:numlab_ulm_ex1))
+  end
+
+  # Change receivers community SUV (:ilias_stgt, :ilias_ulm) to :numlab_teacher
+  # and :ilias_ulm 
+  # Note: In the fixtures :ilias_stgt is configured as a receiver because it is
+  # in the SUV community. This is not correct because :ilias_stgt doesn't set
+  # community_selfrouting, but it's history.
+  test "update_receivers" do
+    headers={
+      "X-EcsReceiverMemberships" => "7,2",
+      "CONTENT_TYPE" => "text/plain"
+      }
+    raw_post= "hallo ich war da"
+    request= TestRequest.new(headers, raw_post)
+    assert_nothing_raised do
+      messages(:numlab_ex1).update__(request, "numlab", "exercises", participants(:ilias_stgt))
+    end
+    # :numlab_teacher is a new receiver and gets an created event
+    assert Participant.for_message(messages(:numlab_ex1)).uniq.include?(participants(:numlab_teacher))
+    assert Event.find_by_participant_id_and_ev_type_id(participants(:numlab_teacher).id,EvType.find_by_name("created"))
+    # :ilias_stgt isn't a receiver anymore and gets an destroyed event (:ilias_stgt was a receiver through fixture)
+    assert !Participant.for_message(messages(:numlab_ex1)).uniq.include?(participants(:ilias_stgt))
+    assert Event.find_by_participant_id_and_ev_type_id(participants(:ilias_stgt).id,EvType.find_by_name("destroyed"))
+    # :ilias_ulm is still a receiver and gets an updated event
+    assert Participant.for_message(messages(:numlab_ex1)).uniq.include?(participants(:ilias_ulm))
+    assert Event.find_by_participant_id_and_ev_type_id(participants(:ilias_ulm).id,EvType.find_by_name("updated"))
+    # number of receivers have to be two
+    assert_equal 2, Participant.for_message(messages(:numlab_ex1)).uniq.length
+  end  
+end
+
+
