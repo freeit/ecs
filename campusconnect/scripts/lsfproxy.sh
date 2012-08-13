@@ -52,6 +52,7 @@ usage() {
   echo "Options:"
   echo "  -c ... courses"
   echo "  -m ... course members"
+  echo "  -o ... organization units"
   echo "  -t ... directory trees"
   echo "  -s ... memberships"
   echo "  -i <resource id>"
@@ -91,7 +92,9 @@ if [ X$COURSES = Xtrue ]; then RESOURCE="campusconnect/courses"
   else if [ X$COURSE_MEMBERS = Xtrue ]; then RESOURCE="campusconnect/course_members"
     else if [ X$TREES = Xtrue ]; then RESOURCE="campusconnect/directory_trees"
       else if [ X$MEMBERSHIPS = Xtrue ]; then RESOURCE="sys/memberships"
-      else echo "ERROR: no resource selection option specified (option -c|m|t)"; exit $E_OPTERROR
+        else if [ X$ORGANIZATION_UNITS = Xtrue ]; then RESOURCE="campusconnect/organization_units"
+          else echo "ERROR: no resource selection option specified (option -c|m|t)"; exit $E_OPTERROR
+        fi
       fi
     fi
   fi
@@ -229,6 +232,7 @@ do
     v) VERBOSE=true;;
     c) COURSES=true;;
     m) COURSE_MEMBERS=true;;
+    o) ORGANIZATION_UNITS=true;;
     t) TREES=true;;
     s) MEMBERSHIPS=true;;
     h) usage; exit 0;;
