@@ -101,14 +101,6 @@ ActiveRecord::Schema.define(:version => 20110303145153) do
     t.boolean  "community_selfrouting", :default => false
   end
 
-  create_table "ressource_monitors", :force => true do |t|
-    t.integer  "lock_version",    :default => 0
-    t.integer  "monitor_counter", :default => 0
-    t.string   "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "ressources", :force => true do |t|
     t.string   "namespace"
     t.string   "ressource"
