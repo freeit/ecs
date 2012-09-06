@@ -18,7 +18,7 @@
 
 Organization.create :name => "not available",
   :description => "For anonymous participants.",
-  :abrev => "n/a" if Organization.find_by_name("not available").nil? and ECS_CONFIG["participants"]["allow_anonymous"] == true
+  :abrev => "n/a" if Organization.find_by_name("not available").nil?
 Organization.create :name => "system",
   :description => "Internal ECS community.",
   :abrev => "sys" if Organization.find_by_name("system").nil?
@@ -30,7 +30,7 @@ Participant.create :name => "ecs",
 Community.create :name => "public",
   :description => "For anonymous participants." if Community.find_by_name("public").nil?
 %w(created destroyed updated notlinked).each do |evt|
-  EvType.create :name => evt if EvType.find_by_name(evt).nil? and ECS_CONFIG["participants"]["allow_anonymous"] == true
+  EvType.create :name => evt if EvType.find_by_name(evt).nil?
 end
 Ressource.create :namespace => 'sys',
   :ressource => 'auths',
