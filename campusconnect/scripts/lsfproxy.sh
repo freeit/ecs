@@ -118,7 +118,7 @@ fi
 curl $CURL_OPTIONS --cacert $CACERT --cert $CERT --key $KEY --pass $PASS \
      -H "Content-Type: text/uri-list" \
      -H "X-EcsReceiverMemberships: $MID" \
-     -d `eval expr $"DATA_URL$DATA_URL_ID"` \
+     -d $(eval echo \$"DATA_URL$DATA_URL_ID") \
      -X POST $ECS_URL/$RESOURCE
 echo ""
 }
@@ -147,7 +147,7 @@ fi
 curl $CURL_OPTIONS --cacert $CACERT --cert $CERT --key $KEY --pass $PASS \
      -H "Content-Type: text/uri-list" \
      -H "X-EcsReceiverMemberships: $MID" \
-     -d `eval expr $"DATA_URL$DATA_URL_ID"` \
+     -d $(eval echo \$"DATA_URL$DATA_URL_ID") \
      -X PUT $ECS_URL/$RESOURCE/$RID
 echo ""
 }
