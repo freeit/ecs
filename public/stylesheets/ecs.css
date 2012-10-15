@@ -110,7 +110,7 @@ label {
 }
 
 .top {
-  text-align: top;
+  vertical-align: top;
 }
 
 
@@ -188,7 +188,7 @@ body {
 
 #banner {
   background: #9c9;
-  padding-top: 20;
+  padding-top: 20px;
   padding-bottom: 0px;
   border-bottom: 2px solid;
   font: small-caps 25px/25px "Times New Roman", serif;
