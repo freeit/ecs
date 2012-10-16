@@ -83,6 +83,11 @@ class Participant < ActiveRecord::Base
     participant.save
   end
 
+
+  def mid(community)
+    Membership.for_participant_id_and_community_id(self, community.id).first.id
+  end
+
 private
 
   def garbage_collect

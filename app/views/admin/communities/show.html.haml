@@ -40,18 +40,20 @@
   %p
     .show-output-width.table-border
       .table-header
-        %label.table-resource-label Participants joining this community:
+        %label.table-resource-label Participants joining the community:
     
       %table.list(width="100%")
         %tr(align="left")
           %th ID:
           %th Name:
           %th Description:
+          %th(align="right") MembershipID (mid):
         - participants.each do |participant|
           %tr{:class => [cycle('list-line-odd', 'list-line-even')]}
             %td= link_to h(participant.id), admin_participant_path(participant)
             %td= participant.name
             %td= h(participant.description).gsub(/\r\n/, '<BR>')
+            %td(align="right")= participant.mid(@community)
 
 %p
   = link_to 'Edit', edit_admin_community_url(:id => @community)
