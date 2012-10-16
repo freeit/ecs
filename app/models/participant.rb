@@ -42,7 +42,9 @@ class Participant < ActiveRecord::Base
   named_scope :for_message, lambda { |message| {
     :joins => [:memberships => {:membership_messages => :message}],
     :conditions => {:messages => {:id => message.id}}}}
-  
+  named_scope :for_community, lambda { |community| {
+    :joins => [:memberships => :community],
+    :conditions => { :communities => { :id => community.id }}}}
 
   # test if the participant is the initial sender of the message in question.
   def sender?(message)
