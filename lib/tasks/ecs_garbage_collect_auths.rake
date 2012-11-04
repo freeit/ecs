@@ -26,7 +26,6 @@ namespace :ecs do
       f.puts "#{Process.pid}"
     end
     begin
-      sleep 5
       RAILS_DEFAULT_LOGGER.info "GC: Searching for outtimed auths ..."
       puts "GC: Searching for outtimed auths ..."
       Message.all.each do |m|
