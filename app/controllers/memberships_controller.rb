@@ -41,6 +41,7 @@ class MembershipsController < ApplicationController
               attribs["mid"] = Membership.for_participant_id_and_community_id(p.id, membership.community.id).first.id
               attribs["org"] = {"name" => p.organization.name, "abbr" => p.organization.abrev}
               attribs["itsyou"] = p.id == @participant.id
+              attribs["pid"] = p.id
               attribs.delete("id")
               attribs.delete("organization_id")
               attribs

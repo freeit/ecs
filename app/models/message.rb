@@ -238,6 +238,7 @@ class Message < ActiveRecord::Base
     b["abbr"] = participant.organization.abrev
     one_touch_token_hash = Digest::SHA1.hexdigest(rand.to_s+Time.now.to_s)
     b["hash"] = one_touch_token_hash
+    b["pid"] = participant.id
     self.body = JSON.pretty_generate(b)
     self.auth = Auth.new :one_touch_hash => one_touch_token_hash
     save!
