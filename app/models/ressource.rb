@@ -35,11 +35,12 @@ class Ressource < ActiveRecord::Base
             rec_mids << memb.id
           end
         end
-        begin
-          MembershipMessage.populate_jointable(msg, rec_mids.join(',') , nil, Participant.find(msg.sender))
-          Event.make(:event_type_name => EvType.find(1).name, :participant => participant, :message => msg)
-        rescue Ecs::InvalidMessageException, Ecs::AuthorizationException
-        rescue  Ecs::InvalidMessageException
+        unless rec_mids.empty?
+          begin
+            MembershipMessage.populate_jointable(msg, rec_mids.join(',') , nil, Participant.find(msg.sender))
+            Event.make(:event_type_name => EvType.find(1).name, :participant => participant, :message => msg)
+          rescue Ecs::InvalidMessageException, Ecs::AuthorizationException
+          end
         end
       end
     end
