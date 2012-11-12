@@ -46,4 +46,4 @@
         %td
           = link_to 'Show', admin_participant_url(:id => participant)
           = link_to 'Edit', edit_admin_participant_url(:id => participant)
-          = link_to 'Destroy', admin_participant_url(:id => participant)
+          = link_to 'Destroy', admin_participant_url(:id => participant),:confirm => 'Are you sure?', :method => :delete
