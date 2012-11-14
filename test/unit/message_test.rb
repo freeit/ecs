@@ -59,6 +59,43 @@ class MessageTest < ActiveSupport::TestCase
     # number of receivers have to be two
     assert_equal 2, Participant.for_message(messages(:numlab_ex1)).uniq.length
   end  
+
+# Auths
+#
+  test "create_auths" do
+    headers={
+      "X-EcsReceiverMemberships" => "7,2",
+      "CONTENT_TYPE" => "application/json"
+      }
+    raw_post= Hash.new
+    raw_post[:realm]= <<-'HERE'
+    {
+      "realm":"https://ilias.uni-stuttgart.de/goto.php?target=crs_95034&client_id=USTGT"
+    }
+    HERE
+    raw_post[:url]= <<-'HERE'
+    {
+      "url":"https://ilias.uni-stuttgart.de/goto.php?target=crs_95034&client_id=USTGT"
+    }
+    HERE
+    raw_post.each do |k,v|
+      request= TestRequest.new(headers, v)
+      msg= nil
+      assert_nothing_raised do
+        msg= Message.create__(request, "sys", "auths", participants(:ilias_stgt))
+      end
+      assert Mime::Type.lookup(msg.content_type)== :json, "Content-Type is not application/json"
+      assert_equal participants(:ilias_stgt).id, msg.sender, "Unexpected creator of the message"
+      json= nil
+      assert_nothing_raised do
+        json= ActiveSupport::JSON.decode(msg.body)
+      end
+      assert json.keys.include?(k.to_s)
+      assert_equal "https://ilias.uni-stuttgart.de/goto.php?target=crs_95034&client_id=USTGT", json[k.to_s]
+      assert json.keys.include?(k.to_s)
+      assert_equal "https://ilias.uni-stuttgart.de/goto.php?target=crs_95034&client_id=USTGT", json[k.to_s]
+      assert json.keys.include?("pid")
+      assert_equal participants(:ilias_stgt).id, json["pid"]
+    end
+  end
 end
-
-

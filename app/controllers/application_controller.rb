@@ -116,26 +116,31 @@ protected
 
   # error pages
   def rescue_body_401
+    @http_error= $!
     logger.error $!.to_s
     render :text => "#{$!.to_s}\n", :layout => false, :status => 401
   end
 
   def rescue_body_500
+    @http_error= $!
     logger.error $!.to_s
     render :text => "#{$!.to_s}\n", :layout => false, :status => 500
   end
 
   def rescue_body_400
+    @http_error= $!
     logger.error $!.to_s
     render :text => "#{$!.to_s}\n" , :layout => false, :status => 400
   end
   
   def rescue_body_403
+    @http_error= $!
     logger.error $!.to_s
     render :text => "#{$!.to_s}\n" , :layout => false, :status => 403
   end
 
   def rescue_body_404
+    @http_error= $!
     logger.error $!.to_s
     if $!.to_s.blank?
       render :text => "The server does not know the ressource\nor the message queue in question is empty.\n" , :layout => false, :status => 404
@@ -145,11 +150,13 @@ protected
   end
 
   def rescue_body_409
+    @http_error= $!
     logger.error $!.to_s
     render :text => "#{$!.to_s}\n" , :layout => false, :status => 409
   end
   
   def rescue_body_415(controller_binding)
+    @http_error= $!
     logger.error $!.to_s
     if $!.to_s.blank?
       render :text => "The format of the client data is not supported by the server.\nIf your format is right please doublecheck the encoding !\nIt has to be UTF8 !\n", :layout => false, :status => 415

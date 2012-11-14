@@ -42,3 +42,8 @@ cc_course:
   postroute: false
   events: true
   
+sys_auths:
+  namespace: sys
+  ressource: auths
+  postroute: false
+  events: false

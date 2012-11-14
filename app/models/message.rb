@@ -200,7 +200,8 @@ class Message < ActiveRecord::Base
   # Preprocess request body if it's a /sys/auths resource.
   # Generate a one touch token (hash)
   def post_create_auths_resource(participant)
-    ttl = 60.seconds
+    ttl_min = 5.seconds
+    ttl = ttl_min + 60.seconds
     unless Mime::Type.lookup(self.content_type).to_sym == :json
       raise Ecs::InvalidMimetypeException, "Body format has to be in JSON"
     end
@@ -210,9 +211,17 @@ class Message < ActiveRecord::Base
       raise Ecs::InvalidMessageException, "Invalid JSON body"
     end
     bks = b.keys
-    unless bks.include?("url")
-      raise Ecs::InvalidMessageException, "Missing url key"
+
+    # NOTE Assures that there are at least url or realm set -> backward compatibility
+    unless bks.include?("url") or bks.include?("realm")
+      raise Ecs::InvalidMessageException, "You have to provide realm or url attribute"
     end
+    if bks.include?("realm") and !b["realm"].empty? and !bks.include?("url")
+      b["url"]= b["realm"]
+    elsif bks.include?("url") and !b["url"].empty? and !bks.include?("realm")
+      b["realm"]= b["url"]
+    end
+
     #msg_id = URI.split(b["url"])[5][1..-1].sub(/[^\/]*\/[^\/]*\/(.*)/, '\1').to_i
     #begin
     #  Message.find(msg_id)
@@ -224,10 +233,13 @@ class Message < ActiveRecord::Base
         b["sov"] = Time.now.xmlschema
         b["eov"] = (Time.now + ttl).xmlschema
       when (bks.include?("sov") and !bks.include?("eov"))
+        if Time.parse(b["sov"]) < Time.now
+          raise Ecs::InvalidMessageException, 'sov time is younger then current time'
+        end
         b["eov"] = (Time.parse(b["sov"]) + ttl).xmlschema
       when (!bks.include?("sov") and bks.include?("eov"))
-        if Time.parse(b["eov"]) < Time.now
-          raise Ecs::InvalidMessageException, 'eov time is younger then current time'
+        if Time.parse(b["eov"]) < (Time.now + ttl_min)
+          raise Ecs::InvalidMessageException, 'eov time is too young'
         end
         b["sov"] = Time.now.xmlschema
       when (bks.include?("sov") and bks.include?("eov"))

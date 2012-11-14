@@ -85,9 +85,9 @@ class MessagesControllerTest < ActionController::TestCase
     @request.env["CONTENT_TYPE"] = "text/html"
     @request.env["X-EcsAuthId"] = identities(:stgt_id1).name
     @request.env["X-EcsReceiverCommunities"] = communities(:suv).name
+    @request.set_REQUEST_URI("/numlab/exercises")
     mm_count = MembershipMessage.all.count
     post :create
-
     assert_response 201
     assert_equal assigns(:record).sender, assigns(:participant).id
     assert_equal mm_count+1, MembershipMessage.all.count
@@ -98,6 +98,7 @@ class MessagesControllerTest < ActionController::TestCase
     @request.env["CONTENT_TYPE"] = "text/html"
     @request.env["X-EcsAuthId"] = identities(:stgt_id1).name
     @request.env["X-EcsReceiverCommunities"] = communities(:suv).name + "," + communities(:public).name
+    @request.set_REQUEST_URI("/numlab/exercises")
     mm_count = MembershipMessage.all.count
     post :create
     assert_response 201
@@ -110,6 +111,7 @@ class MessagesControllerTest < ActionController::TestCase
     @request.env["CONTENT_TYPE"] = "text/html"
     @request.env["X-EcsAuthId"] = identities(:stgt_id1).name
     @request.env["X-EcsReceiverCommunities"] = communities(:suv).name + "," + communities(:public).id.to_s
+    @request.set_REQUEST_URI("/numlab/exercises")
     mm_count = MembershipMessage.all.count
     post :create
     assert_response 201
@@ -121,6 +123,7 @@ class MessagesControllerTest < ActionController::TestCase
     @request.env["RAW_POST_DATA"] = "hallole"
     @request.env["X-EcsAuthId"] = identities(:stgt_id1).name
     @request.env["X-EcsReceiverMemberships"] = memberships(:ulm_wuv).id.to_s
+    @request.set_REQUEST_URI("/numlab/exercises")
     post :create
     assert_response 400
   end
@@ -129,6 +132,7 @@ class MessagesControllerTest < ActionController::TestCase
     @request.env["CONTENT_TYPE"] = "text/html"
     @request.env["X-EcsAuthId"] = identities(:stgt_id1).name
     @request.env["X-EcsReceiverMemberships"] = memberships(:ulm_wuv).id.to_s
+    @request.set_REQUEST_URI("/numlab/exercises")
     post :create
     assert_response 400
   end
@@ -302,18 +306,138 @@ class MessagesControllerTest < ActionController::TestCase
     assert_equal "Hallo Ihr da im Radio.", @response.body.strip
   end
 
+# Auths tests
+#
 
-#  test "create_auths" do
-#    @request.env["RAW_POST_DATA"] = '{"url":"http://freeit.de/course1"}'
-#    @request.env["CONTENT_TYPE"] = "application/json"
-#    @request.env["X-EcsAuthId"] = identities(:stgt_id1).name
-#    @request.env["X-EcsReceiverMemberships"] = memberships(:ulm_wuv).id.to_s
-#    @request.set_REQUEST_URI("/sys/auths")
-#    mm_count = MembershipMessage.all.count
-#    post :create
-#    assert_response 201
-#  end
+  test "create_auths" do
+    @request.env["RAW_POST_DATA"] = <<-'HERE'
+    {
+      "url":"https://ilias.uni-stuttgart.de/goto.php?target=crs_95034&client_id=USTGT",
+      "realm":"https://ilias.uni-stuttgart.de/goto.php?target=crs_95034&client_id=USTGT"
+    }
+    HERE
+    @request.env["CONTENT_TYPE"] = "application/json"
+    @request.env["X-EcsAuthId"] = identities(:stgt_id1).name
+    @request.env["X-EcsReceiverMemberships"] = memberships(:ulm_wuv).id.to_s
+    @request.set_REQUEST_URI("/sys/auths")
+    mm_count = MembershipMessage.all.count
+    post :create
+    assert_response 201
+  end
 
+  test "create_auths_url" do
+    @request.env["RAW_POST_DATA"] = <<-'HERE'
+    {
+      "url":"https://ilias.uni-stuttgart.de/goto.php?target=crs_95034&client_id=USTGT"
+    }
+    HERE
+    @request.env["CONTENT_TYPE"] = "application/json"
+    @request.env["X-EcsAuthId"] = identities(:stgt_id1).name
+    @request.env["X-EcsReceiverMemberships"] = memberships(:ulm_wuv).id.to_s
+    @request.set_REQUEST_URI("/sys/auths")
+    mm_count = MembershipMessage.all.count
+    post :create
+    assert_response 201
+  end
+
+  test "create_auths_realm" do
+    @request.env["RAW_POST_DATA"] = <<-'HERE'
+    {
+      "realm":"https://ilias.uni-stuttgart.de/goto.php?target=crs_95034&client_id=USTGT"
+    }
+    HERE
+    @request.env["CONTENT_TYPE"] = "application/json"
+    @request.env["X-EcsAuthId"] = identities(:stgt_id1).name
+    @request.env["X-EcsReceiverMemberships"] = memberships(:ulm_wuv).id.to_s
+    @request.set_REQUEST_URI("/sys/auths")
+    mm_count = MembershipMessage.all.count
+    post :create
+    assert_response 201
+  end
+
+  test "create_auths_invalid_json_mimetype" do
+    @request.env["RAW_POST_DATA"] = <<-'HERE'
+    {
+      "realm":"https://ilias.uni-stuttgart.de/goto.php?target=crs_95034&client_id=USTGT"
+    }
+    HERE
+    @request.env["CONTENT_TYPE"] = "text/html"
+    @request.env["X-EcsAuthId"] = identities(:stgt_id1).name
+    @request.env["X-EcsReceiverMemberships"] = memberships(:ulm_wuv).id.to_s
+    @request.set_REQUEST_URI("/sys/auths")
+    mm_count = MembershipMessage.all.count
+    post :create
+    assert_response 415
+    assert_equal "Body format has to be in JSON", assigns(:http_error).to_s
+  end
+
+  test "create_auths_invalid_json_body" do
+    @request.env["RAW_POST_DATA"] = <<-'HERE'
+    {
+      "realm"::"https://ilias.uni-stuttgart.de/goto.php?target=crs_95034&client_id=USTGT"
+    }
+    HERE
+    @request.env["CONTENT_TYPE"] = "application/json"
+    @request.env["X-EcsAuthId"] = identities(:stgt_id1).name
+    @request.env["X-EcsReceiverMemberships"] = memberships(:ulm_wuv).id.to_s
+    @request.set_REQUEST_URI("/sys/auths")
+    mm_count = MembershipMessage.all.count
+    post :create
+    assert_response 400
+    assert_equal "Invalid JSON body", assigns(:http_error).to_s
+  end
+
+  test "create_auths_eov_younger_than_sov" do
+    @request.env["RAW_POST_DATA"] = <<-'HERE'
+    {
+      "realm":"https://ilias.uni-stuttgart.de/goto.php?target=crs_95034&client_id=USTGT",
+      "sov": "2011-03-08T23:25:27+01:00",
+      "eov": "2011-03-08T23:25:17+01:00"
+    }
+    HERE
+    @request.env["CONTENT_TYPE"] = "application/json"
+    @request.env["X-EcsAuthId"] = identities(:stgt_id1).name
+    @request.env["X-EcsReceiverMemberships"] = memberships(:ulm_wuv).id.to_s
+    @request.set_REQUEST_URI("/sys/auths")
+    mm_count = MembershipMessage.all.count
+    post :create
+    assert_response 400
+    assert_equal "invalid times either in sov or eov", assigns(:http_error).to_s
+  end
+
+  test "create_auths_sov_younger_than_current_time" do
+    @request.env["RAW_POST_DATA"] = <<-'HERE'
+    {
+      "realm":"https://ilias.uni-stuttgart.de/goto.php?target=crs_95034&client_id=USTGT",
+      "sov": "2011-03-08T23:25:27+01:00"
+    }
+    HERE
+    @request.env["CONTENT_TYPE"] = "application/json"
+    @request.env["X-EcsAuthId"] = identities(:stgt_id1).name
+    @request.env["X-EcsReceiverMemberships"] = memberships(:ulm_wuv).id.to_s
+    @request.set_REQUEST_URI("/sys/auths")
+    mm_count = MembershipMessage.all.count
+    post :create
+    assert_response 400
+    assert_equal "sov time is younger then current time", assigns(:http_error).to_s
+  end
+
+  test "create_auths_eov_too_young" do
+    @request.env["RAW_POST_DATA"] = <<-"HERE"
+    {
+      "realm":"https://ilias.uni-stuttgart.de/goto.php?target=crs_95034&client_id=USTGT",
+      "eov": "#{(Time.now + 1.second).xmlschema}"
+    }
+    HERE
+    @request.env["CONTENT_TYPE"] = "application/json"
+    @request.env["X-EcsAuthId"] = identities(:stgt_id1).name
+    @request.env["X-EcsReceiverMemberships"] = memberships(:ulm_wuv).id.to_s
+    @request.set_REQUEST_URI("/sys/auths")
+    mm_count = MembershipMessage.all.count
+    post :create
+    assert_response 400
+    assert_equal "eov time is too young", assigns(:http_error).to_s
+  end
 
 # anonymous clients
 #
