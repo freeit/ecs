@@ -232,7 +232,7 @@ protected
     if stale?(:etag => @record, :last_modified => @record.updated_at.utc, 
               :x_ecs_receiver_communities => x_ecs_receiver_communities, 
               :x_ecs_sender => x_ecs_sender)
-      render :text => @body, :layout => false, :status => 200, :content_type => @record.content_type
+      render :text => @body, :layout => false, :status => 200, :content_type => Mime::Type.lookup(@record.content_type)
     end
   end
 
@@ -241,9 +241,9 @@ protected
     location += request.headers["SCRIPT_NAME"] if request.headers.has_key?("SCRIPT_NAME")
     location += request.path.gsub(/\/*$/,'') + "/" + @record.id.to_s
     if @app_namespace == 'sys' and @ressource_name == 'auths'
-      render :text => @body, :layout => false, :status => 201, :location => location
+      render :text => @body, :layout => false, :status => 201, :location => location, :content_type => Mime::Type.lookup_by_extension("json")
     else
-      render :text => "", :layout => false, :status => 201, :location => location
+      render :text => "", :layout => false, :status => 201, :location => location, :content_type => Mime::Type.lookup(@record.content_type)
     end
   end
 
