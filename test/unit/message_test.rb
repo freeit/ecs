@@ -68,9 +68,9 @@ class MessageTest < ActiveSupport::TestCase
       "CONTENT_TYPE" => "application/json"
       }
     raw_post= Hash.new
-    raw_post[:realm]= <<-'HERE'
+    raw_post[:realm]= <<-"HERE"
     {
-      "realm":"https://ilias.uni-stuttgart.de/goto.php?target=crs_95034&client_id=USTGT"
+      "realm":"#{Digest::SHA1.hexdigest 'https://ilias.uni-stuttgart.de/goto.php?target=crs_95034&client_id=USTGT'}"
     }
     HERE
     raw_post[:url]= <<-'HERE'
@@ -91,9 +91,12 @@ class MessageTest < ActiveSupport::TestCase
         json= ActiveSupport::JSON.decode(msg.body)
       end
       assert json.keys.include?(k.to_s)
-      assert_equal "https://ilias.uni-stuttgart.de/goto.php?target=crs_95034&client_id=USTGT", json[k.to_s]
-      assert json.keys.include?(k.to_s)
-      assert_equal "https://ilias.uni-stuttgart.de/goto.php?target=crs_95034&client_id=USTGT", json[k.to_s]
+      if k.to_s == "realm"
+        assert_equal Digest::SHA1.hexdigest("https://ilias.uni-stuttgart.de/goto.php?target=crs_95034&client_id=USTGT"), json[k.to_s]
+      end
+      if k.to_s == "url"
+        assert_equal "https://ilias.uni-stuttgart.de/goto.php?target=crs_95034&client_id=USTGT", json[k.to_s]
+      end
       assert json.keys.include?("pid")
       assert_equal participants(:ilias_stgt).id, json["pid"]
     end
