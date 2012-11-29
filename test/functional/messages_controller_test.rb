@@ -423,6 +423,21 @@ class MessagesControllerTest < ActionController::TestCase
     assert_equal "eov time is too young", assigns(:http_error).to_s
   end
 
+  test "delete_auths" do
+    @request.env["X-EcsAuthId"] = identities(:ulm_id1).name
+    @request.set_REQUEST_URI("/sys/auths/#{auths(:valid).one_touch_hash}")
+    auths_count= Auth.all.length
+    messages_count= Message.all.length
+    auth_valid_id= auths(:valid).id
+    message_auth_valid_id= messages(:auth_valid).id
+    post :destroy, { :id => auths(:valid).one_touch_hash }
+    assert_response 200
+    assert_equal messages_count-1, Message.all.length
+    assert_equal auths_count-1, Auth.all.length
+    assert_raise(ActiveRecord::RecordNotFound){Auth.find(auth_valid_id)}
+    assert_raise(ActiveRecord::RecordNotFound){Message.find(message_auth_valid_id)}
+  end
+
 # anonymous clients
 #
 

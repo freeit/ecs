@@ -101,4 +101,13 @@ class MessageTest < ActiveSupport::TestCase
       assert_equal participants(:ilias_stgt).id, json["pid"]
     end
   end
+
+  test "gc_outtimed_auths" do
+    auths_count= Auth.all.length
+    messages_count= Message.all.length
+    Auth.gc_outtimed
+    assert_equal messages_count-1, Message.all.length
+    assert_equal auths_count-1, Auth.all.length
+    assert_raise(ActiveRecord::RecordNotFound){auths(:outtimed)}
+  end
 end

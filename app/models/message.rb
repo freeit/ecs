@@ -163,18 +163,6 @@ class Message < ActiveRecord::Base
     end
   end
 
-  def test_auths_validation_window
-    b = JSON.parse(body)
-    sov = Time.parse(b["sov"]) 
-    eov = Time.parse(b["eov"]) 
-    if sov > Time.now or eov < Time.now
-      false
-    else
-      true
-    end
-  end
-
-
   def self.filter(action_name, app_namespace, ressource_name, record, params)
     d="filter/#{app_namespace}/#{ressource_name}/#{action_name}/*"
     filters=Dir[d].collect{|f| File.directory?(f) ? f : nil}.compact
@@ -291,23 +279,22 @@ class Message < ActiveRecord::Base
     resource_name == 'auths' and
     !memberships.empty? and
     !participant.sender?(self) and
-    !test_auths_validation_window
+    !auth.test_validation_window
   end
-
 
   def valid_auths_resource_fetched_by_non_owner?(app_namespace, resource_name, memberships, participant)
     app_namespace  == 'sys' and
     resource_name == 'auths' and
     !memberships.empty? and
-    !participant.sender?(@record) and
-    test_auths_validation_window
+    !participant.sender?(self) and
+    auth.test_validation_window
   end
 
   def valid_no_auths_resource_fetched_by_non_owner?(app_namespace, resource_name, memberships, participant)
     app_namespace  != 'sys' and
     ressource_name != 'auths' and
     !memberships.empty? and
-    !participant.sender?(@record)
+    !participant.sender?(self)
   end
 
   # Helper function for create and update 

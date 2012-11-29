@@ -52,3 +52,13 @@
   id: 7
   membership_id: 4 #ulm_suv
   message_id: 2 #numlab_exercise_2
+
+8:
+  id: 8
+  membership_id: 2 #ulm_wuv
+  message_id: 7 #auth_outtimed
+
+9:
+  id: 9
+  membership_id: 2 #ulm_wuv
+  message_id: 8 #auth_valid
