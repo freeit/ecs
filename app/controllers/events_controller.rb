@@ -36,7 +36,8 @@ class EventsController < ApplicationController
     max_tries = 5
     begin
       Event.transaction do
-        events_render(@participant.id, 1)
+        count = params["count"].blank? ? 1 : params["count"].to_i
+        events_render(@participant.id, count)
       end
     rescue ActiveRecord::StaleObjectError, ActiveRecord::RecordNotFound => error
       logger.info "**** Concurrent access at events queue (max_tries=#{max_tries})."
