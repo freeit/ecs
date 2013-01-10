@@ -42,20 +42,16 @@ class Admin::ParticipantsController < ApplicationController
       when "true" 
         @list_anonymous=true
         @list_participants_count = Participant.all.count
-        Participant.find(:all).uniq.sort{|x,y| x.id <=> y.id }
+        Participant.find(:all).uniq
       when "false"
         @list_anonymous=false
         @list_participants_count = Participant.all.count - @list_participants_anonymous_count
-        Participant.without_anonymous.uniq.sort{|x,y| x.id <=> y.id }
+        Participant.without_anonymous.uniq
       else
         @list_anonymous=false
         @list_participants_count = Participant.all.count - @list_participants_anonymous_count
-        Participant.without_anonymous.uniq.sort{|x,y| x.id <=> y.id }
+        Participant.without_anonymous.uniq
     end
-    #@participants=Participant.find(:all).uniq.sort{|x,y| x.id <=> y.id }
-    #@participants_without_anonymous=Participant.without_anonymous.uniq.sort{|x,y| x.id <=> y.id }
-    #@participants_anonymous=Participant.anonymous.uniq.sort{|x,y| x.id <=> y.id }
-    #pp params
   end
   
   def show

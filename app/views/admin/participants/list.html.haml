@@ -1,5 +1,5 @@
 -#
-  Copyright (C) 2007, 2008, 2009, 2010 Heiko Bernloehr (FreeIT.de).
+  Copyright (C) 2007, 2013 Heiko Bernloehr (FreeIT.de).
   
   This file is part of ECS.
   
@@ -28,22 +28,28 @@
 %p
   %table.list
     %tr.table-resource-label
+      %th.box2 Organi-<br/>zation:
       %th.box2 ID:
       %th.box2 Name:
       %th.box2 Description (optional):
-      %th.box2 Organi-<br/>zation:
       %th.box2 Self-<br/>routing:
       %th.box2(align="center") Operations:
     %tr
 
-    - for participant in @participants
-      %tr{:class => [cycle('list-line-odd', 'list-line-even')]}
-        %td= participant.id
-        %td= participant.name
-        %td= truncate(participant.description, :length => 80)
-        %td.center= participant.organization.abrev
-        %td.center= check_box_tag "participant[community_selfrouting]",1,participant.community_selfrouting, :disabled => true
-        %td
-          = link_to 'Show', admin_participant_url(:id => participant)
-          = link_to 'Edit', edit_admin_participant_url(:id => participant)
-          = link_to 'Destroy', admin_participant_url(:id => participant),:confirm => 'Are you sure?', :method => :delete
+    - @participants.group_by(&:organization_id).each do |orgid,participants| 
+      - org_printed= false
+      - participants.each do |participant|
+        %tr{:class => [cycle('list-line-odd', 'list-line-even')]}
+          - if org_printed
+            %td.center "
+          - else
+            %td= Organization.find(orgid).abrev
+          %td.center= participant.id
+          %td= participant.name
+          %td= truncate(participant.description, :length => 80)
+          %td.center= check_box_tag "participant[community_selfrouting]",1,participant.community_selfrouting, :disabled => true
+          %td
+            = link_to 'Show', admin_participant_url(:id => participant)
+            = link_to 'Edit', edit_admin_participant_url(:id => participant)
+            = link_to 'Destroy', admin_participant_url(:id => participant),:confirm => 'Are you sure?', :method => :delete
+          - org_printed= true
