@@ -24,9 +24,9 @@
 %p
   %table.list
     %tr.table-resource-label
-      %th.box2 Namespace
+      %th.box2 &uarr; Namespace
       %th.box2 ID
-      %th.box2 Name
+      %th.box2 &uarr; Name
       %th.box2 Postrouted
       %th.box2 Events
       %th.box2(align="center") Operations:
@@ -34,7 +34,7 @@
 
     - @ressources.group_by(&:namespace).each do |ns, ressources|
       - ns_printed= false
-      - ressources.each do |ressource|
+      - ressources.sort_by(&:ressource).each do |ressource|
         %tr{:class => [cycle('list-line-odd', 'list-line-even')]}
           -if ns_printed
             %td.center "

@@ -28,13 +28,13 @@ License along with ECS. If not, see <http://www.gnu.org/licenses/>.
 
   <TR class="table-resource-label">
   <TH class="box2">Id</TH>
-  <TH class="box2">Name</TH>
+  <TH class="box2">&uarr; Name</TH>
   <TH class="box2">Description (optional)</TH>
   <TH class="box2" align="center">Operations</TH>
   </TR>
   <tr></tr>
   
-  <% for community in @communities %>
+  <% for community in @communities.sort_by(&:name) %>
   	<tr valign="top" class="<%= cycle('list-line-odd', 'list-line-even') %>">
       <TD> <%= community.id %></TD>
   		<TD> <%= h community.name %> </TD>

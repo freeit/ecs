@@ -28,17 +28,17 @@
 %p
   %table.list
     %tr.table-resource-label
-      %th.box2 Organi-<br/>zation:
+      %th.box2 &uarr; OrgAbrev:
       %th.box2 ID:
-      %th.box2 Name:
+      %th.box2 &uarr; Name:
       %th.box2 Description (optional):
       %th.box2 Self-<br/>routing:
       %th.box2(align="center") Operations:
     %tr
 
-    - @participants.group_by(&:organization_id).each do |orgid,participants| 
+    - @participants.group_by(&:organization_id).sort{|x,y| Organization.find(x[0]).abrev.downcase <=> Organization.find(y[0]).abrev.downcase}.each do |orgid,participants| 
       - org_printed= false
-      - participants.each do |participant|
+      - participants.sort_by(&:name).each do |participant|
         %tr{:class => [cycle('list-line-odd', 'list-line-even')]}
           - if org_printed
             %td.center "

@@ -31,7 +31,7 @@ class Admin::OrganizationsController < ApplicationController
   end
 
   def list
-    @organizations=Organization.find(:all).uniq.sort{|x,y| x.id <=> y.id }
+    @organizations=Organization.find(:all).uniq
   end
 
   def show

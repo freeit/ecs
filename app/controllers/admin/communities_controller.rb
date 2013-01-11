@@ -31,7 +31,7 @@ class Admin::CommunitiesController < ApplicationController
   end
 
   def list
-    @communities=Community.find(:all).uniq.sort{|x,y| x.id <=> y.id }
+    @communities=Community.find(:all).uniq
   end
 
   def show

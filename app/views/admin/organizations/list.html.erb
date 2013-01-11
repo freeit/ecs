@@ -27,15 +27,15 @@ License along with ECS. If not, see <http://www.gnu.org/licenses/>.
 <table class="list">
 
   <TR class="table-resource-label">
-    <TH class="box2">Id</TH>
-    <TH class="box2">Name</TH>
+    <TH class="box2">ID</TH>
+    <TH class="box2">&uarr; Name</TH>
     <TH class="box2">Abreviation</TH>
     <TH class="box2">Description</TH>
     <TH class="box2" align="center">Operations</TH>
   </TR>
   <tr></tr>
   
-  <% for organization in @organizations %>
+  <% for organization in @organizations.sort_by(&:name) %>
   	<tr valign="top" class="<%= cycle('list-line-odd', 'list-line-even') %>">
       <TD> <%= organization.id %></TD>
   		<TD> <%= h organization.name %> </TD>
