@@ -35,7 +35,7 @@ License along with ECS. If not, see <http://www.gnu.org/licenses/>.
   </TR>
   <tr></tr>
   
-  <% for organization in @organizations.sort_by(&:name) %>
+  <% for organization in @organizations.sort{|x,y| x.name.downcase <=> y.name.downcase} %>
   	<tr valign="top" class="<%= cycle('list-line-odd', 'list-line-even') %>">
       <TD> <%= organization.id %></TD>
   		<TD> <%= h organization.name %> </TD>

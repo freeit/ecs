@@ -34,7 +34,7 @@ License along with ECS. If not, see <http://www.gnu.org/licenses/>.
   </TR>
   <tr></tr>
   
-  <% for community in @communities.sort_by(&:name) %>
+  <% for community in @communities.sort{|x,y| x.name.downcase <=> y.name.downcase}.each %>
   	<tr valign="top" class="<%= cycle('list-line-odd', 'list-line-even') %>">
       <TD> <%= community.id %></TD>
   		<TD> <%= h community.name %> </TD>

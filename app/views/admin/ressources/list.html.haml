@@ -32,9 +32,9 @@
       %th.box2(align="center") Operations:
     %tr
 
-    - @ressources.group_by(&:namespace).each do |ns, ressources|
+    - @ressources.group_by(&:namespace).sort{|x,y| x[0].downcase <=> y[0].downcase}.each do |ns, ressources|
       - ns_printed= false
-      - ressources.sort_by(&:ressource).each do |ressource|
+      - ressources.sort{|x,y| x.ressource.downcase <=> y.ressource.downcase}.each do |ressource|
         %tr{:class => [cycle('list-line-odd', 'list-line-even')]}
           -if ns_printed
             %td.center "
