@@ -4,6 +4,7 @@
   "properties": {
     "rootID": {"type":"string", "required":true},
     "directoryTreeTitle": {"type":"string", "required":true},
+    "term": {"type":"string", "required":false},
     "nodes": {
       "type":"array",
       "items": {
