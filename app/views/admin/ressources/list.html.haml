@@ -1,0 +1,51 @@
+-#
+  Copyright (C) 2007, 2013 Heiko Bernloehr (FreeIT.de).
+  
+  This file is part of ECS.
+  
+  ECS is free software: you can redistribute it and/or modify it
+  under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of
+  the License, or (at your option) any later version.
+  
+  ECS is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Affero General Public License for more details.
+  
+  You should have received a copy of the GNU Affero General Public
+  License along with ECS. If not, see <http://www.gnu.org/licenses/>.
+
+
+%h1.box1 Listing Ressources (#{@list_ressources_count.to_s})
+
+.text-link= link_to 'New resource', new_admin_ressource_url
+
+%p
+  %table.list
+    %tr.table-resource-label
+      %th.box2 Namespace
+      %th.box2 ID
+      %th.box2 Name
+      %th.box2 Postrouted
+      %th.box2 Events
+      %th.box2(align="center") Operations:
+    %tr
+
+    - @ressources.group_by(&:namespace).each do |ns, ressources|
+      - ns_printed= false
+      - ressources.each do |ressource|
+        %tr{:class => [cycle('list-line-odd', 'list-line-even')]}
+          -if ns_printed
+            %td.center "
+          - else
+            %td #{ns}
+          %td.center= ressource.id
+          %td= h ressource.ressource
+          %td.center= check_box_tag "ressource[postroute]",1,ressource.postroute, :disabled => true
+          %td.center= check_box_tag "ressource[events]",1,ressource.events, :disabled => true
+          %td
+            = link_to 'Show', admin_ressource_url(:id => ressource)
+            = link_to 'Edit', edit_admin_ressource_url(:id => ressource)
+            = link_to 'Destroy', admin_ressource_url(:id => ressource), :confirm => 'Are you sure?', :method => :delete
+          - ns_printed= true
