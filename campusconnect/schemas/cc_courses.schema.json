@@ -12,7 +12,6 @@
         "title": {"type":"string"},
         "courseType": {"type":"string"},
         "hoursPerWeek": {"type":"integer"},
-        "maxParticipants": {"type":"integer"},
         "parallelGroupScenario": {"type":"integer"}
       }
     },
@@ -49,7 +48,7 @@
       "items": {
         "type":"object",
         "properties":{
-          "parentID": {"type":"integer"},
+          "parentID": {"type":"string"},
           "order": {"type":"integer"}
         }
       }
@@ -95,7 +94,6 @@
       "items": {
         "type":"object",
         "properties": {
-          "title": {"type":"string"},
           "id": {"type":"string"},
           "comment": {"type":"string"},
           "firstDate": {"type":"string"},
