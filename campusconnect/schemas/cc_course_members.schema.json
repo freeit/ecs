@@ -18,10 +18,12 @@
               "properties": {
                 "id": {"type":"string"},
                 "groupRole": {"type":"string"}
-              }
+              },
+              "additionalProperties" : false
             }
           }
-        }
+        },
+        "additionalProperties" : false
       }
     }
   },

@@ -37,9 +37,11 @@
             "properties": {
               "startDatetime": {"type":"string", "format":"date-time"},
               "endDatetime": {"type":"string", "format":"date-time"}
-             }
+            },
+            "additionalProperties" : false
           }
-        }
+        },
+        "additionalProperties" : false
       }
     },
     "degreeProgrammes": {
@@ -49,7 +51,8 @@
         "properties": {
           "title": {"type":"string"},
           "code": {"type":"string"}
-        }
+        }, 
+        "additionalProperties" : false
       }
     },
     "lecturers": {
@@ -59,7 +62,8 @@
         "properties": {
           "fisrtName": {"type":"string"},
           "lastName": {"type":"string"}
-        }
+        },
+        "additionalProperties" : false
       }
     }
   },

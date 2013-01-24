@@ -14,7 +14,8 @@
         "courseType": {"type":"string"},
         "hoursPerWeek": {"type":"integer"},
         "parallelGroupScenario": {"type":"integer"}
-      }
+      },
+      "additionalProperties" : false
     },
     "lecturers": {
       "type":"array",
@@ -23,7 +24,8 @@
         "properties":{
           "firstName": {"type":"string"},
           "lastName": {"type":"string"}
-        }
+        },
+        "additionalProperties" : false
       }
     },
     "degreeProgrammes": {
@@ -39,9 +41,11 @@
             "properties": {
               "from":{"type":"integer"},
               "to":{"type":"integer"}
-            }
+            },
+            "additionalProperties" : false
           }
-        }
+        },
+        "additionalProperties" : false
       }
     },
     "allocations": {
@@ -51,7 +55,8 @@
         "properties":{
           "parentID": {"type":"string"},
           "order": {"type":"integer"}
-        }
+        },
+        "additionalProperties" : false
       }
     },
     "comment1": {"type":"string"},
@@ -65,7 +70,8 @@
         "properties":{
           "id": {"type":"string"},
           "title": {"type":"string"}
-        }
+        },
+        "additionalProperties" : false
       }
     },  
     "prerequisites": {"type":"string"},
@@ -80,7 +86,8 @@
         "properties":{
           "href": {"type":"string", "format":"uri"},
           "title": {"type":"string"}
-        }
+        },
+        "additionalProperties" : false
       }
     },  
     "linkToCourse": {
@@ -88,7 +95,8 @@
         "properties":{
           "href": {"type":"string", "format":"uri"},
           "title": {"type":"string"}
-        }
+        },
+        "additionalProperties" : false
     },  
     "parallelGroups": {
       "type":"array",
@@ -122,9 +130,11 @@
                   "properties": {
                     "startDatetime": {"type":"string", "format":"date-time"},
                     "endDatetime": {"type":"string", "format":"date-time"}
-                  }
+                  },
+                  "additionalProperties" : false
                 }
-              }
+              },
+              "additionalProperties" : false
             }
           },  
           "singleDatesAndVenues": {
@@ -132,9 +142,17 @@
             "items": {
               "type":"object",
               "properties": {
-                "startDatetime": {"type":"string", "format":"date-time"},
-                "endDatetime": {"type":"string", "format":"date-time"}
-              }
+                "venue": {"type":"string"},
+                "date": {
+                  "type":"object",
+                  "properties": {
+                    "startDatetime": {"type":"string", "format":"date-time"},
+                    "endDatetime": {"type":"string", "format":"date-time"}
+                  },
+                  "additionalProperties" : false
+                }
+              },
+              "additionalProperties" : false
             }
           },
           "maxParticipants": {"type":"integer"},
@@ -145,8 +163,9 @@
               "type":"object",
               "properties": {
                 "firstName": {"type":"string"},
-                "lsatName": {"type":"string"}
-              }
+                "lastName": {"type":"string"}
+              },
+              "additionalProperties" : false
             }
           },
           "canceledDates": {
@@ -156,10 +175,12 @@
               "properties": {
                 "datetime": {"type":"string", "format":"date-time"},
                 "comment": {"type":"string"}
-              }
+              },
+              "additionalProperties" : false
             }
           }
-        }
+        },
+        "additionalProperties" : false
       }
     },
     "modules": {

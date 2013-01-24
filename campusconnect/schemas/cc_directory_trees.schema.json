@@ -19,9 +19,11 @@
             "properties": {
               "id": {"type":"string", "required":true},
               "title": {"type":"string"}
-            }
+            },
+            "additionalProperties" : false
           }
-        }
+        },
+        "additionalProperties" : false
       }
     }
   },
