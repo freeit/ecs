@@ -1,4 +1,5 @@
 {
+  "$schema": "http://json-schema.org/draft-03/schema#",
   "description":"Data schema for JSON representation of CampusConnect terms resource",
   "type":"object",
   "properties": {
@@ -8,5 +9,6 @@
     "end": {"type":"string", "format":"date-time"},
     "lecturePeriodStart": {"type":"string", "format":"date-time"},
     "lecturePeriodEnd": {"type":"string", "format":"date-time"}
-  }
+  },
+  "additionalProperties" : false
 }
