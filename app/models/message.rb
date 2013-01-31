@@ -204,9 +204,6 @@ class Message < ActiveRecord::Base
     unless bks.include?("url") or bks.include?("realm")
       raise Ecs::InvalidMessageException, "You have to provide realm or url attribute"
     end
-    if bks.include?("url") and bks.include?("realm")
-      raise Ecs::InvalidMessageException, "You only be allowed to use either realm or url attribute"
-    end
 
     #msg_id = URI.split(b["url"])[5][1..-1].sub(/[^\/]*\/[^\/]*\/(.*)/, '\1').to_i
     #begin
