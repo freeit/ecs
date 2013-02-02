@@ -7,14 +7,15 @@ class Auth < ActiveRecord::Base
   #  :conditions => {:participants => {:id => participant.id}}}}
 
 
+  # if valid time window return true
   def test_validation_window
     b = JSON.parse(message.body)
     sov = Time.parse(b["sov"]) 
     eov = Time.parse(b["eov"]) 
-    if sov > Time.now or eov < Time.now
-      false
-    else
+    if eov > Time.now
       true
+    else
+      false
     end
   end
 
