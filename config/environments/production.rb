@@ -48,7 +48,7 @@ config.action_view.cache_template_loading            = true
 # Custom logging
 class EcsLogger < Logger
   def format_message(severity, timestamp, progname, msg)
-    "#{timestamp.to_formatted_s(:db)} #{severity}  #{progname.to_s} #{msg}\n" 
+    "[%s(%d)%6s] %s\n" % [timestamp.to_s(:db), $$, severity, msg.to_s]
   end 
 end 
 config.logger = EcsLogger.new(Rails.root.join("log",Rails.env + ".log"))
