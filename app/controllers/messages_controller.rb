@@ -71,7 +71,7 @@ class MessagesController < ApplicationController
     when @record.outtimed_auths_resource_by_non_owner?(@app_namespace, @resource_name, @participant)
       @record.destroy_as_receiver(@participant)
       raise Ecs::OuttimedAuthsException, 'Authorization token outtimed'
-    when @participant.sender?(@record)
+    when (@participant.sender?(@record) and not @participant.receiver?(@record))
       @record.destroy_as_sender
     else
       @record.destroy_as_receiver(@participant)

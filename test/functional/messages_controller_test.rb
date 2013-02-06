@@ -186,6 +186,34 @@ class MessagesControllerTest < ActionController::TestCase
     assert_response 404
   end
 
+  # Owner deletes his message for which he is concurrently a receiver.
+  # This should only be possible until he clears its receiver queue. Then the
+  # next delete operation removes the message from ECS and also destroys all other
+  # receiver references.
+  test "delete_postrouted_message_as_owner_and_receiver_with_references_in_place" do
+    @request.set_REQUEST_URI("/numlab/exercises/99999")
+    @request.env["X-EcsAuthId"] = identities(:stgt_id1).name
+    refscount= MembershipMessage.find_all_by_message_id(messages(:numlab_ex1)).count
+    assert refscount > 1
+    post :destroy, { :id => messages(:numlab_ex1).id }
+    logger.debug "@request.path = "+@request.path
+    assert_response 200
+    get :show, { :id => messages(:numlab_ex1).id }
+    assert_response 200 
+    assert MembershipMessage.find_all_by_message_id(messages(:numlab_ex1)).count == refscount - 1
+    # message is only tagged as removed (events on). physically it's still there.
+    assert_nothing_raised(ActiveRecord::RecordNotFound) { Message.find(messages(:numlab_ex1)) }
+    # This destroy is processed as role "sender", because the receiver quueue of the sender
+    # participant is now empty. Therefore all receiver references were deleted.
+    post :destroy, { :id => messages(:numlab_ex1).id }
+    assert_response 200
+    get :show, { :id => messages(:numlab_ex1).id }
+    assert_response 404 
+    assert_equal 0, MembershipMessage.find_all_by_message_id(messages(:numlab_ex1)).count
+    # message is only tagged as removed (events on). physically it's still there.
+    assert_nothing_raised(ActiveRecord::RecordNotFound) { Message.find(messages(:numlab_ex1)) }
+  end
+
   test "delete_postrouted_message_as_owner_with_references_in_place" do
     @request.set_REQUEST_URI("/numlab/exercises/99999")
     @request.env["X-EcsAuthId"] = identities(:ulm_id1).name
