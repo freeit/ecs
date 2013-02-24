@@ -108,7 +108,7 @@
             %td= event.id
             %td= event.message.id
             %td= event.ev_type.name
-            %td= event.created_at
+            %td= event.updated_at
 
 - unless (messages =  Message.for_participant_receiver(@participant).for_not_removed.uniq).blank?
   %p

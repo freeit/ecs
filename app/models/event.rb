@@ -49,12 +49,22 @@ private
     if unique?(event) and event.save
       event
     else
+      # There is already a pending event describing a change of the
+      # message. So don't create another one. Instead only touch the
+      # "updated_at" attribute of the event.
+      iev= initial_event(event.participant_id, event.message_id, event.ev_type_id)
+      iev.updated_at= Time.now.to_s(:db)
+      iev.save
       nil
     end
   end
 
   def self.unique?(event)
-    Event.find_by_participant_id_and_message_id_and_ev_type_id(event.participant_id, event.message_id, event.ev_type_id).blank? 
+    initial_event(event.participant_id, event.message_id, event.ev_type_id).blank?
+  end
+
+  def self.initial_event(participant_id, msg_id, event_type_id) 
+    Event.find_by_participant_id_and_message_id_and_ev_type_id(participant_id, msg_id, event_type_id)
   end
 
 end
