@@ -65,6 +65,17 @@
         },
         "additionalProperties" : false
       }
+    },
+    "allocations": {
+      "type":"array",
+      "items": {
+        "type":"object",
+        "properties":{
+          "parentID": {"type":"string"},
+          "order": {"type":"integer"}
+        },
+        "additionalProperties" : false
+      }
     }
   },
   "additionalProperties" : false
