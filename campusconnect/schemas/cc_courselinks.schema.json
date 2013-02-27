@@ -60,7 +60,7 @@
       "items": {
         "type":"object",
         "properties": {
-          "fisrtName": {"type":"string"},
+          "firstName": {"type":"string"},
           "lastName": {"type":"string"}
         },
         "additionalProperties" : false
