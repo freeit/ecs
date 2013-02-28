@@ -15,6 +15,7 @@
     "courseType": {"type":"string"},
     "title": {"type":"string"},
     "firstDate": {"type":"string"},
+    "avatar": {"type":"string", "format":"uri"},
     "datesAndVenues": {
       "type":"array",
       "items": {
@@ -76,6 +77,34 @@
         },
         "additionalProperties" : false
       }
+    },
+    "availability": {
+      "type":"object",
+      "properties": {
+        "status": { "enum":["online","offline","timeLimited"], "required":true },
+        "timeLimited": {
+          "type":"object",
+          "properties": {
+            "firstDate": {
+              "type":"object",
+              "properties": {
+                "startDatetime": {"type":"string", "format":"date-time"},
+                "endDatetime": {"type":"string", "format":"date-time"}
+              },
+              "additionalProperties" : false
+            },
+            "lastDate": {
+              "type":"object",
+              "properties": {
+                "startDatetime": {"type":"string", "format":"date-time"},
+                "endDatetime": {"type":"string", "format":"date-time"}
+              },
+              "additionalProperties" : false
+            }
+          }
+        }
+      },
+      "additionalProperties" : false
     }
   },
   "additionalProperties" : false
