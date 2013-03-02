@@ -68,7 +68,6 @@ class Admin::ParticipantsController < ApplicationController
     @participant = Participant.new(params[:participant])
     if @participant.save
       flash[:notice] = 'Participant was successfully created.'
-      Ressource.postrouting(@participant)
       redirect_to admin_participants_path
     else 
       @organizations = Organization.find(:all, :order => :id)

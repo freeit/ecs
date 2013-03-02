@@ -24,28 +24,6 @@ class Ressource < ActiveRecord::Base
 
   named_scope :list, :order => "namespace, ressource ASC"
 
-  def self.postrouting(participant)
-    find_all_by_postroute(true).each do |res| 
-      res.messages.each do |msg|
-        rec_cids = msg.communities.map{|c|c.id}
-        rec_mids = []
-        participant.memberships.each do |memb|
-          if rec_cids.include?(memb.community.id)
-            logger.info "**** postrouting message.id=#{msg.id} to participant:#{participant.name}"
-            rec_mids << memb.id
-          end
-        end
-        unless rec_mids.empty?
-          begin
-            MembershipMessage.populate_jointable(msg, rec_mids.join(',') , nil, Participant.find(msg.sender))
-            Event.make(:event_type_name => EvType.find(1).name, :participant => participant, :message => msg)
-          rescue Ecs::InvalidMessageException, Ecs::AuthorizationException
-          end
-        end
-      end
-    end
-  end 
-
   def self.validates_ressource_path(namespace, ressource)
     r = Ressource.find_by_namespace_and_ressource(namespace, ressource)
     raise(Ecs::InvalidRessourceUriException, "*** ressource uri error ***") unless r

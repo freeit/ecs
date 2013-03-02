@@ -26,6 +26,8 @@ class Membership < ActiveRecord::Base
   has_many    :messages, :through => :membership_messages
   has_many    :membership_messages, :dependent => :destroy
 
+  after_create  :postroute
+
   # returns memberships of the relation between a participant and a message
   # if no relationship then returns empty array.
   named_scope :receiver, lambda { |participant_id,message_id| {
@@ -56,4 +58,17 @@ class Membership < ActiveRecord::Base
       sender_mids.flatten
     end
   end
+
+
+private
+
+  # generate created events for all messages connected to this community membership
+  def postroute
+    community.messages.map{|m| m.ressource.postroute ? m : nil}.compact.each do |msg|
+      messages << msg
+      Event.make(:event_type_name => EvType.find_by_name("created").name, :participant => participant, :message => msg)
+      logger.info "**** postrouting message.id=#{msg.id} to participant:#{participant.name} (pid:#{participant.id})"
+    end
+  end
+
 end
