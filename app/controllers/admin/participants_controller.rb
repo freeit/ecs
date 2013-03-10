@@ -84,7 +84,9 @@ class Admin::ParticipantsController < ApplicationController
     params[:participant][:community_ids] ||= []
     @organizations = Organization.find(:all, :order => :id)
     @participant = Participant.find(params[:id])
+    lmsgs= leaved_messages(@participant, params[:participant][:community_ids])
     if @participant.update_attributes(params[:participant])
+      generate_destroyed_events_by_leaving_a_community(@participant,lmsgs) unless lmsgs.blank?
       flash[:notice] = 'Participant was successfully updated.'
       redirect_to admin_participant_url(:id => @participant)
     else
@@ -121,4 +123,25 @@ class Admin::ParticipantsController < ApplicationController
     redirect_to admin_participant_communities_path(params[:id])
   end
   
+private
+
+  # Generate destroyed events for all messages unconnected in respect to the
+  # leaving communities.
+  def generate_destroyed_events_by_leaving_a_community(participant, messages )
+    messages.each do |msg|
+      Event.make(:event_type_name => EvType.find_by_name("destroyed").name, :participant => participant, :message => msg)
+      logger.info "destroyed event for message.id=#{msg.id}, participant:#{participant.name} (pid:#{participant.id})"
+    end
+  end
+
+  def leaved_messages(participant, community_ids)
+    leaved_community_ids= participant.communities.map{|c| c.id} - community_ids.map{|p| p.to_i}
+    leaved_messages= []
+    leaved_community_ids.each do |cid|
+      leaved_messages << Membership.find_by_participant_id_and_community_id(participant.id, cid).messages
+      leaved_messages << Community.find(cid).messages
+    end
+    leaved_messages.flatten.compact.uniq
+  end
+
 end
