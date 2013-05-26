@@ -3,12 +3,14 @@
   "description":"Data schema for JSON representation of CampusConnect courses resource",
   "type":"object",
   "properties": {
+    "lectureID": {"type":"string", "required":true},
+    "title": {"type":"string", "required":true},
     "organisation": {"type":"string"},
     "number": {"type":"string"},
     "term": {"type":"string"},
     "courseType": {"type":"string"},
     "hoursPerWeek": {"type":"integer"},
-    "parallelGroupScenario": {"type":"integer"},
+    "groupScenario": {"type":"integer"},
     "degreeProgrammes": {
       "type":"array",
       "items": {
@@ -79,13 +81,12 @@
         },
         "additionalProperties" : false
     },  
-    "parallelGroups": {
+    "groups": {
       "type":"array",
       "items": {
         "type":"object",
         "properties": {
-          "id": {"type":"string", "required":true},
-          "title": {"type":"string", "required":true},
+          "title": {"type":"string"},
           "comment": {"type":"string"},
           "datesAndVenues": {
             "type":"array",
