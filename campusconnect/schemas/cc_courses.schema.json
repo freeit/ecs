@@ -61,7 +61,7 @@
     "courseAssessmentMethod": {"type":"string"},
     "courseTopics": {"type":"string"},
     "linkToCurriculum": {"type":"string"},
-    "targetAudiences": {"type":"string"},
+    "targetAudience": {"type":"string"},
     "links": {
       "type":"array",
       "items": {
