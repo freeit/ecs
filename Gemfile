@@ -8,5 +8,7 @@ gem "i18n", '0.3.7'
 gem "ruby-debug"
 gem 'rake', '~> 0.9.2.2'
 gem "rdoc", '~> 3.12'
-gem "haml"
+# rails 2.3.x doesn't work with version 4.x
+gem "haml", '3.1.7'
+
 
