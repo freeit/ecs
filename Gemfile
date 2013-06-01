@@ -1,5 +1,5 @@
 source "http://rubygems.org"
-gem "rails", "2.3.16"
+gem "rails", "2.3.18"
 gem "sqlite3"
 gem "json", "1.5.3"
 gem "jsonpretty"
