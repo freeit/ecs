@@ -238,6 +238,8 @@ class MessagesControllerTest < ActionController::TestCase
     assert_response 200
     assert_nothing_raised(ActiveRecord::RecordNotFound) { Message.find(@request.parameters[:id]) }
     assert_equal 0, MembershipMessage.find_all_by_message_id(@request.parameters[:id]).count
+    assert_equal Membership.find_by_participant_id_and_community_id(participants(:ilias_ulm),communities(:wuv)).id.to_s, @response["X-EcsSender"]
+    assert_equal communities(:wuv).id.to_s, @response["X-EcsReceiverCommunities"]
   end
 
   test "delete_none_postrouted_message_as_none_owner_with_last_reference_in_place" do
@@ -261,6 +263,8 @@ class MessagesControllerTest < ActionController::TestCase
     assert_equal $~.to_s, @request.parameters[:id]
     assert_nothing_raised(ActiveRecord::RecordNotFound) { Message.find(@request.parameters[:id]) }
     assert_nil MembershipMessage.find_by_message_id(@request.parameters[:id])
+    assert_equal Membership.find_by_participant_id_and_community_id(participants(:ilias_stgt),communities(:public)).id.to_s, @response["X-EcsSender"]
+    assert_equal communities(:public).id.to_s, @response["X-EcsReceiverCommunities"]
   end
 
   test "delete_none_postrouted_message_as_none_owner_with_references_in_place" do
@@ -297,6 +301,8 @@ class MessagesControllerTest < ActionController::TestCase
     get :fifo
     assert_response 200
     assert_equal "Hallo Ihr da im Radio.", @response.body.strip
+    assert_equal Membership.find_by_participant_id_and_community_id(participants(:ilias_stgt),communities(:wuv)).id.to_s, @response["X-EcsSender"]
+    assert_equal communities(:wuv).id.to_s, @response["X-EcsReceiverCommunities"]
   end
 
   test "fifo get not idempotent" do
@@ -305,6 +311,8 @@ class MessagesControllerTest < ActionController::TestCase
     post :fifo
     assert_response 200
     assert_equal "Hallo Ihr da im Radio.", @response.body.strip
+    assert_equal Membership.find_by_participant_id_and_community_id(participants(:ilias_stgt),communities(:wuv)).id.to_s, @response["X-EcsSender"]
+    assert_equal communities(:wuv).id.to_s, @response["X-EcsReceiverCommunities"]
     get :fifo
     assert_response 200
     assert_not_equal "Hallo Ihr da im Radio.", @response.body.strip

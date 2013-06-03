@@ -26,6 +26,7 @@ class MessagesController < ApplicationController
 
   def initialize
     super
+    @render_cmd=nil
   end
 
   def index
@@ -45,6 +46,7 @@ class MessagesController < ApplicationController
       Message.filter(__method__, @app_namespace, @ressource_name, @record, params)
       @body = @record.body 
       show_render
+      eval(@render_cmd)
     else
       raise Ecs::AuthorizationException, 
             "You are not allowed to access this resource, " +
@@ -67,6 +69,9 @@ class MessagesController < ApplicationController
   end
 
   def destroy
+    @body = @record.body
+    @memberships = Membership.receiver(@participant.id, @record.id)
+    show_render
     case
     when @record.outtimed_auths_resource_by_non_owner?(@app_namespace, @resource_name, @participant)
       @record.destroy_as_receiver(@participant)
@@ -76,8 +81,7 @@ class MessagesController < ApplicationController
     else
       @record.destroy_as_receiver(@participant)
     end
-    @body = @record.body
-    show_render
+    eval(@render_cmd)
   end
 
   def fifo
@@ -177,12 +181,16 @@ protected
           @body = @record.body 
           if request.post?
             if @record
+              show_render
               @record.destroy_as_receiver(@participant)
+              eval(@render_cmd)
             else
               raise ActiveRecord::RecordNotFound
             end
+          else
+            show_render
+            eval(@render_cmd)
           end
-          show_render
         else
           empty_render
         end
@@ -232,7 +240,7 @@ protected
     if stale?(:etag => @record, :last_modified => @record.updated_at.utc, 
               :x_ecs_receiver_communities => x_ecs_receiver_communities, 
               :x_ecs_sender => x_ecs_sender)
-      render :text => @body, :layout => false, :status => 200, :content_type => Mime::Type.lookup(@record.content_type)
+      @render_cmd='render :text => @body, :layout => false, :status => 200, :content_type => Mime::Type.lookup(@record.content_type)'
     end
   end
 
