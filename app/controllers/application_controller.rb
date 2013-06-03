@@ -72,7 +72,6 @@ protected
       # new anonymous participant
       if request.headers["X-EcsAuthId"].blank? and request.headers["Cookie"].blank?
         @participant, @cookie = Participant.generate_anonymous_participant
-        Ressource.postrouting(@participant)
         return @participant
       end
       # anonymous participants
