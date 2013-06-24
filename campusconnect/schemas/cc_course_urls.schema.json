@@ -3,9 +3,19 @@
   "description":"Data schema for JSON representation of CampusConnect course_urls resource",
   "type":"object",
   "properties": {
-    "cms_course_id": {"type":"string", "required":true},
+    "cms_lecture_id": {"type":"string", "required":true},
     "ecs_course_url": {"type":"string", "required":true, "format":"uri"},
-    "lms_course_url": {"type":"string", "required":true, "format":"uri"},
+    "lms_course_url": {
+      "type":"array",
+      "items": {
+        "type":"object",
+        "properties": {
+          "title": {"type":"string", "required":true},
+          "url": {"type":"string", "required":true, "format":"uri"}
+        },
+        "additionalProperties" : false
+      }
+    }
   },
   "additionalProperties" : false
 }
