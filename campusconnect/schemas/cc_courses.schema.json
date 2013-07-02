@@ -8,7 +8,8 @@
     "organisation": {"type":"string"},
     "number": {"type":"string"},
     "term": {"type":"string"},
-    "courseType": {"type":"string"},
+    "termID": {"type":"string"},
+    "lectureType": {"type":"string"},
     "hoursPerWeek": {"type":"integer"},
     "groupScenario": {"type":"integer"},
     "degreeProgrammes": {
@@ -58,10 +59,15 @@
       }
     },  
     "prerequisites": {"type":"string"},
-    "courseAssessmentMethod": {"type":"string"},
-    "courseTopics": {"type":"string"},
+    "lectureAssessmentType": {"type":"string"},
+    "lectureTopics": {"type":"string"},
     "linkToCurriculum": {"type":"string"},
-    "targetAudience": {"type":"string"},
+    "targetAudiences": {
+      "type":"array",
+      "items": {
+        "type":"string"
+      }
+    },
     "links": {
       "type":"array",
       "items": {
@@ -73,7 +79,7 @@
         "additionalProperties" : false
       }
     },  
-    "linkToCourse": {
+    "linkToLecture": {
         "type":"object",
         "properties":{
           "href": {"type":"string", "format":"uri"},
@@ -161,31 +167,59 @@
       }
     },
     "modules": {
-      "required":true,
       "type":"array",
       "items": {
         "type":"object",
         "properties": {
           "id": {"type":"string"},
           "title": {"type":"string"},
-          "number": {"type":"integer"},
+          "number": {"type":"string"},
           "credits": {"type":"integer"},
           "hoursPerWeek": {"type":"integer"},
-          "duration": {"type":"integer"},
+          "duration": {"type":"string"},
           "cycle": {"type":"string"},
-          "degreeProgramme": {"type":"string"},
+          "degreeProgrammes": {
+            "type":"array",
+            "items": {
+              "type":"object",
+              "properties":{
+                "id": {"type":"string"},
+                "title": {"type":"string"},
+                "code": {"type":"string"},
+                "courseUnitYearOfStudy": {
+                  "type":"object",
+                  "properties": {
+                    "from":{"type":"integer"},
+                    "to":{"type":"integer"}
+                  },
+                  "additionalProperties" : false
+                }
+              },
+              "additionalProperties" : false
+            }
+          },
           "finalExamination": {"type":"string"},
           "label": {"type":"string"},
           "regulationsVersion": {"type":"string"},
-          "degreeProgrammeCode": {"type":"string"},
           "prerequisites": {"type":"string"},
           "learningObjectives": {"type":"string"},
           "recommendedReading": {"type":"string"},
           "description": {"type":"string"},
           "workload": {"type":"string"},
-          "studyAssessmentMethods": {"type":"string"},
-          "examinationAssessmentMethods": {"type":"string"}
-        }
+          "studyAssessmentMethods": {
+            "type":"array",
+            "items": {
+              "type":"string"
+            }
+          },
+          "examinationAssessmentMethods": {
+            "type":"array",
+            "items": {
+              "type":"string"
+            }
+          }
+        },
+        "additionalProperties" : false
       }
     }
   },
