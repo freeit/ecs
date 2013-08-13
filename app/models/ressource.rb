@@ -36,6 +36,10 @@ class Ressource < ActiveRecord::Base
     return r
   end
 
+  def events?
+    self.events.blank? ? false : true
+  end
+
 private
 
   def rebuild_routes

@@ -47,6 +47,12 @@
     // = check_box_tag "participant[community_selfrouting]",1,@participant.community_selfrouting, :disabled => true
     = @participant.community_selfrouting.to_s
 
+.small-skip
+  %span.box5
+    %label.box4.table-resource-label Events:
+    // = check_box_tag "participant[community_selfrouting]",1,@participant.community_selfrouting, :disabled => true
+    = @participant.events?.to_s
+
 - unless @participant.description.blank?
   %p
     .formular-input-width.table-border

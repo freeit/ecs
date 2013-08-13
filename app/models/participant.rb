@@ -59,6 +59,9 @@ class Participant < ActiveRecord::Base
     not Membership.receiver(id, message.id).empty? 
   end
     
+  def events?
+    self.events_.blank? ? false : true
+  end
 
   def self.generate_anonymous_participant
     cookie = Digest::SHA1.hexdigest('something secret'+Time.now.to_s+rand.to_s)

@@ -40,9 +40,10 @@ private
   def self.make(options)
     options.assert_valid_keys(:event_type_name, :membership_message, :participant, :message)
     message = options[:membership_message] ? options[:membership_message].message : options[:message]
-    return unless message.ressource.events
+    participant= options[:membership_message] ? options[:membership_message].membership.participant : options[:participant]
+    return if not (message.ressource.events? and participant.events?)
     event = Event.new
-    event.participant_id = options[:membership_message] ? options[:membership_message].membership.participant.id : options[:participant].id
+    event.participant_id = participant.id
     event.message_id = message.id
     case options[:event_type_name]
       when "created"

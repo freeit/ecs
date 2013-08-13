@@ -33,6 +33,7 @@
       %th.box2 &uarr; Name:
       %th.box2 Description (optional):
       %th.box2 Self-<br/>routing:
+      %th.box2 Events:
       %th.box2(align="center") Operations:
     %tr
 
@@ -48,6 +49,7 @@
           %td= participant.name
           %td= truncate(participant.description, :length => 80)
           %td.center= check_box_tag "participant[community_selfrouting]",1,participant.community_selfrouting, :disabled => true
+          %td.center= check_box_tag "participant[events_]",1,participant.events_, :disabled => true
           %td
             = link_to 'Show', admin_participant_url(:id => participant)
             = link_to 'Edit', edit_admin_participant_url(:id => participant)
