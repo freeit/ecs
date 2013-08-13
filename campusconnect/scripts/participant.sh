@@ -116,8 +116,7 @@ if [ "x`echo $rid | grep '^[0-9]\+$'`" != "x" -a "x$namespace" != "x" -a "x$reso
   fi
   cmd="curl $CURL_OPTIONS --cacert $CACERT --cert $CERT --key $KEY --pass $PASS \
        -X DELETE ${ECS_URL}$1 $REDIRECT_IO"
-  #eval $cmd
-  echo $cmd
+  eval $cmd
 elif [ "x`echo $rid | grep '^[0-9]\+$'`" = "x" -a "x$namespace" != "x" -a "x$resourcename" != "x" ]; then 
   curl_options="$CURL_OPTIONS"
   CURL_OPTIONS=
