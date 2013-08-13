@@ -10,6 +10,7 @@
         "type":"object",
         "properties": {
           "personID": {"type":"string", "required":true},
+          "role": {"type":"integer", "required":true},
           "groups": {
             "type":"array",
             "items": {
