@@ -32,6 +32,8 @@ ActionController::Routing::Routes.draw do |map|
                 :only => [:index]
   map.resources :events, :path_prefix => '/sys', :name_prefix => 'sys_',
                 :only => [:index], :collection => { :fifo => [:get, :post] }
+  map.resources :configs, :path_prefix => '/sys', :name_prefix => 'sys_',
+                :only => [:index, :create]
 
   begin
     Ressource.all.each do |r|
