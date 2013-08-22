@@ -137,11 +137,12 @@ elif [ "x$rid" = "xfifo" -a "x$namespace" = "xsys" ]; then
   cmd="curl $CURL_OPTIONS --cacert $CACERT --cert $CERT --key $KEY --pass $PASS \
        -X POST ${ECS_URL}$1 $REDIRECT_IO"
   eval $cmd
+elif [ "x$namespace" = "xsys" -a "x$resourcename" = "xevents" -a "x$rid" = "x" ]; then 
+  echo "To delete all events, please see command help: \"participants.sh -h\""
 elif [ "x`echo $rid | grep '^[0-9]\+$'`" = "x" -a "x$namespace" != "x" -a "x$resourcename" != "x" ]; then 
   curl_options="$CURL_OPTIONS"
   CURL_OPTIONS=
-  list=`get /$namespace/$resourcename`
-  CURL_OPTIONS=$curl_options
+  list=`curl -k --cacert $CACERT --cert $CERT --key $KEY --pass $PASS ${ECS_URL}/$namespace/$resourcename 2>/dev/null`
   for i in $list; do
     echo Deleting resource representation \"/$namespace/$i\" ...
     delete "/$namespace/$i"
