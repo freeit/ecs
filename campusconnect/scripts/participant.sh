@@ -37,7 +37,7 @@ SENDER=$FALSE
 RECEIVER=$FALSE
 ALL=$FALSE
 CURL_OPTIONS="-s"
-REDIRECT_IO=" 2>/dev/null"
+REDIRECT_IO=""
 
 ###
 ### Usage
@@ -78,6 +78,22 @@ Examples:
   Delete courselinks where I'm a receiver or sender of:
   participant.sh -a delete /campusconnect/courselinks
 
+  List all events:
+  participant.sh get /sys/events
+
+  Get oldest event (fifo):
+  participant.sh get /sys/events/fifo
+
+  Get and delete oldest event (fifo):
+  participant.sh delete /sys/events/fifo
+
+FAQ: 
+  Q: You want to delete all events.
+  A: Just call "participant.sh delete /sys/events/fifo" in a loop:
+     for i in `seq 10`; do ./participant.sh delete '/sys/events/fifo' ; done
+     This will get and delete always the oldest event. If there no more events
+     you will get back nothing. Just repeat the loop until you don't get anything
+     back.
 EOF
 }
 
@@ -116,6 +132,10 @@ if [ "x`echo $rid | grep '^[0-9]\+$'`" != "x" -a "x$namespace" != "x" -a "x$reso
   fi
   cmd="curl $CURL_OPTIONS --cacert $CACERT --cert $CERT --key $KEY --pass $PASS \
        -X DELETE ${ECS_URL}$1 $REDIRECT_IO"
+  eval $cmd
+elif [ "x$rid" = "xfifo" -a "x$namespace" = "xsys" ]; then
+  cmd="curl $CURL_OPTIONS --cacert $CACERT --cert $CERT --key $KEY --pass $PASS \
+       -X POST ${ECS_URL}$1 $REDIRECT_IO"
   eval $cmd
 elif [ "x`echo $rid | grep '^[0-9]\+$'`" = "x" -a "x$namespace" != "x" -a "x$resourcename" != "x" ]; then 
   curl_options="$CURL_OPTIONS"
