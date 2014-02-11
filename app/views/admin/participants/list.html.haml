@@ -19,11 +19,11 @@
 
 %h1.box1 Listing Participants (#{@list_participants_count.to_s}) 
 
-.text-link= link_to 'New participant', new_admin_participant_url
+.text-link= link_to 'New participant', new_admin_participant_path
 - if @list_anonymous
-  .text-link= link_to "Hide anonymous (#{@list_participants_anonymous_count})", admin_participants_url(:anonymous => "false")
+  .text-link= link_to "Hide anonymous (#{@list_participants_anonymous_count})", admin_participants_path(:anonymous => "false")
 - else
-  .text-link= link_to "Show anonymous (#{@list_participants_anonymous_count})", admin_participants_url(:anonymous => "true")
+  .text-link= link_to "Show anonymous (#{@list_participants_anonymous_count})", admin_participants_path(:anonymous => "true")
 
 %p
   %table.list
@@ -51,7 +51,7 @@
           %td.center= check_box_tag "participant[community_selfrouting]",1,participant.community_selfrouting, :disabled => true
           %td.center= check_box_tag "participant[events_]",1,participant.events_, :disabled => true
           %td
-            = link_to 'Show', admin_participant_url(:id => participant)
-            = link_to 'Edit', edit_admin_participant_url(:id => participant)
-            = link_to 'Destroy', admin_participant_url(:id => participant),:confirm => 'Are you sure?', :method => :delete
+            = link_to 'Show', admin_participant_path(:id => participant)
+            = link_to 'Edit', edit_admin_participant_path(:id => participant)
+            = link_to 'Destroy', admin_participant_path(:id => participant),:confirm => 'Are you sure?', :method => :delete
           - org_printed= true

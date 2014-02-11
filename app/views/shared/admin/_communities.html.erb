@@ -34,9 +34,9 @@ License along with ECS. If not, see <http://www.gnu.org/licenses/>.
 
 
 		<TD>
-			<%= link_to 'Show', show_admin_community_url(:id => community) %>
-			<%= link_to 'Edit', edit_admin_community_url(:id => community) %>
-			<%= link_to 'Destroy', destroy_admin_community_url(:id => community), :confirm => 'Are you sure?', :method => :delete %><BR>
+			<%= link_to 'Show', show_admin_community_path(:id => community) %>
+			<%= link_to 'Edit', edit_admin_community_path(:id => community) %>
+			<%= link_to 'Destroy', destroy_admin_community_path(:id => community), :confirm => 'Are you sure?', :method => :delete %><BR>
       <% if defined? links then -%>
       <% links.each do |link| %>
         <%= eval "link_to \"#{link[:text]}\", #{link[:map_name_function]}" %>

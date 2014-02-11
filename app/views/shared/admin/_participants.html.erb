@@ -35,9 +35,9 @@ License along with ECS. If not, see <http://www.gnu.org/licenses/>.
 
 
 		<TD>
-			<%= link_to 'Show', show_admin_participant_url(:id => participant) %>
-			<%= link_to 'Edit', edit_admin_participant_url(:id => participant) %>
-			<%= link_to 'Destroy', destroy_admin_participant_url(:id => participant), :confirm => 'Are you sure?', :method => :post %><BR>
+			<%= link_to 'Show', show_admin_participant_path(:id => participant) %>
+			<%= link_to 'Edit', edit_admin_participant_path(:id => participant) %>
+			<%= link_to 'Destroy', destroy_admin_participant_path(:id => participant), :confirm => 'Are you sure?', :method => :post %><BR>
       <% if defined? links then -%>
       <% links.each do |link| %>
         <%= eval "link_to \"#{link[:text]}\", #{link[:map_name_function]}" %>

@@ -20,7 +20,7 @@ License along with ECS. If not, see <http://www.gnu.org/licenses/>.
 
 <h1>Listing Participants to join Community "<%= @community.name+" ("+@community.description+")" %>" </h1>
 
-<%= link_to 'Back', index_admin_communities_url %><BR><BR>
+<%= link_to 'Back', index_admin_communities_path %><BR><BR>
 
 <%= render(:partial => 'shared/admin/participants',
            :locals  => 
@@ -29,11 +29,11 @@ License along with ECS. If not, see <http://www.gnu.org/licenses/>.
              [
                { 
                  :text=>"join Community", 
-                 :map_name_function=>'create_admin_community_participant_url(:id => @community.id, :p_id => participant.id), :method=>:post'
+                 :map_name_function=>'create_admin_community_participant_path(:id => @community.id, :p_id => participant.id), :method=>:post'
                }
              ]
            }
           ) 
 %>
 
-<BR><%= link_to 'Back', index_admin_communities_url %><BR>
+<BR><%= link_to 'Back', index_admin_communities_path %><BR>

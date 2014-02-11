@@ -20,9 +20,9 @@
 %h1.box1 Show Community
 
 %p
-  = link_to 'Edit', edit_admin_community_url(:id => @community)
+  = link_to 'Edit', edit_admin_community_path(:id => @community)
   |
-  = link_to 'Back', admin_communities_url
+  = link_to 'Back', admin_communities_path
 
 .normal-skip
   %span.box5
@@ -56,7 +56,7 @@
             %td(align="right")= participant.mid(@community)
 
 %p
-  = link_to 'Edit', edit_admin_community_url(:id => @community)
+  = link_to 'Edit', edit_admin_community_path(:id => @community)
   |
-  = link_to 'Back', admin_communities_url
+  = link_to 'Back', admin_communities_path
 

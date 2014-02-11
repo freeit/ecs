@@ -21,8 +21,8 @@ License along with ECS. If not, see <http://www.gnu.org/licenses/>.
 <h1 class="box1">Edit Participant</h1>
 
 <P>
-<%= link_to 'Show', admin_participant_url(:id => @participant) %> |
-<%= link_to 'Back', admin_participants_url %>
+<%= link_to 'Show', admin_participant_path(:id => @participant) %> |
+<%= link_to 'Back', admin_participants_path %>
 </P>
 <P>
 <% form_for [:admin, setup_participant(@participant)], :method=>:put do |f| %>
@@ -33,6 +33,6 @@ License along with ECS. If not, see <http://www.gnu.org/licenses/>.
 </P>
 
 <P>
-<%= link_to 'Show', admin_participant_url(:id => @participant) %> |
-<%= link_to 'Back', admin_participants_url %>
+<%= link_to 'Show', admin_participant_path(:id => @participant) %> |
+<%= link_to 'Back', admin_participants_path %>
 </P>

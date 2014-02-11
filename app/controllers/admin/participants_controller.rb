@@ -88,7 +88,7 @@ class Admin::ParticipantsController < ApplicationController
     if @participant.update_attributes(params[:participant])
       generate_destroyed_events_by_leaving_a_community(@participant,lmsgs) unless lmsgs.blank?
       flash[:notice] = 'Participant was successfully updated.'
-      redirect_to admin_participant_url(:id => @participant)
+      redirect_to admin_participant_path(:id => @participant)
     else
       render :action => 'edit'
     end

@@ -23,7 +23,7 @@ class Admin::CommunitiesController < ApplicationController
   # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
   verify :method => [ :post, :put, :delete ], :only => [ :destroy, :create, :update, :destroy_participant ],
          :add_flash => { :notice => "Failed to execute last action" },
-         :redirect_to => :index_admin_communities_url
+         :redirect_to => :index_admin_communities_path
 
   def index
     list
@@ -92,7 +92,7 @@ class Admin::CommunitiesController < ApplicationController
   # community invites a participant
   def create_participant
     create_membership(params[:id], params[:p_id])
-    redirect_to index_admin_community_nonparticipants_url(:id=>params[:id])
+    redirect_to index_admin_community_nonparticipants_path(:id=>params[:id])
   end
 
 end
