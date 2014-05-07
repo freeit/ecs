@@ -67,11 +67,11 @@ class ApplicationController < ActionController::Base
 protected
 
   def authentication
-    logger.info "X-EcsAuthId: #{request.headers['X-EcsAuthId']}" unless request.headers['X-EcsAuthId'].blank?
     if ECS_CONFIG["participants"]["allow_anonymous"]
       # new anonymous participant
       if request.headers["X-EcsAuthId"].blank? and request.headers["Cookie"].blank?
         @participant, @cookie = Participant.generate_anonymous_participant
+        logger.info "Cookie (new anonymous participant): #{@cookie} -- Participant-ID: #{@participant.id}"
         return @participant
       end
       # anonymous participants
@@ -81,6 +81,7 @@ protected
         elsif (participant = identity.participant).blank?
           raise Ecs::AuthenticationException, "Cookie: #{@cookie}\" is not assigned any participant"
         else
+          logger.info "Cookie: #{@cookie} -- Participant-ID: #{participant.id}"
           return @participant = participant
         end
       end
@@ -93,6 +94,7 @@ protected
     elsif (participant = identity.participant).blank?
       raise Ecs::AuthenticationException, "\"X-EcsAuthId: #{auth_id}\" is not assigned any participant"
     else
+      logger.info "X-EcsAuthId: #{auth_id} -- Participant-ID: #{participant.id}"
       return @participant = participant
     end
   end
