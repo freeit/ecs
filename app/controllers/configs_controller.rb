@@ -14,7 +14,7 @@ class ConfigsController < ApplicationController
   end
 
   def create
-    unless Mime::Type.lookup(request.headers["CONTENT_TYPE"]).to_sym == :json
+    unless Mime::Type.lookup(request.headers["CONTENT_TYPE"]) =~ "application/json"
       raise Ecs::InvalidMimetypeException, "Please provide \"Content-Type:\" header. Data format has to be in JSON (application/json)"
     end
 
