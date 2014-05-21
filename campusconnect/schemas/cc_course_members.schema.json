@@ -10,6 +10,7 @@
         "type":"object",
         "properties": {
           "personID": {"type":"string", "required":true},
+          "personIDtype": { "enum": [ "ecs_PersonalUniqueCode", "ecs_ePPN", "ecs_login", "ecs_loginUID", "ecs_uid", "ecs_email" ], "required":false },
           "role": {"type":"integer", "required":true},
           "groups": {
             "type":"array",
