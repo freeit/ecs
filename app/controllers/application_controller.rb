@@ -69,24 +69,44 @@ protected
   def authentication
     if ECS_CONFIG["participants"]["allow_anonymous"]
       # new anonymous participant
-      if request.headers["X-EcsAuthId"].blank? and request.headers["Cookie"].blank?
+      if new_anonymous_participant?
         @participant, @cookie = Participant.generate_anonymous_participant
         logger.info "Cookie (new anonymous participant): #{@cookie} -- Participant-ID: #{@participant.id}"
         return @participant
       end
       # anonymous participants
-      if !(@cookie = cookies[:ecs_anonymous]).blank?
-        if (identity = Identity.find_by_name(@cookie)).blank?
-          raise Ecs::AuthenticationException, "No valid identity found for cookie: #{@cookie}"
-        elsif (participant = identity.participant).blank?
-          raise Ecs::AuthenticationException, "Cookie: #{@cookie}\" is not assigned any participant"
-        else
-          logger.info "Cookie: #{@cookie} -- Participant-ID: #{participant.id}"
-          return @participant = participant
-        end
+      if (participant= anonymous_participant)
+        logger.info "Cookie: #{@cookie} -- Participant-ID: #{participant.id}"
+        return @participant = participant
       end
     end
     # authenticated participants
+    auth_id, participant = authenticated_participant
+    if participant
+      logger.info "X-EcsAuthId: #{auth_id} -- Participant-ID: #{participant.id}"
+      return @participant= participant
+    end
+  end
+
+  def new_anonymous_participant?
+    request.headers["X-EcsAuthId"].blank? and request.headers["Cookie"].blank?
+  end
+
+  def anonymous_participant
+    if !(@cookie = cookies[:ecs_anonymous]).blank?
+      if (identity = Identity.find_by_name(@cookie)).blank?
+        raise Ecs::AuthenticationException, "No valid identity found for cookie: #{@cookie}"
+      elsif (participant = identity.participant).blank?
+        raise Ecs::AuthenticationException, "Cookie: #{@cookie}\" is not assigned any participant"
+      else
+        return participant
+      end
+    else
+      false
+    end
+  end
+
+  def authenticated_participant
     if (auth_id = request.headers["X-EcsAuthId"]).blank?
       raise Ecs::AuthenticationException, "No \"X-EcsAuthId\" http header"
     elsif (identity = Identity.find_by_name(auth_id)).blank?
@@ -94,8 +114,7 @@ protected
     elsif (participant = identity.participant).blank?
       raise Ecs::AuthenticationException, "\"X-EcsAuthId: #{auth_id}\" is not assigned any participant"
     else
-      logger.info "X-EcsAuthId: #{auth_id} -- Participant-ID: #{participant.id}"
-      return @participant = participant
+      return auth_id, participant
     end
   end
 
