@@ -67,6 +67,12 @@ class ApplicationController < ActionController::Base
 protected
 
   def authentication
+    # authenticated participants
+    auth_id, participant = authenticated_participant
+    if participant
+      logger.info "X-EcsAuthId: #{auth_id} -- Participant-ID: #{participant.id}"
+      return @participant= participant
+    end
     if ECS_CONFIG["participants"]["allow_anonymous"]
       # new anonymous participant
       if new_anonymous_participant?
@@ -79,12 +85,6 @@ protected
         logger.info "Cookie: #{@cookie} -- Participant-ID: #{participant.id}"
         return @participant = participant
       end
-    end
-    # authenticated participants
-    auth_id, participant = authenticated_participant
-    if participant
-      logger.info "X-EcsAuthId: #{auth_id} -- Participant-ID: #{participant.id}"
-      return @participant= participant
     end
   end
 
