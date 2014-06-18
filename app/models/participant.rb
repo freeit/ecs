@@ -27,12 +27,19 @@ class Participant < ActiveRecord::Base
   has_many    :communities, :through => :memberships
   has_many    :identities, :dependent => :destroy
   has_many    :events, :dependent => :destroy
+  has_many    :childs,
+              :order => "id ASC",
+              :class_name => "Subparticipant",
+              :foreign_key => "parent_id",
+              :dependent => :destroy
+  has_one     :subparticipant, :dependent => :destroy
 
   validates_presence_of :name, :organization_id
   validates_uniqueness_of :name
 
   accepts_nested_attributes_for :identities, :allow_destroy => true, :reject_if => proc { |attrs| attrs.all? { |k, v| v.blank? } }
   accepts_nested_attributes_for :communities, :reject_if => proc { |attrs| attrs.all? { |k, v| v.blank? } }
+  accepts_nested_attributes_for :subparticipant, :allow_destroy => true
 
   #named_scope :reduced_attributes, :select => "name, description, dns, email" 
   named_scope :without_anonymous, :conditions => { :participants => { :anonymous => false } }
@@ -43,6 +50,7 @@ class Participant < ActiveRecord::Base
   named_scope :for_community, lambda { |community| {
     :joins => [:memberships => :community],
     :conditions => { :communities => { :id => community.id }}}}
+  named_scope :for_subparticipants
 
   # test if the participant is the initial sender of the message in question.
   def sender?(message)
@@ -83,7 +91,6 @@ class Participant < ActiveRecord::Base
     participant.ttl = DateTime.now.utc + TTL
     participant.save
   end
-
 
   def mid(community)
     Membership.for_participant_id_and_community_id(self, community.id).first.id

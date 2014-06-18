@@ -132,6 +132,23 @@ protected
     Participant.touch_ttl(@participant) if @participant.anonymous
   end
 
+  def block_anonymous_participants
+    if @participant.anonymous
+      raise Ecs::AuthenticationException, "Anonymous participants not allowed."
+    end
+  end
+      
+  def block_subparticipants
+    if @participant.subparticipant
+      raise Ecs::AuthenticationException, "Subparticipants not allowed."
+    end
+  end
+
+  def check_json_contenttype
+    unless Mime::Type.lookup(request.headers["CONTENT_TYPE"]) =~ "application/json"
+      raise Ecs::InvalidMimetypeException, "Please provide \"Content-Type: application/json\" header for json data."
+    end unless request.raw_post.empty?
+  end
 
 
   # error pages

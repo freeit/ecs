@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130813144307) do
+ActiveRecord::Schema.define(:version => 20140525164346) do
 
   create_table "auths", :force => true do |t|
     t.string   "one_touch_hash"
@@ -120,5 +120,13 @@ ActiveRecord::Schema.define(:version => 20130813144307) do
 
   add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
   add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
+
+  create_table "subparticipants", :force => true do |t|
+    t.integer  "participant_id"
+    t.integer  "parent_id"
+    t.string   "realm"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end

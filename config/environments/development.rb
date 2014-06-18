@@ -41,5 +41,5 @@ class EcsLogger < Logger
   end 
 end 
 config.logger = EcsLogger.new(Rails.root.join("log",Rails.env + ".log"))
-config.log_level = :info
-config.logger.level = Logger::INFO
+config.log_level = :debug
+config.logger.level = Logger::DEBUG

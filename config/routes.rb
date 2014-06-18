@@ -18,6 +18,7 @@
 
 ActionController::Routing::Routes.draw do |map|
 
+
   map.namespace(:admin) do |admin|
     admin.resources :participants
     admin.resources :communities, :has_many => :participants
@@ -34,6 +35,8 @@ ActionController::Routing::Routes.draw do |map|
                 :only => [:index], :collection => { :fifo => [:get, :post] }
   map.resources :configs, :path_prefix => '/sys', :name_prefix => 'sys_',
                 :only => [:index, :create]
+  map.resources :subparticipants, :path_prefix => '/sys', :name_prefix => 'sys_',
+                :only => [:index, :show, :create, :update, :destroy]
 
   begin
     Ressource.all.each do |r|
