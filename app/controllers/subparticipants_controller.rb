@@ -52,9 +52,10 @@ class SubparticipantsController < ApplicationController
     sender= @participant
     begin
       json_data= ActiveSupport::JSON.decode request.raw_post
-    rescue StandardError
+    rescue ActiveSupport::OkJson::Error, StandardError
       raise Ecs::InvalidMessageException, "You have provided invalid JSON data (SubparticipantsController#create)."
     end unless request.raw_post.empty?
+    logger.debug "request raw post: #{(request.raw_post.empty?)?'<empty>':request.raw_post}"  
     subparticipant= Subparticipant.generate(sender, json_data)
     body= show_render(subparticipant)
     respond_to do |format|

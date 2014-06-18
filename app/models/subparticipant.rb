@@ -74,6 +74,7 @@ private
   end
     
   def self.process_json_data(sender, json_data)
+    json_data= {} unless json_data.class == Hash
     realm= json_data["realm"] ||= nil
     community_selfrouting= json_data["community_selfrouting"] || false
     events= json_data["events"] ||= false
