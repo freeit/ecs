@@ -46,7 +46,7 @@ class MessagesController < ApplicationController
       Message.filter(__method__, @app_namespace, @ressource_name, @record, params)
       @body = @record.body 
       show_render
-      eval(@render_cmd)
+      eval(@render_cmd) unless @render_cmd.blank?
     else
       raise Ecs::AuthorizationException, 
             "You are not allowed to access this resource, " +
@@ -81,7 +81,7 @@ class MessagesController < ApplicationController
     else
       @record.destroy_as_receiver(@participant)
     end
-    eval(@render_cmd)
+    eval(@render_cmd) unless @render_cmd.blank?
   end
 
   def fifo
@@ -183,13 +183,13 @@ protected
             if @record
               show_render
               @record.destroy_as_receiver(@participant)
-              eval(@render_cmd)
+              eval(@render_cmd) unless @render_cmd.blank?
             else
               raise ActiveRecord::RecordNotFound
             end
           else
             show_render
-            eval(@render_cmd)
+            eval(@render_cmd) unless @render_cmd.blank?
           end
         else
           empty_render
