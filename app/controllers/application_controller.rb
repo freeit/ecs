@@ -67,6 +67,12 @@ class ApplicationController < ActionController::Base
 protected
 
   def authentication
+    # authenticated subparticipants
+    participant = subparticipant?
+    if participant
+      logger.info "X-EcsAuthId: #{participant.identities[0].name} -- Subparticipant-ID: #{participant.id}"
+      return @participant= participant
+    end
     # authenticated participants
     auth_id, participant = authenticated_participant
     if participant
@@ -86,6 +92,7 @@ protected
         return @participant = participant
       end
     end
+    false
   end
 
   def new_anonymous_participant?
@@ -98,6 +105,20 @@ protected
         raise Ecs::AuthenticationException, "No valid identity found for cookie: #{@cookie}"
       elsif (participant = identity.participant).blank?
         raise Ecs::AuthenticationException, "Cookie: #{@cookie}\" is not assigned any participant"
+      else
+        return participant
+      end
+    else
+      false
+    end
+  end
+
+  def subparticipant?
+    if !(@cookie = cookies[:ecs_subparticipant]).blank?
+      if (identity = Identity.find_by_name(@cookie)).blank?
+        raise Ecs::AuthenticationException, "No valid identity found for subparticipant cookie: #{@cookie}"
+      elsif (participant = identity.participant).blank?
+        raise Ecs::AuthenticationException, "Subparticipant-Cookie: #{@cookie}\" is not assigned any participant"
       else
         return participant
       end
@@ -120,12 +141,22 @@ protected
 
   # set the cookie header
   def add_cookie_header
-    cookies[:ecs_anonymous] = \
-      {
-        :value => @cookie, 
-        :path => "/", 
-        :expires => Participant::TTL.seconds.from_now
-      } unless @cookie.blank?
+    case 
+    when @participant.anonymous?
+      cookies[:ecs_anonymous] = \
+        {
+          :value => @cookie, 
+          :path => "/", 
+          :expires => Participant::TTL.seconds.from_now
+        }
+    when @participant.subparticipant?
+      cookies[:ecs_subparticipant] = \
+        {
+          :value => @cookie, 
+          :path => "/", 
+          :expires => Subparticipant::TTL.seconds.from_now
+        }
+    end
   end
 
   def touch_participant_ttl

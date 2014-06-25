@@ -69,6 +69,14 @@ class Participant < ActiveRecord::Base
     self.events_.blank? ? false : true
   end
 
+  def anonymous?
+    anonymous
+  end
+
+  def subparticipant?
+    subparticipant
+  end
+
   def self.generate_anonymous_participant
     cookie = Digest::SHA1.hexdigest('something secret'+Time.now.to_s+rand.to_s)
     params = {
