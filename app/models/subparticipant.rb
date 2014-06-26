@@ -82,7 +82,7 @@ private
     json_data= {} unless json_data.class == Hash
     realm= json_data["realm"] ||= nil
     community_selfrouting= json_data["community_selfrouting"] || false
-    events= json_data["events"] ||= false
+    events= json_data["events"] ||= true
     if json_data["communities"]
       community_ids= json_data["communities"].map do |comm|
         case 
