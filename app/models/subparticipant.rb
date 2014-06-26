@@ -17,6 +17,9 @@
 
 class Subparticipant < ActiveRecord::Base
 
+  TTL = 3600 # seconds, how long a subparticipant lives, after last
+             # communication with ECS
+
   require 'securerandom'
 
   belongs_to  :parent,
@@ -26,17 +29,18 @@ class Subparticipant < ActiveRecord::Base
   belongs_to  :participant
 
 
-  def self.generate(sender, json_data) 
+  def self.generate(parent, json_data) 
     auth_id= Identity.randomized_authid
-    data = process_json_data(sender, json_data)
+    data = process_json_data(parent, json_data)
+    check_valid_communities(parent ,data[:community_ids])
     params = {
-        "name" => "Subparticipant (\##{SecureRandom.hex}) from #{sender.name}",
+        "name" => "Subparticipant (\##{SecureRandom.hex}) from #{parent.name}",
         "identities_attributes" => {"0"=>{"name"=>"#{auth_id}", "description"=>"Randomized authid"}},
         "community_ids" => data[:community_ids],
         "description" => "",
         "dns" => "N/A",
-        "organization_id" => sender.organization.id,
-        "email" => sender.email,
+        "organization_id" => parent.organization.id,
+        "email" => parent.email,
         "ttl" => nil,
         "anonymous" => false,
         "community_selfrouting" => data[:community_selfrouting],
@@ -46,18 +50,19 @@ class Subparticipant < ActiveRecord::Base
     participant = Participant.new(params)
     participant.save!
     subp= participant.subparticipant
-    subp.parent= sender
+    subp.parent= parent
     subp.save!
     participant.name= "Subparticipant (id:#{subp.id})"
-    participant.description= "Created from \"#{sender.name}\" (pid:#{sender.id})"
+    participant.description= "Created from \"#{parent.name}\" (pid:#{parent.id})"
     participant.save!
     subp
   end
 
-  def update__(sender, json_data, subparticipant)
+  def update__(parent, json_data, subparticipant)
     participant= subparticipant.participant
     auth_id= "dummy"
-    data= process_json_data(sender, json_data)
+    data= process_json_data(parent, json_data)
+    check_valid_communities(parent, data[:community_ids])
     params = {
         "community_selfrouting" => data[:community_selfrouting],
         "community_ids" => data[:community_ids],
@@ -80,11 +85,19 @@ private
     events= json_data["events"] ||= false
     if json_data["communities"]
       community_ids= json_data["communities"].map do |comm|
-        erg= case 
+        case 
           when comm.class == Fixnum
-            comm.to_s
+            if Community.find_by_id(comm)
+              comm
+            else
+              raise Ecs::InvalidMessageException, comm.to_s
+            end
           when comm.class == String
-            (c= Community.find_by_name(comm)) ? c.id.to_s : nil
+            if (c= Community.find_by_name(comm))
+              c.id
+            else
+              raise Ecs::InvalidMessageException, comm.to_s
+            end
           else
             nil
         end
@@ -94,6 +107,30 @@ private
     community_ids.compact!
     { :realm => realm, :community_selfrouting => community_selfrouting, :events => events,
       :community_ids => community_ids }
+  rescue Ecs::InvalidMessageException
+    errortext= <<-END
+You provided at least one unknown community for a subparticipant creation.
+Following community is unknown (either a cid or a community name): #{$!}
+    END
+    raise Ecs::InvalidMessageException, errortext
+  end
+
+  def self.check_valid_communities(parent, community_ids)
+    if community_ids.blank?
+      logger.debug "Subparticipant#check_valid_communities: empty community_ids"
+      return
+    end
+    parent_community_ids= parent.communities.map{|c| c.id}
+    logger.debug "Subparticipant#check_valid_communities: parent community ids = [#{parent_community_ids.join(', ')}]"
+    logger.debug "Subparticipant#check_valid_communities: subparticipant community ids = [#{community_ids.join(', ')}]"
+    logger.debug "Subparticipant#check_valid_communities: Difference between subparticipant community ids and parent community ids = [#{(community_ids - parent_community_ids).join(', ')}]"
+    unless (community_ids - parent_community_ids).blank?
+      errortext= <<-END
+The subparticipant's communities must be a subset of its parent.
+Following communities are not allowed: #{(community_ids - parent_community_ids).map{|cid|Community.find(cid).name}.join(', ')}
+      END
+      raise Ecs::InvalidMessageException, errortext
+    end
   end
     
 end

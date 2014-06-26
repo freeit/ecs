@@ -49,14 +49,13 @@ class SubparticipantsController < ApplicationController
   end
 
   def create
-    sender= @participant
     begin
       json_data= ActiveSupport::JSON.decode request.raw_post
     rescue ActiveSupport::OkJson::Error, StandardError
       raise Ecs::InvalidMessageException, "You have provided invalid JSON data (SubparticipantsController#create)."
     end unless request.raw_post.empty?
     logger.debug "request raw post: #{(request.raw_post.empty?)?'<empty>':request.raw_post}"  
-    subparticipant= Subparticipant.generate(sender, json_data)
+    subparticipant= Subparticipant.generate(@participant, json_data)
     body= show_render(subparticipant)
     respond_to do |format|
       format.json { render :json  => JSON.pretty_generate(body) + "\r\n", :location => location(subparticipant) }
@@ -70,9 +69,8 @@ class SubparticipantsController < ApplicationController
     rescue StandardError
       raise Ecs::InvalidMessageException, "You have provided invalid JSON data (SubparticipantsController#update)."
     end unless request.raw_post.empty?
-    sender= @participant
     subparticipant= Subparticipant.find(params[:id])
-    subparticipant.update__(sender, json_data, subparticipant)
+    subparticipant.update__(@participant, json_data, subparticipant)
     body= show_render(subparticipant)
     respond_to do |format|
       format.json { render :json  => JSON.pretty_generate(body) + "\r\n", :location => location(subparticipant) }
@@ -111,10 +109,6 @@ private
     unless @participant.childs.include?(subparticipant)
       raise Ecs::AuthorizationException, "You are not allowed to access this subparticipant because you are not its parent/creator."
     end
-  end
-
-  def check_communities
-    
   end
 
   def location(subparticipant)
