@@ -21,7 +21,6 @@ ActionController::Dispatcher.middleware = ActionController::MiddlewareStack.new 
   m.use ActionController::Failsafe
   m.use ActiveRecord::ConnectionAdapters::ConnectionManagement
   m.use ActiveRecord::QueryCache
-  m.use ActiveRecord::SessionStore
   m.use Rack::MethodOverride
   m.use Rack::Head
 end 
