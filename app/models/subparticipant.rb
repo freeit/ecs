@@ -62,7 +62,7 @@ class Subparticipant < ActiveRecord::Base
     participant= subparticipant.participant
     auth_id= "dummy"
     data= process_json_data(parent, json_data)
-    check_valid_communities(parent, data[:community_ids])
+    Subparticipant::check_valid_communities(parent, data[:community_ids])
     params = {
         "community_selfrouting" => data[:community_selfrouting],
         "community_ids" => data[:community_ids],
