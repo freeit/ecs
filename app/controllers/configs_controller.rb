@@ -51,9 +51,9 @@ private
     res_ev={};Ressource.all.each {|r| res_ev["/#{r.namespace}/#{r.ressource}"] = r.events}
     config= \
       { 
-        :participant_events => @participant.events?.to_s,
+        :participant_events => @participant.events?,
         :resource_events => res_ev,
-        :selfrouting => @participant.community_selfrouting.to_s
+        :selfrouting => @participant.community_selfrouting
       }
     respond_to do |format|
       format.json { render :json  => JSON.pretty_generate(config) + "\r\n" }
