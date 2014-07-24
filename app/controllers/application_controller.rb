@@ -103,8 +103,8 @@ protected
     if !(@cookie = cookies[:ecs_anonymous]).blank?
       if (identity = Identity.find_by_name(@cookie)).blank?
         raise Ecs::AuthenticationException, "No valid identity found for cookie: #{@cookie}"
-      elsif (participant = identity.participant).blank?
-        raise Ecs::AuthenticationException, "Cookie: #{@cookie}\" is not assigned any participant"
+      elsif (participant = identity.participant).blank? or !participant.anonymous
+        raise Ecs::AuthenticationException, "Cookie: #{@cookie}\" is not assigned any anonymous participant"
       else
         return participant
       end
@@ -117,8 +117,8 @@ protected
     if !(@cookie = cookies[:ecs_subparticipant]).blank?
       if (identity = Identity.find_by_name(@cookie)).blank?
         raise Ecs::AuthenticationException, "No valid identity found for subparticipant cookie: #{@cookie}"
-      elsif (participant = identity.participant).blank?
-        raise Ecs::AuthenticationException, "Subparticipant-Cookie: #{@cookie}\" is not assigned any participant"
+      elsif (participant = identity.participant).blank? or !participant.subparticipant
+        raise Ecs::AuthenticationException, "Subparticipant-Cookie: #{@cookie}\" is not assigned any subparticipant"
       else
         return participant
       end
