@@ -8,7 +8,7 @@ namespace :vip do
     Message.for_resource("numlab", "results").each do |msg|
       if msg.created_at < (timenow - ttl)
         i+=1
-        Message::destroy_msg(msg)
+        msg.destroy_as_sender
         txt= "Service: garbage collect result: #{msg.ressource.namespace}/#{msg.ressource.ressource}/#{msg.id.to_s}"
         RAILS_DEFAULT_LOGGER.info txt
         #puts txt
