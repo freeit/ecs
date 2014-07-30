@@ -10,7 +10,7 @@ namespace :vip do
         post_time= JSON.parse(msg.body)['Exercise']['postTime']
         diff_time= Time::now.utc - Time::utc(*ParseDate::parsedate(post_time)) - ttl
         if diff_time >= 0
-          #Message::destroy_msg(msg)
+          msg.destroy_as_sender
           num+=1
           txt= "Filter: delete message (#{Time::utc(*ParseDate::parsedate(post_time))}): #{msg.ressource.namespace}/#{msg.ressource.ressource}/#{msg.id.to_s}"
           RAILS_DEFAULT_LOGGER.info txt
