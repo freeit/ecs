@@ -17,10 +17,8 @@
 
 
 class Participant < ActiveRecord::Base
-  TTL = 3600 # seconds, how long an anonymous participant lives
+  TTL = 1.hour # how long an anonymous participant lives
 
-  after_save    :garbage_collect
-  after_create  :garbage_collect
   after_destroy :delete_messages
 
   belongs_to  :organization
@@ -73,7 +71,7 @@ class Participant < ActiveRecord::Base
         "dns"=>"N/A",
         "organization_id"=>Organization.find_by_name("not available").id,
         "email"=>"N/A",
-        "ttl"=> DateTime.now.utc + TTL.seconds,
+        "ttl"=> DateTime.now.utc + TTL,
         "anonymous"=>true
     }
     ap = new(params)
@@ -82,7 +80,7 @@ class Participant < ActiveRecord::Base
   end
 
   def self.touch_ttl(participant)
-    participant.ttl = DateTime.now.utc + TTL.seconds
+    participant.ttl = DateTime.now.utc + TTL
     participant.save
   end
 
@@ -92,13 +90,6 @@ class Participant < ActiveRecord::Base
   end
 
 private
-
-  def garbage_collect
-    # garbage collect only if a new anonymous participant was created
-    if self.anonymous
-      Participant.destroy_all(["(anonymous = ?) AND (ttl < ?)", true, DateTime.now.utc])
-    end
-  end
 
   def delete_messages
     Message.destroy_all(["sender = ?", self.id])
