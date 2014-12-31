@@ -59,6 +59,33 @@ class Membership < ActiveRecord::Base
     end
   end
 
+  def self.memberships(participant)
+    memberships = []
+    Membership.for_participant_id(participant.id).each do |membership|
+        community= lambda { |memb|
+                            attribs = memb.community_with_reduced_attributes.attributes
+                            id = attribs["id"]; attribs.delete("id"); attribs["cid"] = id
+                            attribs
+                          }.call(membership)
+        logger.debug "**** Membership::memberships: community: #{community.inspect}"
+        participants= membership.community.participants.with_reduced_attributes_and_without_anonymous.map do |p|
+          attribs = p.attributes
+          attribs["mid"] = Membership.for_participant_id_and_community_id(p.id, membership.community.id).first.id
+          attribs["org"] = {"name" => p.organization.name, "abbr" => p.organization.abrev}
+          attribs["itsyou"] = p.id == participant.id
+          attribs["pid"] = p.id
+          attribs.delete("id")
+          attribs.delete("organization_id")
+          attribs
+        end
+        logger.debug "**** Membership::memberships: participants: #{participants.inspect}"
+        memberships << 
+          { :community => community,
+            :participants => participants
+          }
+    end
+    memberships
+  end
 
 private
 

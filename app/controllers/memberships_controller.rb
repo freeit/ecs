@@ -28,26 +28,7 @@ class MembershipsController < ApplicationController
   end
 
   def index
-    memberships = []
-    Membership.for_participant_id(@participant.id).each do |membership|
-        memberships << 
-          { :community => lambda { |memb|
-                            attribs = memb.community_with_reduced_attributes.attributes
-                            id = attribs["id"]; attribs.delete("id"); attribs["cid"] = id
-                            attribs
-                          }.call(membership),
-            :participants => membership.community.participants.with_reduced_attributes_and_without_anonymous.map {|p|
-              attribs = p.attributes
-              attribs["mid"] = Membership.for_participant_id_and_community_id(p.id, membership.community.id).first.id
-              attribs["org"] = {"name" => p.organization.name, "abbr" => p.organization.abrev}
-              attribs["itsyou"] = p.id == @participant.id
-              attribs["pid"] = p.id
-              attribs.delete("id")
-              attribs.delete("organization_id")
-              attribs
-            }
-          }
-    end
+    memberships = Membership.memberships(@participant)
     if memberships.empty?
       render :text => "", :content_type => "application/json", :layout => false
     else
