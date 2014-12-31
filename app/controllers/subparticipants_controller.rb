@@ -98,7 +98,7 @@ private
         :email => participant.email,
         :community_selfrouting => participant.community_selfrouting,
         :events => participant.events_,
-        :communities => participant.communities.map{|c| c.name},
+        :memberships => Membership.memberships(participant,true),
         :realm => subparticipant.realm,
       }
     data

@@ -24,6 +24,11 @@ class Community < ActiveRecord::Base
             :conditions => ["participants.anonymous = ?", false],
             :order => "participants.id ASC"
     end
+    def with_reduced_attributes_and_only_itsyou_and_without_anonymous(pid)
+      find  :all, :select => "participants.id, name, description, email, dns, organization_id",
+            :conditions => ["participants.anonymous = ? and participants.id = ?", false, pid],
+            :order => "participants.id ASC"
+    end
   end
   has_many :community_messages, :dependent => :destroy
   has_many :messages, :through => :community_messages

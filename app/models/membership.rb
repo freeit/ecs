@@ -59,7 +59,7 @@ class Membership < ActiveRecord::Base
     end
   end
 
-  def self.memberships(participant)
+  def self.memberships(participant,itsyou=false)
     memberships = []
     Membership.for_participant_id(participant.id).each do |membership|
         community= lambda { |memb|
@@ -68,7 +68,13 @@ class Membership < ActiveRecord::Base
                             attribs
                           }.call(membership)
         logger.debug "**** Membership::memberships: community: #{community.inspect}"
-        participants= membership.community.participants.with_reduced_attributes_and_without_anonymous.map do |p|
+        if itsyou
+          participants_with_reduced_attribs= membership.community.participants.with_reduced_attributes_and_only_itsyou_and_without_anonymous(participant.id)
+          logger.debug "**** Membership::memberships: participants_with_reduced_attribs: #{participants_with_reduced_attribs.inspect}"
+        else
+          participants_with_reduced_attribs= membership.community.participants.with_reduced_attributes_and_without_anonymous
+        end
+        participants= participants_with_reduced_attribs.map do |p|
           attribs = p.attributes
           attribs["mid"] = Membership.for_participant_id_and_community_id(p.id, membership.community.id).first.id
           attribs["org"] = {"name" => p.organization.name, "abbr" => p.organization.abrev}
