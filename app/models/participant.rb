@@ -1,17 +1,17 @@
 # Copyright (C) 2007, 2008, 2009, 2010 Heiko Bernloehr (FreeIT.de).
-# 
+#
 # This file is part of ECS.
-# 
+#
 # ECS is free software: you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of
 # the License, or (at your option) any later version.
-# 
+#
 # ECS is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Affero General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Affero General Public
 # License along with ECS. If not, see <http://www.gnu.org/licenses/>.
 
@@ -41,7 +41,7 @@ class Participant < ActiveRecord::Base
   accepts_nested_attributes_for :communities, :reject_if => proc { |attrs| attrs.all? { |k, v| v.blank? } }
   accepts_nested_attributes_for :subparticipant, :allow_destroy => true
 
-  #named_scope :reduced_attributes, :select => "name, description, dns, email" 
+  named_scope :order_id_asc, :order => "participants.id ASC"
   named_scope :without_anonymous, :conditions => { :participants => { :anonymous => false } }
   named_scope :anonymous, :conditions => { :participants => { :anonymous => true } }
   named_scope :for_message, lambda { |message| {
@@ -51,6 +51,11 @@ class Participant < ActiveRecord::Base
     :joins => [:memberships => :community],
     :conditions => { :communities => { :id => community.id }}}}
   named_scope :for_subparticipants
+  named_scope :itsyou, lambda { |itsyoupid| { :conditions => { :participants => { :id => itsyoupid } } } }
+
+  def self.reduced_attributes
+    find  :all, :select => "participants.id, participants.name, participants.description, participants.email, participants.dns, participants.organization_id"
+  end
 
   # test if the participant is the initial sender of the message in question.
   def sender?(message)
@@ -62,9 +67,9 @@ class Participant < ActiveRecord::Base
   end
 
   def receiver?(message)
-    not Membership.receiver(id, message.id).empty? 
+    not Membership.receiver(id, message.id).empty?
   end
-    
+
   def events?
     self.events_.blank? ? false : true
   end
@@ -109,5 +114,5 @@ private
   def delete_messages
     Message.destroy_all(["sender = ?", self.id])
   end
-    
+
 end

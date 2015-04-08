@@ -1,17 +1,17 @@
 # Copyright (C) 2007, 2008, 2009, 2010 Heiko Bernloehr (FreeIT.de).
-# 
+#
 # This file is part of ECS.
-# 
+#
 # ECS is free software: you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of
 # the License, or (at your option) any later version.
-# 
+#
 # ECS is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Affero General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Affero General Public
 # License along with ECS. If not, see <http://www.gnu.org/licenses/>.
 
@@ -31,11 +31,11 @@ class Membership < ActiveRecord::Base
   # returns memberships of the relation between a participant and a message
   # if no relationship then returns empty array.
   named_scope :receiver, lambda { |participant_id,message_id| {
-    :joins => [:participant, {:membership_messages => :message}], 
+    :joins => [:participant, {:membership_messages => :message}],
     :conditions => { :participants => { :id => participant_id }, :messages => { :id => message_id } } } }
 
   named_scope :receivers, lambda { |message_id| {
-    :joins => [:membership_messages => :message], 
+    :joins => [:membership_messages => :message],
     :select => :memberships.to_s+".id" + ", community_id, participant_id",
     :conditions => { :messages => { :id => message_id } } } }
 
@@ -69,10 +69,10 @@ class Membership < ActiveRecord::Base
                           }.call(membership)
         logger.debug "**** Membership::memberships: community: #{community.inspect}"
         if itsyou
-          participants_with_reduced_attribs= membership.community.participants.with_reduced_attributes_and_only_itsyou_and_without_anonymous(participant.id)
+          participants_with_reduced_attribs= membership.community.participants.itsyou(participant.id).without_anonymous.reduced_attributes
           logger.debug "**** Membership::memberships: participants_with_reduced_attribs: #{participants_with_reduced_attribs.inspect}"
         else
-          participants_with_reduced_attribs= membership.community.participants.with_reduced_attributes_and_without_anonymous
+          participants_with_reduced_attribs= membership.community.participants.without_anonymous.reduced_attributes
         end
         participants= participants_with_reduced_attribs.map do |p|
           attribs = p.attributes
@@ -85,7 +85,7 @@ class Membership < ActiveRecord::Base
           attribs
         end
         logger.debug "**** Membership::memberships: participants: #{participants.inspect}"
-        memberships << 
+        memberships <<
           { :community => community,
             :participants => participants
           }
