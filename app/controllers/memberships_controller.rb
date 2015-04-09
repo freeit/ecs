@@ -28,7 +28,7 @@ class MembershipsController < ApplicationController
   end
 
   def index
-    memberships = Membership.memberships(@participant)
+    memberships= index_querystring_list
     if memberships.empty?
       render :text => "", :content_type => "application/json", :layout => false
     else
@@ -37,6 +37,28 @@ class MembershipsController < ApplicationController
         format.xml  { render :xml  => memberships }
       end
     end
+  end
+
+  private
+
+  def index_querystring_list
+    header_querystrings = request.headers["X-EcsQueryStrings"]
+    if header_querystrings
+      hqs = header_querystrings.split(",").map{|s| s.strip}.map{|s| s.split("=").map{|s| s.strip}}
+      mainparticipants = (m=hqs.assoc("mainparticipants")) ? m[1] : nil
+      subparticipants = (m=hqs.assoc("subparticipants")) ? m[1] : nil
+      anonymous = (m=hqs.assoc("anonymous")) ? m[1] : nil
+      all = (m=hqs.assoc("all")) ? m[1] : nil
+    end
+    mainparticipants ||= params["mainparticipants"] ? params["mainparticipants"] : nil
+    subparticipants ||= params["subparticipants"] ? params["subparticipants"] : nil
+    anonymous ||= params["anonymous"] ? params["anonymous"] : nil
+    all ||= params["all"] ? params["all"] : nil
+    Membership.memberships(@participant,false,
+                           { :mainparticipants => mainparticipants,
+                             :subparticipants => subparticipants,
+                             :anonymous => anonymous,
+                             :all => all })
   end
 
 end

@@ -52,9 +52,26 @@ class Participant < ActiveRecord::Base
     :conditions => { :communities => { :id => community.id }}}}
   named_scope :for_subparticipants
   named_scope :itsyou, lambda { |itsyoupid| { :conditions => { :participants => { :id => itsyoupid } } } }
+  named_scope :only_subparticipants, :joins => [:subparticipant]
 
   def self.reduced_attributes
     find  :all, :select => "participants.id, participants.name, participants.description, participants.email, participants.dns, participants.organization_id"
+  end
+
+  def self.mainparticipants_with_reduced_attributes
+    without_anonymous.order_id_asc.reduced_attributes - only_subparticipants.reduced_attributes
+  end
+
+  def self.subparticipants_with_reduced_attributes
+    only_subparticipants.order_id_asc.reduced_attributes
+  end
+
+  def self.without_anonymous_with_reduced_attributes
+    without_anonymous.order_id_asc.reduced_attributes
+  end
+
+  def self.anonymous_participants_with_reduced_attributes
+    anonymous.order_id_asc.reduced_attributes
   end
 
   # test if the participant is the initial sender of the message in question.
