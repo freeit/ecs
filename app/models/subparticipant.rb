@@ -43,6 +43,7 @@ class Subparticipant < ActiveRecord::Base
         "email" => parent.email,
         "ttl" => nil,
         "anonymous" => false,
+        "ptype" => Participant::TYPE[:sub],
         "community_selfrouting" => data[:community_selfrouting],
         "events_" => data[:events],
         "subparticipant_attributes" => { :realm => data[:realm] } 

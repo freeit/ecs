@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140525164346) do
+ActiveRecord::Schema.define(:version => 20150420210728) do
 
   create_table "auths", :force => true do |t|
     t.string   "one_touch_hash"
@@ -100,6 +100,7 @@ ActiveRecord::Schema.define(:version => 20140525164346) do
     t.datetime "updated_at"
     t.boolean  "community_selfrouting", :default => false
     t.boolean  "events_",               :default => true
+    t.string   "ptype"
   end
 
   create_table "ressources", :force => true do |t|

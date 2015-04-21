@@ -66,6 +66,7 @@ class Admin::ParticipantsController < ApplicationController
   
   def create
     @participant = Participant.new(params[:participant])
+    @participant.ptype = Participant::TYPE[:main]
     if @participant.save
       flash[:notice] = 'Participant was successfully created.'
       redirect_to admin_participants_path

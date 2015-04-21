@@ -1,4 +1,4 @@
-# Copyright (C) 2007, 2008, 2009, 2010 Heiko Bernloehr (FreeIT.de).
+# Copyright (C) 2007, 2008, 2009, 2010, 2014 Heiko Bernloehr (FreeIT.de).
 #
 # This file is part of ECS.
 #
@@ -18,6 +18,7 @@
 
 class Participant < ActiveRecord::Base
   TTL = 1.hour # how long an anonymous participant lives
+  TYPE={ :main => "main", :sub => "sub", :anonym => "anonym" }
 
   after_destroy :delete_messages
 
@@ -52,26 +53,44 @@ class Participant < ActiveRecord::Base
     :conditions => { :communities => { :id => community.id }}}}
   named_scope :for_subparticipants
   named_scope :itsyou, lambda { |itsyoupid| { :conditions => { :participants => { :id => itsyoupid } } } }
-  named_scope :only_subparticipants, :joins => [:subparticipant]
+  named_scope :only_subparticipants, :conditions => { :participants => { :ptype => TYPE[:sub] } }
+  named_scope :only_mainparticipants, :conditions => { :participants => { :ptype => TYPE[:main] } }
+  named_scope :only_anonymous, :conditions => { :participants => { :ptype => TYPE[:anonym] } }
 
   def self.reduced_attributes
-    find  :all, :select => "participants.id, participants.name, participants.description, participants.email, participants.dns, participants.organization_id"
+    find  :all, :select => "participants.id, participants.name, participants.description, participants.email, participants.dns, participants.organization_id, participants.ptype"
   end
 
   def self.mainparticipants_with_reduced_attributes
-    without_anonymous.order_id_asc.reduced_attributes - only_subparticipants.reduced_attributes
+    only_mainparticipants.order_id_asc.reduced_attributes
   end
 
   def self.subparticipants_with_reduced_attributes
     only_subparticipants.order_id_asc.reduced_attributes
   end
 
-  def self.without_anonymous_with_reduced_attributes
-    without_anonymous.order_id_asc.reduced_attributes
+  def self.anonymous_participants_with_reduced_attributes
+    only_anonymous.order_id_asc.reduced_attributes
   end
 
-  def self.anonymous_participants_with_reduced_attributes
-    anonymous.order_id_asc.reduced_attributes
+  def mainparticipant?
+    if not anonymousparticipant? and subparticipant.nil?
+      true
+    else
+      false
+    end
+  end
+
+  def subparticipant?
+    if not anonymousparticipant? and not subparticipant.nil?
+      true
+    else
+      false
+    end
+  end
+
+  def anonymousparticipant?
+    anonymous?
   end
 
   # test if the participant is the initial sender of the message in question.
@@ -95,10 +114,6 @@ class Participant < ActiveRecord::Base
     anonymous
   end
 
-  def subparticipant?
-    subparticipant
-  end
-
   def self.generate_anonymous_participant
     cookie = Digest::SHA1.hexdigest('something secret'+Time.now.to_s+rand.to_s)
     params = {
@@ -110,7 +125,8 @@ class Participant < ActiveRecord::Base
         "organization_id"=>Organization.find_by_name("not available").id,
         "email"=>"N/A",
         "ttl"=> DateTime.now.utc + TTL,
-        "anonymous"=>true
+        "anonymous"=>true,
+        "ptype"=>TYPE[:anonym]
     }
     ap = new(params)
     ap.save!

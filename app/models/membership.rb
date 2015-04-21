@@ -91,8 +91,10 @@ class Membership < ActiveRecord::Base
           attribs["org"] = {"name" => p.organization.name, "abbr" => p.organization.abrev}
           attribs["itsyou"] = p.id == participant.id
           attribs["pid"] = p.id
+          attribs["type"] = p.ptype
           attribs.delete("id")
           attribs.delete("organization_id")
+          attribs.delete("ptype")
           attribs
         end
         logger.debug "**** Membership::memberships: participants: #{participants.inspect}"
