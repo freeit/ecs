@@ -82,7 +82,7 @@ class Membership < ActiveRecord::Base
           when filter[:anonymous]
             membership.community.participants.anonymous_participants_with_reduced_attributes
           else
-            membership.community.participants.without_anonymous_with_reduced_attributes
+            membership.community.participants.mainparticipants_with_reduced_attributes
           end
         end
         participants= participants_with_reduced_attribs.map do |p|
