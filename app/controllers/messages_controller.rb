@@ -43,7 +43,7 @@ class MessagesController < ApplicationController
     when @record.outtimed_auths_resource_by_non_owner?(@app_namespace, @resource_name, @participant)
       raise Ecs::OuttimedAuthsException, 'Authorization token outtimed'
     when (!@memberships.empty? or @participant.sender?(@record))
-      Message.filter(__method__, @app_namespace, @ressource_name, @record, params)
+      @record.filter(__method__, @app_namespace, @ressource_name, params)
       @body = @record.body 
       show_render
       eval(@render_cmd) unless @render_cmd.blank?

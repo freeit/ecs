@@ -163,12 +163,12 @@ class Message < ActiveRecord::Base
     end
   end
 
-  def self.filter(action_name, app_namespace, ressource_name, record, params)
+  def filter(action_name, app_namespace, ressource_name, params)
     d="filter/#{app_namespace}/#{ressource_name}/#{action_name}/*"
     filters=Dir[d].collect{|f| File.directory?(f) ? f : nil}.compact
     return if filters.empty?
     FILTER_API.params= params
-    FILTER_API.record= record
+    FILTER_API.record= self
     filters.sort!
     filters.each do |f|
       files= Dir[f+'/*.rb']
