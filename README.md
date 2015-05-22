@@ -7,14 +7,13 @@ services such as
    * learning management systems (Ilias, Moodle, StudIP, ...)
    * campus management systems (HIS/LSF, StudIP, OpenCMS, ...)
 
-See also: 
-  http://FreeIT.de/en/ecsa/ecs
-  http://FreeIT.de/en/campusconnect
+See also:
+* http://FreeIT.de/en/ecsa/ecs
+* http://FreeIT.de/en/campusconnect
 
 If you want to open a new ticket, it's best you go through of one of the following ticket creation links:
-
-[Ticket creation [en]](http://FreeIT.de/en/ecsa/ecs.html#tickets)  
-[Ticket eröffnen [de]](http://FreeIT.de/de/ecsa/ecs.html#tickets)
+* [Ticket creation [en]](http://FreeIT.de/en/ecsa/ecs.html#tickets)
+* [Ticket eröffnen [de]](http://FreeIT.de/de/ecsa/ecs.html#tickets)
 
 Of course you could jump directly to the ticket/issue tracker to open
 a [new ticket](https://github.com/freeit/ecs/issues/new).
