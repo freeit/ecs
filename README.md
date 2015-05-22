@@ -1,5 +1,4 @@
-ECS -- Elearning Community Server
-=================================
+# ECS -- Elearning Community Server
 
 It's a REST based middleware (MOM), especially for integrating e-learning based
 services such as 
@@ -11,6 +10,7 @@ See also:
 * http://FreeIT.de/en/ecsa/ecs
 * http://FreeIT.de/en/campusconnect
 
+## Ticket creation
 If you want to open a new ticket, it's best you go through of one of the following ticket creation links:
 * [Ticket creation [en]](http://FreeIT.de/en/ecsa/ecs.html#tickets)
 * [Ticket eröffnen [de]](http://FreeIT.de/de/ecsa/ecs.html#tickets)
