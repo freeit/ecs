@@ -16,7 +16,10 @@ If you want to open a new ticket, it's best you go through of one of the followi
 [Ticket creation [en]](http://FreeIT.de/en/ecsa/ecs.html#tickets)  
 [Ticket eröffnen [de]](http://FreeIT.de/de/ecsa/ecs.html#tickets)
 
-Of course you could jump directly to the ticket/issue tracker to open a [new ticket](https://github.com/freeit/ecs/issues/new). But then you should keep in mind, that you have to prefix the title of the ticket with one of these tags:
+Of course you could jump directly to the ticket/issue tracker to open
+a [new ticket](https://github.com/freeit/ecs/issues/new).
+But then you should keep in mind, that you have to prefix the title of
+the ticket with one of these tags on your own:
 * [ask] if you have a question
 * [bug] if you want to report a bug
 * [info] if you want to give everybody some advise
