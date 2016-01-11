@@ -3,7 +3,7 @@ namespace :ecs do
   task :gc_anonymous_participants => :environment  do
     num= Participant.find(:all, :conditions => ["(anonymous = ?) AND (ttl < ?)", true, DateTime.now.utc]).length
     Participant.destroy_all(["(anonymous = ?) AND (ttl < ?)", true, DateTime.now.utc])
-    txt= "Number of deleted messages: #{num}"
+    txt= "gc_anonymous_participants: Number of deleted outtimed anonymous participants: #{num}"
     puts txt
     RAILS_DEFAULT_LOGGER.info txt
   end
