@@ -246,6 +246,7 @@ protected
 
   def create_render
     location = request.protocol + request.host
+    location += ":" + request.headers["SERVER_PORT"] unless [80,443].include? request.headers["SERVER_PORT"]
     location += request.headers["SCRIPT_NAME"] if request.headers.has_key?("SCRIPT_NAME")
     location += request.path.gsub(/\/*$/,'') + "/" + @record.id.to_s
     if @app_namespace == 'sys' and @ressource_name == 'auths'
