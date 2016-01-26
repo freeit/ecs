@@ -37,3 +37,4 @@ end
 
 ECS_CONFIG["participants"]["allow_anonymous"] = false unless defined? ECS_CONFIG["participants"]["allow_anonymous"]
 ECS_CONFIG["participants"]["allow_events"] = true unless defined? ECS_CONFIG["participants"]["allow_events"]
+ECS_CONFIG["admin"]["confirm_actions"] = true unless defined? ECS_CONFIG["admin"]["confirm_actions"]

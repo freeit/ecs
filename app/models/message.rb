@@ -32,11 +32,13 @@ class Message < ActiveRecord::Base
   named_scope :for_participant_receiver, lambda {|participant| {
     :joins => {:membership_messages => {:membership => :participant}},
     :order => "id ASC",
-    :conditions => {:participants => {:id => participant.id}}}}
+    :conditions => {:participants => {:id => participant.id}},
+    :readonly => false}}
 
   named_scope :for_participant_sender, lambda {|participant| {
     :order => "id ASC",
-    :conditions => {:sender => participant.id}}}
+    :conditions => {:sender => participant.id},
+    :readonly => false}}
 
   named_scope :for_not_removed, lambda { {
     :order => "id ASC",

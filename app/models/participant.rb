@@ -73,6 +73,24 @@ class Participant < ActiveRecord::Base
     only_anonymous.order_id_asc.reduced_attributes
   end
 
+  def destroy_receiver_messages
+    Message.for_participant_receiver(self).each do |m|
+      m.destroy_as_receiver(self)
+    end
+  end
+
+  def destroy_sender_messages
+    Message.for_participant_sender(self).each do |m|
+      m.destroy_as_sender
+    end
+  end
+
+  def destroy_events
+    self.events.each do |e|
+      e.destroy
+    end
+  end
+
   def mainparticipant?
     if not anonymousparticipant? and subparticipant.nil?
       true

@@ -1,4 +1,5 @@
 participants:
   allow_anonymous: false
   allow_events: true # for database migration
-
+admin:
+  confirm_actions: false

@@ -39,7 +39,7 @@ class Admin::ParticipantsControllerTest < ActionController::TestCase
     assert_difference('Participant.count') do
       post :create, params
     end
-    assert_equal('Participant was successfully created.',flash[:notice])
+    assert_equal('Participant "testclient" was successfully created.',flash[:notice])
     assert_equal(communities(:wuv).id, Participant.find_by_name("testclient").communities.first.id)
     assert_equal(1,Participant.find_by_name("testclient").memberships.first.membership_messages.count)
   end

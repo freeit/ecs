@@ -23,7 +23,7 @@ class Admin::ParticipantsController < ApplicationController
   include Admin::Helper
 
   # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
-  verify :method => [ :post, :put, :delete ], :only => [ :destroy, :create, :update, :destroy_participant ],
+  verify :method => [ :post, :put, :delete ], :only => [ :destroy, :create, :update, :destroy_participant, :reset ],
          :add_flash => { :notice => "Failed to execute last action" },
          :redirect_to => :admin_participants_path
 
@@ -35,11 +35,11 @@ class Admin::ParticipantsController < ApplicationController
     list
     render :action => 'list'
   end
-  
-  def list 
+
+  def list
     @list_participants_anonymous_count = Participant.all.count - Participant.without_anonymous.count
     @participants = case params[:anonymous]
-      when "true" 
+      when "true"
         @list_anonymous=true
         @list_participants_count = Participant.all.count
         Participant.find(:all).uniq
@@ -52,12 +52,20 @@ class Admin::ParticipantsController < ApplicationController
         @list_participants_count = Participant.all.count - @list_participants_anonymous_count
         Participant.without_anonymous.uniq
     end
+    @action_buttons = case params[:actionbuttons]
+                      when "true"
+                        true
+                      when "false"
+                        false
+                      else
+                        false
+                      end
   end
-  
+
   def show
     @participant = Participant.find(params[:id])
   end
-  
+
   def new
     @participant = Participant.new
     @organizations = Organization.find(:all, :order => :id)
@@ -80,7 +88,16 @@ class Admin::ParticipantsController < ApplicationController
     @participant = Participant.find(params[:id])
     @organizations = Organization.find(:all, :order => :id)
   end
-  
+
+  def reset
+    @participant = Participant.find(params[:id])
+    @participant.destroy_receiver_messages
+    @participant.destroy_sender_messages
+    @participant.destroy_events
+    flash[:notice] = "Successfully cleared all sent and received messages and events of participant \"#{CGI.escapeHTML @participant.name}\"."
+    redirect_to_admin_participants_path
+  end
+
   def update
     params[:participant][:community_ids] ||= []
     @organizations = Organization.find(:all, :order => :id)
@@ -124,8 +141,19 @@ class Admin::ParticipantsController < ApplicationController
     create_membership(params[:c_id], params[:id])
     redirect_to admin_participant_communities_path(params[:id])
   end
-  
+
 private
+
+  def redirect_to_admin_participants_path
+    queryparams={}
+    if params[:anonymous]
+      queryparams[:anonymous]=true
+    end
+    if params[:actionbuttons]
+      queryparams[:actionbuttons]=true
+    end
+    redirect_to admin_participants_path(queryparams)
+  end
 
   # Generate destroyed events for all messages unconnected in respect to the
   # leaving communities.
@@ -145,5 +173,4 @@ private
     end
     leaved_messages.flatten.compact.uniq
   end
-
 end

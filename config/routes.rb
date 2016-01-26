@@ -20,7 +20,7 @@ ActionController::Routing::Routes.draw do |map|
 
 
   map.namespace(:admin) do |admin|
-    admin.resources :participants
+    admin.resources :participants, :member => { :reset => :post }
     admin.resources :communities, :has_many => :participants
     admin.resources :organizations
     admin.resources :ressources
