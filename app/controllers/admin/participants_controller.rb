@@ -1,17 +1,17 @@
-# Copyright (C) 2007, 2008, 2009, 2010 Heiko Bernloehr (FreeIT.de).
-# 
+# Copyright (C) 2007, 2008, 2009, 2010, 2016 Heiko Bernloehr (FreeIT.de).
+#
 # This file is part of ECS.
-# 
+#
 # ECS is free software: you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of
 # the License, or (at your option) any later version.
-# 
+#
 # ECS is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Affero General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Affero General Public
 # License along with ECS. If not, see <http://www.gnu.org/licenses/>.
 
@@ -63,19 +63,19 @@ class Admin::ParticipantsController < ApplicationController
     @organizations = Organization.find(:all, :order => :id)
     @participant.identities.build
   end
-  
+
   def create
     @participant = Participant.new(params[:participant])
     @participant.ptype = Participant::TYPE[:main]
     if @participant.save
-      flash[:notice] = 'Participant was successfully created.'
+      flash[:notice] = "Participant \"#{CGI.escapeHTML @participant.name}\" was successfully created."
       redirect_to admin_participants_path
-    else 
+    else
       @organizations = Organization.find(:all, :order => :id)
       render :action => 'new'
     end
   end
-  
+
   def edit
     @participant = Participant.find(params[:id])
     @organizations = Organization.find(:all, :order => :id)
@@ -94,13 +94,14 @@ class Admin::ParticipantsController < ApplicationController
       render :action => 'edit'
     end
   end
-  
+
   def destroy
-    Participant.find(params[:id]).destroy
-    flash[:notice] = 'Participant was successfully destroyed.'
-    redirect_to admin_participants_path 
+    p = Participant.find(params[:id])
+    p.destroy
+    flash[:notice] = "Participant \"#{CGI.escapeHTML p.name}\" was successfully destroyed."
+    redirect_to_admin_participants_path
   end
-  
+
   def index_communities
     @participant = Participant.find(params[:id])
     @communities=Participant.find(params[:id]).memberships.collect {|i| i.community  }.uniq.sort{|x,y| x.id <=> y.id }
