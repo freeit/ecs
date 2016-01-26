@@ -24,7 +24,8 @@
 # no regular words or you'll be exposed to dictionary attacks.
 ActionController::Base.session = {
   :key         => '_ecs2_session',
-  :secret      => 'd7cbf7e65e30a174a914b6f9bf9769c0ff92666c652bd2c76e4598a0eaf70334719473189c41a043e32d8e7c0294e4b5b6e0e240acbffbe0d2f5708ee6fba93e'
+  :secret      => 'd7cbf7e65e30a174a914b6f9bf9769c0ff92666c652bd2c76e4598a0eaf70334719473189c41a043e32d8e7c0294e4b5b6e0e240acbffbe0d2f5708ee6fba93e',
+  :secure      => true
 }
 
 # Use the database for sessions instead of the cookie-based default,
